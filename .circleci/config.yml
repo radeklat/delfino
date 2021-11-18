@@ -1,0 +1,174 @@
+version: 2.1
+
+orbs:
+  gh: circleci/github-cli@1.0.4
+
+parameters:
+  project_name:
+    type: string
+    default: toolbox
+  working_directory:
+    type: string
+    default: ~/toolbox
+  python_version:
+    type: string
+    default: "3.6"
+  cache_version:
+    type: string
+    default: "1"
+  git_trunk_branch:
+    type: string
+    default: "main"
+
+jobs: # A basic unit of work in a run
+  test:
+    environment:
+      PYTHONPATH: src
+    parameters:
+      python_version:
+        type: string
+    docker:
+      - image: circleci/python:<< parameters.python_version >>
+        environment:
+          PIPENV_VENV_IN_PROJECT: "true"
+    working_directory: << pipeline.parameters.working_directory >>
+    steps:
+      - checkout
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python<< parameters.python_version >>/site-packages
+      - restore_cache:
+          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< parameters.python_version >>-{{ checksum "poetry.lock" }}
+      - run:
+          name: Install dev libraries
+          command: pip install --upgrade pip poetry && poetry install --no-ansi
+      - run:
+          name: Format check
+          command: poetry run inv format --check
+      - run:
+          name: Type check
+          command: poetry run inv typecheck
+      - run:
+          name: Linters
+          command: poetry run inv lint
+      - save_cache:
+          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< parameters.python_version >>-{{ checksum "poetry.lock" }}
+          paths:
+            - ".venv"
+            - "/usr/local/bin"
+            - "/usr/local/lib/python<< parameters.python_version >>/site-packages"
+      - run:
+          name: Unit tests
+          command: poetry run inv test-unit
+      - run:
+          name: Integration tests
+          command: poetry run inv test-integration
+      - run:
+          name: Build coverage report
+          command: poetry run inv coverage-report
+      - run:
+          name: Upload coverage reports to Codecov
+          command: |
+            [[ "${CIRCLE_BRANCH}" == "<< pipeline.parameters.git_trunk_branch >>" ]] && BASE_COMMIT_SHA=$(git rev-parse HEAD~1) || BASE_COMMIT_SHA=$(git merge-base ${CIRCLE_BRANCH} origin/<< pipeline.parameters.git_trunk_branch >>)
+            bash <(curl -s https://codecov.io/bash) -N ${BASE_COMMIT_SHA} -f reports/coverage-unit.xml -F total,unit_tests &&
+            bash <(curl -s https://codecov.io/bash) -N ${BASE_COMMIT_SHA} -f reports/coverage-integration.xml -F total,integration_tests
+      - store_artifacts:
+          path: reports/coverage-report
+      - store_test_results:
+          path: reports
+
+  build:
+    working_directory: << pipeline.parameters.working_directory >>
+    docker: # run the steps with Docker
+      - image: circleci/python:<< pipeline.parameters.python_version >>
+        environment:
+          PIPENV_VENV_IN_PROJECT: "true"
+    steps:
+      - checkout
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+      - restore_cache:
+          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< pipeline.parameters.python_version >>-{{ checksum "poetry.lock" }}
+      - run:
+          name: Build library
+          command: |
+            poetry build
+      - persist_to_workspace:
+          root: << pipeline.parameters.working_directory >>
+          paths:
+            - .
+
+  deploy_library:
+    working_directory: << pipeline.parameters.working_directory >>
+    docker: # run the steps with Docker
+      - image: circleci/python:<< pipeline.parameters.python_version >>
+    steps:
+      - attach_workspace:
+          at: << pipeline.parameters.working_directory >>
+#      - run:
+#          name: Upload to pypi
+#          command: |
+#            VERSION=$(poetry version -s)
+#            VERSION_EXISTS=$( \
+#              curl -Ls https://pypi.org/pypi/<< pipeline.parameters.project_name >>/json | \
+#                jq -r '.releases | keys_unsorted' | \
+#                grep -q "\"$VERSION\"" ; echo $? \
+#            )
+#            if [[ $VERSION_EXISTS -ne 0 ]]; then
+#              poetry publish --username "__token__" --password $PYPI_API_TOKEN
+#            else
+#              echo "Package with this version has been already release. Skipping."
+#            fi
+
+  release:
+    working_directory: << pipeline.parameters.working_directory >>
+    docker:
+      - image: circleci/python:<< pipeline.parameters.python_version >>
+    steps:
+      - checkout
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python<< pipeline.parameters.python_version >>/site-packages
+      - restore_cache:
+          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< pipeline.parameters.python_version >>-{{ checksum "poetry.lock" }}
+      - gh/setup
+      - run:
+          name: Tag release
+          command: |
+            git fetch --tags origin
+            VERSION=$(poetry version -s)
+            if [[ $(git tag | grep -q $VERSION; echo $?) -ne 0 ]]; then
+              gh release create $VERSION -F CHANGELOG.md
+            else
+              echo "Tag '$VERSION' already exists. Skipping."
+            fi
+
+
+workflows:
+  version: 2
+  all_pipelines:
+    jobs:
+      - test:
+          name: Python << matrix.python_version >> tests
+          context: settings-doc
+          matrix:
+            parameters:
+              python_version: [ "3.6", "3.7", "3.8", "3.9", "3.10" ]
+      - build:
+          name: Build
+          requires:
+            - test
+      - deploy_library:
+          name: Deploy to Pypi
+          context: pypi_upload
+          requires:
+            - Build
+          filters:
+            branches:
+              only: << pipeline.parameters.git_trunk_branch >>
+      - release:
+          context:
+            - github
+          requires:
+            - Deploy to Pypi
+          filters:
+            branches:
+              only: << pipeline.parameters.git_trunk_branch >>
