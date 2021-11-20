@@ -36,7 +36,7 @@ def lint_pydocstyle(app_context: AppContext):
     report_pydocstyle_fpath = toolbox.reports_directory / "pydocstyle-report.log"
 
     try:
-        app_context.ctx.run(f"pydocstyle {toolbox.source_directory} > {report_pydocstyle_fpath}")
+        app_context.ctx.run(f"pydocstyle {toolbox.sources_directory} > {report_pydocstyle_fpath}")
     finally:
         if os.path.exists(report_pydocstyle_fpath):
             format_messages(read_contents(report_pydocstyle_fpath))
@@ -57,7 +57,7 @@ def lint_pycodestyle(app_context: AppContext):
     print_header("code style (PEP8)", level=2)
     ensure_reports_dir(toolbox)
 
-    dirs = f"{toolbox.source_directory} {toolbox.tests_directory}"
+    dirs = f"{toolbox.sources_directory} {toolbox.tests_directory}"
     report_pycodestyle_fpath = toolbox.reports_directory / "pycodestyle-report.log"
 
     try:
@@ -104,7 +104,7 @@ def lint_pylint(app_context: AppContext):
 
     run_pylint(
         app_context,
-        [toolbox.source_directory],
+        [toolbox.sources_directory],
         toolbox.reports_directory / "pylint-report.log",
         app_context.project_root / ".pylintrc",
     )

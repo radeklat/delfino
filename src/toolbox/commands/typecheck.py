@@ -37,11 +37,11 @@ def typecheck(app_context: AppContext, summary_only: bool):
 
     app_context.ctx.run(
         f"set -o pipefail; "
-        f'export MYPYPATH="$MYPYPATH:{toolbox.source_directory}"; '
+        f'export MYPYPATH="$MYPYPATH:{toolbox.sources_directory}"; '
         f"mypy --show-column-numbers --show-error-codes --color-output --warn-unused-config --warn-unused-ignores "
         f"--follow-imports silent "
         f"--junit-xml {reports_dir} "
-        f"{toolbox.source_directory} {toolbox.tests_directory}"
+        f"{toolbox.sources_directory} {toolbox.tests_directory}"
         f"{tail}",
         pty=True,
     )

@@ -14,6 +14,10 @@ Types of changes are:
 
 ## [Unreleased]
 
+### Added
+
+- `init` command to initialize required parameters and directories.
+
 ## [0.1.0] - 2021-11-20
 
 - Initial copy of source codes.

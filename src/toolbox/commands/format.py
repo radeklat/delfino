@@ -29,7 +29,7 @@ def run_format(app_context: AppContext, check: bool, quiet: bool):
     ensure_pre_commit(app_context.ctx)
 
     toolbox = app_context.py_project_toml.tool.toolbox
-    dirs = f"{toolbox.source_directory} {toolbox.tests_directory}"
+    dirs = f"{toolbox.sources_directory} {toolbox.tests_directory}"
     flags = []
 
     if check:

@@ -3,7 +3,9 @@ from pathlib import Path
 from typing import Optional
 
 import click
+import toml
 from invoke import Context as InvokeContext
+from pydantic import ValidationError
 
 from toolbox.commands.format import run_format
 from toolbox.commands.init import run_init
@@ -27,9 +29,24 @@ def main(project_root: Optional[Path] = None):
     if not project_root:
         project_root = Path(os.getcwd())
 
-    click.get_current_context().obj = AppContext(
+    file_path = (project_root / "pyproject.toml").relative_to(project_root)
+    context = click.get_current_context()
+
+    if context.invoked_subcommand == run_init.name:
+        context.obj = file_path
+        return
+
+    try:
+        py_project_toml = PyProjectToml(file_path=file_path, **toml.load(file_path))
+    except (FileNotFoundError, ValidationError) as exc:
+        click.secho(
+            f"Toolbox appears to be misconfigured: {exc}\nPlease run `toolbox {run_init.name}`.", fg="red", err=True
+        )
+        raise click.Abort() from exc
+
+    context.obj = AppContext(
         project_root=project_root,
-        py_project_toml=PyProjectToml.load(project_root=project_root),
+        py_project_toml=py_project_toml,
         ctx=InvokeContext(),
     )
 

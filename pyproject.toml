@@ -117,6 +117,6 @@ add-ignore = [
 
 [tool.toolbox]
 reports_directory = "reports"
-source_directory = "src"
+sources_directory = "src"
 tests_directory = "tests"
 test_types = ["unit", "integration"]

@@ -25,7 +25,7 @@ def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) ->
     app_context.ctx.run(
         f"""
         pytest \
-            --cov={toolbox.source_directory} \
+            --cov={toolbox.sources_directory} \
             --cov-report="xml:{toolbox.reports_directory / f"coverage-{name}.xml"}" \
             --cov-branch -vv --maxfail={maxfail} {"-s" if debug else ""}\
             {toolbox.tests_directory / name}
