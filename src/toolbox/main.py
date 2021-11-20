@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -5,12 +6,14 @@ import click
 from invoke import Context as InvokeContext
 
 from toolbox.commands.format import run_format
+from toolbox.commands.init import run_init
 from toolbox.commands.lint import lint, lint_pycodestyle, lint_pydocstyle, lint_pylint
 from toolbox.commands.switch_python_version import switch_python_version
 from toolbox.commands.test import coverage_open, coverage_report, test_all, test_integration, test_unit
 from toolbox.commands.typecheck import typecheck
 from toolbox.commands.verify_all import verify_all
-from toolbox.constants import AppContext, PyProjectToml
+from toolbox.config import PyProjectToml
+from toolbox.contexts import AppContext
 
 
 @click.group()
@@ -21,8 +24,12 @@ from toolbox.constants import AppContext, PyProjectToml
     help="Root folder of the project, if not running from it.",
 )
 def main(project_root: Optional[Path] = None):
+    if not project_root:
+        project_root = Path(os.getcwd())
+
     click.get_current_context().obj = AppContext(
-        py_project_toml=PyProjectToml(project_root=project_root),
+        project_root=project_root,
+        py_project_toml=PyProjectToml.load(project_root=project_root),
         ctx=InvokeContext(),
     )
 
@@ -41,6 +48,7 @@ _COMMANDS = [
     coverage_open,
     switch_python_version,
     verify_all,
+    run_init,
 ]
 
 for command in _COMMANDS:

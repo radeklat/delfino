@@ -14,7 +14,7 @@ Types of changes are:
 
 ## [Unreleased]
 
-## [0.1.0] - 2021-11-18
+## [0.1.0] - 2021-11-20
 
 - Initial copy of source codes.
 

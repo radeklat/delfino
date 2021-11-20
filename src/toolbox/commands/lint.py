@@ -7,7 +7,7 @@ from typing import List
 import click
 from termcolor import cprint
 
-from toolbox.constants import AppContext, pass_app_context
+from toolbox.contexts import AppContext, pass_app_context
 from toolbox.utils import (
     command_names,
     ensure_reports_dir,
@@ -29,14 +29,14 @@ def lint_pydocstyle(app_context: AppContext):
     with a few exceptions. Note that pylint also carries out additional documentation
     style checks.
     """
-    project = app_context.py_project_toml.project
+    toolbox = app_context.py_project_toml.tool.toolbox
     print_header("documentation style", level=2)
-    ensure_reports_dir(project)
+    ensure_reports_dir(toolbox)
 
-    report_pydocstyle_fpath = project.reports_directory / "pydocstyle-report.log"
+    report_pydocstyle_fpath = toolbox.reports_directory / "pydocstyle-report.log"
 
     try:
-        app_context.ctx.run(f"pydocstyle {project.source_directory} > {report_pydocstyle_fpath}")
+        app_context.ctx.run(f"pydocstyle {toolbox.source_directory} > {report_pydocstyle_fpath}")
     finally:
         if os.path.exists(report_pydocstyle_fpath):
             format_messages(read_contents(report_pydocstyle_fpath))
@@ -53,12 +53,12 @@ def lint_pycodestyle(app_context: AppContext):
     Why pycodestyle and pylint? So far, pylint does not check against every convention in PEP8. As pylint's
     functionality grows, we should move all PEP8 checking to pylint and remove pycodestyle.
     """
-    project = app_context.py_project_toml.project
+    toolbox = app_context.py_project_toml.tool.toolbox
     print_header("code style (PEP8)", level=2)
-    ensure_reports_dir(project)
+    ensure_reports_dir(toolbox)
 
-    dirs = f"{project.source_directory} {project.tests_directory}"
-    report_pycodestyle_fpath = project.reports_directory / "pycodestyle-report.log"
+    dirs = f"{toolbox.source_directory} {toolbox.tests_directory}"
+    report_pycodestyle_fpath = toolbox.reports_directory / "pycodestyle-report.log"
 
     try:
         app_context.ctx.run(
@@ -79,7 +79,7 @@ def lint_pycodestyle(app_context: AppContext):
 @handle_invoke_exceptions
 def run_pylint(app_context: AppContext, source_dirs: List[Path], report_path: Path, pylintrc_fpath: Path):
     print_header(", ".join(map(str, source_dirs)), level=3)
-    ensure_reports_dir(app_context.py_project_toml.project)
+    ensure_reports_dir(app_context.py_project_toml.tool.toolbox)
 
     try:
         app_context.ctx.run(f"pylint --rcfile {pylintrc_fpath} {' '.join(map(str, source_dirs))} > {report_path}")
@@ -100,21 +100,21 @@ def lint_pylint(app_context: AppContext):
     found in the `.pylintrc` file.
     """
     print_header("pylint", level=2)
-    project = app_context.py_project_toml.project
+    toolbox = app_context.py_project_toml.tool.toolbox
 
     run_pylint(
         app_context,
-        [project.source_directory],
-        project.reports_directory / "pylint-report.log",
-        project.root_directory / ".pylintrc",
+        [toolbox.source_directory],
+        toolbox.reports_directory / "pylint-report.log",
+        app_context.project_root / ".pylintrc",
     )
 
-    if project.tests_directory:
+    if toolbox.tests_directory:
         run_pylint(
             app_context,
-            [project.tests_directory],
-            project.reports_directory / "pylint-report-tests.log",
-            project.tests_directory / ".pylintrc",
+            [toolbox.tests_directory],
+            toolbox.reports_directory / "pylint-report-tests.log",
+            toolbox.tests_directory / ".pylintrc",
         )
 
 

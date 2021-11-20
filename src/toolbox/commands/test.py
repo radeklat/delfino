@@ -8,29 +8,29 @@ from pathlib import Path
 import click
 import invoke
 
-from toolbox.constants import AppContext, pass_app_context
+from toolbox.contexts import AppContext, pass_app_context
 from toolbox.utils import ensure_reports_dir, handle_invoke_exceptions, print_header
 
 
 @handle_invoke_exceptions
 def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) -> None:
     """Execute the tests for a given test type."""
-    project = app_context.py_project_toml.project
+    toolbox = app_context.py_project_toml.tool.toolbox
 
-    if name not in project.test_types or not project.tests_directory:
+    if name not in toolbox.test_types or not toolbox.tests_directory:
         return
 
     print_header(f"️Running {name} tests️", icon="🔎🐛")
-    ensure_reports_dir(project)
+    ensure_reports_dir(toolbox)
     app_context.ctx.run(
         f"""
         pytest \
-            --cov={project.source_directory} \
-            --cov-report="xml:{project.reports_directory / f"coverage-{name}.xml"}" \
+            --cov={toolbox.source_directory} \
+            --cov-report="xml:{toolbox.reports_directory / f"coverage-{name}.xml"}" \
             --cov-branch -vv --maxfail={maxfail} {"-s" if debug else ""}\
-            {project.tests_directory / name}
+            {toolbox.tests_directory / name}
         """,
-        env={"COVERAGE_FILE": project.reports_directory / f"coverage-{name}.dat"},
+        env={"COVERAGE_FILE": toolbox.reports_directory / f"coverage-{name}.dat"},
         pty=True,
     )
 
@@ -75,15 +75,15 @@ def coverage_report(app_context: AppContext):
     Combines all test types.
     """
     print_header("Generating coverage report", icon="📃")
-    project = app_context.py_project_toml.project
-    ensure_reports_dir(project)
+    toolbox = app_context.py_project_toml.tool.toolbox
+    ensure_reports_dir(toolbox)
 
-    coverage_dat_combined = project.reports_directory / "coverage.dat"
-    coverage_html = project.reports_directory / "coverage-report/"
+    coverage_dat_combined = toolbox.reports_directory / "coverage.dat"
+    coverage_html = toolbox.reports_directory / "coverage-report/"
 
     coverage_files = []  # we'll make a copy because `combine` will erase them
-    for test_type in project.test_types:
-        coverage_dat = project.reports_directory / f"coverage-{test_type}.dat"
+    for test_type in toolbox.test_types:
+        coverage_dat = toolbox.reports_directory / f"coverage-{test_type}.dat"
 
         if not coverage_dat.exists():
             click.secho(
@@ -124,7 +124,7 @@ def test_all(click_context: click.Context):
 @click.command(help="Open coverage results in default browser.")
 @pass_app_context
 def coverage_open(app_context: AppContext):
-    report_index = app_context.py_project_toml.project.reports_directory / "coverage-report" / "index.html"
+    report_index = app_context.py_project_toml.tool.toolbox.reports_directory / "coverage-report" / "index.html"
     if not report_index.exists():
         click.secho(
             f"Could not find coverage report '{report_index}'. Ensure that the report has been built.\n"

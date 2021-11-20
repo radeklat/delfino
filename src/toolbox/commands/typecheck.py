@@ -3,7 +3,7 @@ import click
 import invoke
 from termcolor import cprint
 
-from toolbox.constants import AppContext, pass_app_context
+from toolbox.contexts import AppContext, pass_app_context
 from toolbox.utils import ensure_reports_dir, handle_invoke_exceptions, print_header
 
 
@@ -30,18 +30,18 @@ def typecheck(app_context: AppContext, summary_only: bool):
     print_header("RUNNING TYPE CHECKER")
 
     tail = " | tail -n 1" if summary_only else ""
-    project = app_context.py_project_toml.project
-    reports_dir = project.reports_directory / "typecheck" / "junit.xml"
+    toolbox = app_context.py_project_toml.tool.toolbox
+    reports_dir = toolbox.reports_directory / "typecheck" / "junit.xml"
 
-    ensure_reports_dir(project)
+    ensure_reports_dir(toolbox)
 
     app_context.ctx.run(
         f"set -o pipefail; "
-        f'export MYPYPATH="$MYPYPATH:{project.source_directory}"; '
+        f'export MYPYPATH="$MYPYPATH:{toolbox.source_directory}"; '
         f"mypy --show-column-numbers --show-error-codes --color-output --warn-unused-config --warn-unused-ignores "
         f"--follow-imports silent "
         f"--junit-xml {reports_dir} "
-        f"{project.source_directory} {project.tests_directory}"
+        f"{toolbox.source_directory} {toolbox.tests_directory}"
         f"{tail}",
         pty=True,
     )

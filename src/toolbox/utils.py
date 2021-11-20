@@ -11,12 +11,12 @@ import invoke
 from click import secho
 from invoke import Context
 
-from toolbox.constants import Project
+from toolbox.config import Toolbox
 
 
-def ensure_reports_dir(project: Project) -> None:
+def ensure_reports_dir(toolbox: Toolbox) -> None:
     """Ensures that the reports directory exists."""
-    project.reports_directory.mkdir(parents=True, exist_ok=True)
+    toolbox.reports_directory.mkdir(parents=True, exist_ok=True)
 
 
 def read_contents(fpath: Path, strip_newline=True) -> str:

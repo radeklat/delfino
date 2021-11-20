@@ -1,7 +1,7 @@
 import click
 import invoke
 
-from toolbox.constants import AppContext, pass_app_context
+from toolbox.contexts import AppContext, pass_app_context
 from toolbox.utils import ensure_pre_commit, print_header
 
 
@@ -28,8 +28,8 @@ def run_format(app_context: AppContext, check: bool, quiet: bool):
     """Runs black code formatter and isort on source code."""
     ensure_pre_commit(app_context.ctx)
 
-    project = app_context.py_project_toml.project
-    dirs = f"{project.source_directory} {project.tests_directory}"
+    toolbox = app_context.py_project_toml.tool.toolbox
+    dirs = f"{toolbox.source_directory} {toolbox.tests_directory}"
     flags = []
 
     if check:
