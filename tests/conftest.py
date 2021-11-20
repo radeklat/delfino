@@ -1,5 +1,5 @@
 from _pytest.fixtures import fixture
-from typer.testing import CliRunner
+from click.testing import CliRunner
 
 
 @fixture(scope="session")

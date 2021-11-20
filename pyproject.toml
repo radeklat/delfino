@@ -12,7 +12,8 @@ settings-doc = "toolbox.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.6.2"
-typer = {version = "^0.4.0", extras = ["all"]}
+toml = "^0.10.2"
+click = "^8.0.3"
 
 [tool.poetry.dev-dependencies]
 black = "^21.9b0"
@@ -112,3 +113,9 @@ add-ignore = [
     "D401",  # "First line should be in imperative mood"
     "D413",  # "Missing blank line after last section"
 ]
+
+[tool.toolbox]
+reports_directory = "reports"
+source_directory = "src"
+tests_directory = "tests"
+test_types = ["unit", "integration"]
