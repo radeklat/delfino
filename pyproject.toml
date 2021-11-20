@@ -8,7 +8,7 @@ readme = "README.md"
 homepage = "https://github.com/radeklat/toolbox"
 
 [tool.poetry.scripts]
-settings-doc = "toolbox.main:app"
+toolbox = "toolbox.main:main"
 
 [tool.poetry.dependencies]
 python = "^3.6.2"

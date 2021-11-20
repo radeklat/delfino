@@ -43,8 +43,8 @@ _COMMANDS = [
     verify_all,
 ]
 
-if __name__ == "__main__":
-    for command in _COMMANDS:
-        main.add_command(command, command.name)
+for command in _COMMANDS:
+    main.add_command(command, command.name)
 
+if __name__ == "__main__":
     main()
