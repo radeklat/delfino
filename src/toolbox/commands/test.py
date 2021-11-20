@@ -9,14 +9,15 @@ import click
 import invoke
 
 from toolbox.constants import AppContext, pass_app_context
-from toolbox.utils import ensure_reports_dir, print_header
+from toolbox.utils import ensure_reports_dir, handle_invoke_exceptions, print_header
 
 
+@handle_invoke_exceptions
 def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) -> None:
     """Execute the tests for a given test type."""
     project = app_context.py_project_toml.project
 
-    if name not in project.test_types:
+    if name not in project.test_types or not project.tests_directory:
         return
 
     print_header(f"️Running {name} tests️", icon="🔎🐛")
@@ -67,6 +68,7 @@ def _get_total_coverage(ctx: invoke.Context, coverage_dat: Path) -> str:
 
 @click.command()
 @pass_app_context
+@handle_invoke_exceptions
 def coverage_report(app_context: AppContext):
     """Analyse coverage and generate a term/HTML report.
 
@@ -124,12 +126,14 @@ def test_all(click_context: click.Context):
 def coverage_open(app_context: AppContext):
     report_index = app_context.py_project_toml.project.reports_directory / "coverage-report" / "index.html"
     if not report_index.exists():
-        raise invoke.Exit(
+        click.secho(
             f"Could not find coverage report '{report_index}'. Ensure that the report has been built.\n"
             "Try one of the following:\n"
             f"  pipenv run inv {coverage_report.name}\n"
             f"or\n"
             f"  pipenv run inv {test_all.name}",
-            1,
+            fg="red",
         )
+
+        raise click.exceptions.Exit(code=1)
     webbrowser.open(f"file:///{report_index.absolute()}")

@@ -1,12 +1,13 @@
 import click
 
 from toolbox.constants import AppContext, pass_app_context
-from toolbox.utils import print_header
+from toolbox.utils import handle_invoke_exceptions, print_header
 
 
 @click.command(help="Switches Python venv to a different Python version.")
 @click.option("--version", type=str, help="Desired Python version. You can use only MAJOR.MINOR (for example 3.6).")
 @pass_app_context
+@handle_invoke_exceptions
 def switch_python_version(app_context: AppContext, version: str):
     """Use this to test the sub-packages with a different Python version.
 

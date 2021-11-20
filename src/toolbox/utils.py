@@ -2,8 +2,12 @@
 import os
 import re
 import shutil
+from functools import wraps
 from pathlib import Path
+from typing import List
 
+import click
+import invoke
 from click import secho
 from invoke import Context
 
@@ -52,3 +56,20 @@ def print_header(text: str, level: int = 1, icon: str = ""):
     if level == 1:
         text = text.upper()
     print(padding.format(f" {icon}{text} {icon}"))
+
+
+def handle_invoke_exceptions(func):
+    """Translates ``invoke.UnexpectedExit`` into ``click.Exit``."""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except invoke.UnexpectedExit as exc:
+            raise click.exceptions.Exit(code=exc.result.return_code) from exc
+
+    return wrapper
+
+
+def command_names(commands: List[click.Command]) -> str:
+    return ", ".join(command.name for command in commands if command.name)

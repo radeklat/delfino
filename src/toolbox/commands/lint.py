@@ -8,11 +8,19 @@ import click
 from termcolor import cprint
 
 from toolbox.constants import AppContext, pass_app_context
-from toolbox.utils import ensure_reports_dir, format_messages, print_header, read_contents
+from toolbox.utils import (
+    command_names,
+    ensure_reports_dir,
+    format_messages,
+    handle_invoke_exceptions,
+    print_header,
+    read_contents,
+)
 
 
 @click.command()
 @pass_app_context
+@handle_invoke_exceptions
 def lint_pydocstyle(app_context: AppContext):
     """Run docstring linting on source code.
 
@@ -36,6 +44,7 @@ def lint_pydocstyle(app_context: AppContext):
 
 @click.command()
 @pass_app_context
+@handle_invoke_exceptions
 def lint_pycodestyle(app_context: AppContext):
     """Run PEP8 checking on code.
 
@@ -67,16 +76,17 @@ def lint_pycodestyle(app_context: AppContext):
             format_messages(read_contents(report_pycodestyle_fpath))
 
 
+@handle_invoke_exceptions
 def run_pylint(app_context: AppContext, source_dirs: List[Path], report_path: Path, pylintrc_fpath: Path):
     print_header(", ".join(map(str, source_dirs)), level=3)
     ensure_reports_dir(app_context.py_project_toml.project)
 
     try:
         app_context.ctx.run(f"pylint --rcfile {pylintrc_fpath} {' '.join(map(str, source_dirs))} > {report_path}")
-    except Exception as runtime_error:  # pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-except
         if os.path.exists(report_path):
             print(read_contents(report_path))
-        raise runtime_error
+        raise
     else:
         cprint("✔ No issues found.", "green")
 
@@ -98,21 +108,20 @@ def lint_pylint(app_context: AppContext):
         project.reports_directory / "pylint-report.log",
         project.root_directory / ".pylintrc",
     )
-    run_pylint(
-        app_context,
-        [project.tests_directory],
-        project.reports_directory / "pylint-report-tests.log",
-        project.tests_directory / ".pylintrc",
-    )
+
+    if project.tests_directory:
+        run_pylint(
+            app_context,
+            [project.tests_directory],
+            project.reports_directory / "pylint-report-tests.log",
+            project.tests_directory / ".pylintrc",
+        )
 
 
 _COMMANDS = [lint_pylint, lint_pycodestyle, lint_pydocstyle]
 
 
-@click.command(
-    help=f"Run linting on the entire code base.\n\n"
-    f"Alias for the {', '.join(command.name for command in _COMMANDS)} commands."
-)
+@click.command(help=f"Run linting on the entire code base.\n\n" f"Alias for the {command_names(_COMMANDS)} commands.")
 @click.pass_context
 def lint(click_context: click.Context):
     print_header("Linting", icon="🔎")

@@ -1,7 +1,7 @@
+from pathlib import Path
 from typing import Optional
 
 import click
-from click import Path, pass_context, Context
 from invoke import Context as InvokeContext
 
 from toolbox.commands.format import run_format
@@ -17,12 +17,11 @@ from toolbox.constants import AppContext, PyProjectToml
 @click.option(
     "--project-root",
     default=None,
-    type=Path(exists=True, dir_okay=True, file_okay=False, readable=True, writable=True),
+    type=click.Path(exists=True, dir_okay=True, file_okay=False, readable=True, writable=True),
     help="Root folder of the project, if not running from it.",
 )
-@pass_context
-def main(context: Context, project_root: Optional[Path]):
-    context.obj = AppContext(
+def main(project_root: Optional[Path] = None):
+    click.get_current_context().obj = AppContext(
         py_project_toml=PyProjectToml(project_root=project_root),
         ctx=InvokeContext(),
     )
