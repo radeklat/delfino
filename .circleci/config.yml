@@ -19,6 +19,9 @@ parameters:
   git_trunk_branch:
     type: string
     default: "main"
+  command_prefix:
+    type: string
+    default: "poetry run python src/toolbox/main.py"
 
 jobs: # A basic unit of work in a run
   test:
@@ -43,13 +46,13 @@ jobs: # A basic unit of work in a run
           command: pip install --upgrade pip poetry && poetry install --no-ansi
       - run:
           name: Format check
-          command: poetry run inv format --check
+          command: << pipeline.parameters.command_prefix >> format --check
       - run:
           name: Type check
-          command: poetry run inv typecheck
+          command: << pipeline.parameters.command_prefix >> typecheck
       - run:
           name: Linters
-          command: poetry run inv lint
+          command: << pipeline.parameters.command_prefix >> lint
       - save_cache:
           key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< parameters.python_version >>-{{ checksum "poetry.lock" }}
           paths:
@@ -58,13 +61,13 @@ jobs: # A basic unit of work in a run
             - "/usr/local/lib/python<< parameters.python_version >>/site-packages"
       - run:
           name: Unit tests
-          command: poetry run inv test-unit
+          command: << pipeline.parameters.command_prefix >> test-unit
       - run:
           name: Integration tests
-          command: poetry run inv test-integration
+          command: << pipeline.parameters.command_prefix >> test-integration
       - run:
           name: Build coverage report
-          command: poetry run inv coverage-report
+          command: << pipeline.parameters.command_prefix >> coverage-report
       - run:
           name: Upload coverage reports to Codecov
           command: |
