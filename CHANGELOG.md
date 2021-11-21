@@ -16,6 +16,7 @@ Types of changes are:
 
 ### Added
 
+- `extras` dependencies in `pyproject.toml`
 - `init` command to initialize required parameters and directories.
 
 ## [0.1.0] - 2021-11-20

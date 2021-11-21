@@ -15,27 +15,19 @@ python = "^3.6.2"
 toml = "^0.10.2"
 click = "^8.0.3"
 pydantic = "^1.8.2"
+invoke = "^1.6.0"
+termcolor = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
-black = "^21.9b0"
-isort = "^5.9.3"
-coverage = "^6.0.2"
-pylint = "^2.11.1"
-mypy = "^0.910"
-pytest = "^6.2.5"
-pytest-cov = "^3.0.0"
-pre-commit = "^2.15.0"
-pycodestyle = "^2.8.0"
-pydocstyle = "^6.1.1"
-pytest-dotenv = "^0.5.2"
-invoke = "^1.6.0"
 types-termcolor = "*"
-pytest-mock = "^3.6.1"
 types-toml = "*"
-click = "^8.0.3"
-types-dataclasses = {version = "*", markers = "python_version < '3.7'"}
-dataclasses = {version = "*", markers = "python_version < '3.7'"}
-termcolor = "^1.1.0"
+
+[tool.poetry.extras]
+all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "pytest-dotenv", "pytest-mock", "mypy", "pylint", "pycodestyle", "pydocstyle"]
+format = ["black", "isort", "pre-commit"]
+test = ["pytest", "coverage", "pytest-cov", "pytest-dotenv", "pytest-mock"]
+typecheck = ["mypy"]
+lint = ["pylint", "pycodestyle", "pydocstyle"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

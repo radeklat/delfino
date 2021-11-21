@@ -43,7 +43,7 @@ jobs: # A basic unit of work in a run
           key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< parameters.python_version >>-{{ checksum "poetry.lock" }}
       - run:
           name: Install dev libraries
-          command: pip install --upgrade pip poetry && poetry install --no-ansi
+          command: pip install --upgrade pip poetry && poetry install --no-ansi --no-root
       - run:
           name: Format check
           command: << pipeline.parameters.command_prefix >> format --check
