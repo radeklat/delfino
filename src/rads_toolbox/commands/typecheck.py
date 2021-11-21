@@ -3,8 +3,8 @@ import click
 import invoke
 from termcolor import cprint
 
-from toolbox.contexts import AppContext, pass_app_context
-from toolbox.utils import ensure_reports_dir, handle_invoke_exceptions, print_header
+from rads_toolbox.contexts import AppContext, pass_app_context
+from rads_toolbox.utils import ensure_reports_dir, handle_invoke_exceptions, print_header
 
 
 def _handle_unexpected_pass(expected_to_fail: bool, result: invoke.Result, path: str):

@@ -11,7 +11,7 @@ import invoke
 from click import secho
 from invoke import Context
 
-from toolbox.config import Toolbox
+from rads_toolbox.config import Toolbox
 
 
 def ensure_reports_dir(toolbox: Toolbox) -> None:

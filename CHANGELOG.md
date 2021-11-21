@@ -19,6 +19,11 @@ Types of changes are:
 - `extras` dependencies in `pyproject.toml`
 - `init` command to initialize required parameters and directories.
 
+### Changed
+
+- Rename project to `rads-toolbox` to be able to publish to Pypi.
+- Package publishing from Github releases to Pypi.
+
 ## [0.1.0] - 2021-11-20
 
 - Initial copy of source codes.

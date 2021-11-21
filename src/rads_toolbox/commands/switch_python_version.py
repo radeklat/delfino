@@ -1,7 +1,7 @@
 import click
 
-from toolbox.contexts import AppContext, pass_app_context
-from toolbox.utils import handle_invoke_exceptions, print_header
+from rads_toolbox.contexts import AppContext, pass_app_context
+from rads_toolbox.utils import handle_invoke_exceptions, print_header
 
 
 @click.command(help="Switches Python venv to a different Python version.")

@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "toolbox"
+name = "rads-toolbox"
 version = "0.1.0"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"
 readme = "README.md"
-homepage = "https://github.com/radeklat/toolbox"
+homepage = "https://github.com/radeklat/rads-toolbox"
 
 [tool.poetry.scripts]
-toolbox = "toolbox.main:main"
+rads-toolbox = "rads_toolbox.main:main"
 
 [tool.poetry.dependencies]
 python = "^3.6.2"
@@ -85,7 +85,7 @@ env_files = ".env.test"
 # Values:    https://docs.python.org/3/library/warnings.html#describing-warning-filters
 #            action:message:category:module:line
 filterwarnings = [
-    "ignore:'toolbox.main' found in sys.modules after import of package 'toolbox', but prior to execution of 'toolbox.main'; this may result in unpredictable behaviour::runpy"
+    "ignore:'rads_toolbox.main' found in sys.modules after import of package 'rads_toolbox', but prior to execution of 'rads_toolbox.main'; this may result in unpredictable behaviour::runpy"
 ]
 
 markers = [
@@ -120,7 +120,7 @@ add-ignore = [
     "D413",  # "Missing blank line after last section"
 ]
 
-[tool.toolbox]
+[tool.rads_toolbox]
 reports_directory = "reports"
 sources_directory = "src"
 tests_directory = "tests"

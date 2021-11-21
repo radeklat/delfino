@@ -1,4 +1,4 @@
-from toolbox.main import main
+from rads_toolbox.main import main
 
 
 class TestProject:

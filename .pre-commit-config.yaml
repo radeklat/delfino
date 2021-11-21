@@ -8,5 +8,5 @@ repos:
     name: formatting
     stages: [commit]
     language: system
-    entry: bash -c "export PYTHONPATH=src; poetry run python src/toolbox/main.py format"
+    entry: bash -c "export PYTHONPATH=src; poetry run python src/rads_toolbox/main.py format"
     pass_filenames: false

@@ -4,7 +4,7 @@ from click import make_pass_decorator
 from invoke import Context
 from pydantic import BaseModel
 
-from toolbox.config import PyProjectToml
+from rads_toolbox.config import PyProjectToml
 
 
 class AppContext(BaseModel):

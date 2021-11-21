@@ -6,10 +6,10 @@ orbs:
 parameters:
   project_name:
     type: string
-    default: toolbox
+    default: rads-toolbox
   working_directory:
     type: string
-    default: ~/toolbox
+    default: ~/rads_toolbox
   python_version:
     type: string
     default: "3.6"
@@ -21,7 +21,7 @@ parameters:
     default: "main"
   command_prefix:
     type: string
-    default: "poetry run python src/toolbox/main.py"
+    default: "poetry run python src/rads_toolbox/main.py"
 
 jobs: # A basic unit of work in a run
   test:
@@ -100,6 +100,28 @@ jobs: # A basic unit of work in a run
           paths:
             - .
 
+  publish:
+    working_directory: << pipeline.parameters.working_directory >>
+    docker: # run the steps with Docker
+      - image: circleci/python:<< pipeline.parameters.python_version >>
+    steps:
+      - attach_workspace:
+          at: << pipeline.parameters.working_directory >>
+      - run:
+          name: Upload to pypi
+          command: |
+            VERSION=$(poetry version -s)
+            VERSION_EXISTS=$( \
+              curl -Ls https://pypi.org/pypi/<< pipeline.parameters.project_name >>/json | \
+                jq -r '.releases | keys_unsorted' | \
+                grep -q "\"$VERSION\"" ; echo $? \
+            )
+            if [[ $VERSION_EXISTS -ne 0 ]]; then
+              poetry publish --username "__token__" --password $PYPI_API_TOKEN
+            else
+              echo "Package with this version has been already release. Skipping."
+            fi
+
   release:
     working_directory: << pipeline.parameters.working_directory >>
     docker:
@@ -119,14 +141,9 @@ jobs: # A basic unit of work in a run
               echo "Tag '$VERSION' already exists. Skipping."
               circleci-agent step halt
             fi
-      - attach_workspace:
-          at: << pipeline.parameters.working_directory >>
       - run:
           name: Create a release
           command: gh release create $VERSION -F CHANGELOG.md
-      - run:
-          name: Upload assets
-          command: gh release upload $VERSION dist/*
 
 workflows:
   version: 2
@@ -142,11 +159,19 @@ workflows:
           name: Build
           requires:
             - test
+      - publish:
+          name: Publish to Pypi
+          context: pypi_upload
+          requires:
+            - Build
+          filters:
+            branches:
+              only: << pipeline.parameters.git_trunk_branch >>
       - release:
           context:
             - github
           requires:
-            - Build
+            - Publish to Pypi
           filters:
             branches:
               only: << pipeline.parameters.git_trunk_branch >>

@@ -1,7 +1,7 @@
 import click
 
 _TEMPLATE = """
-[tool.toolbox]
+[tool.rads_toolbox]
 reports_directory = "reports"
 sources_directory = "src"
 tests_directory = "tests"

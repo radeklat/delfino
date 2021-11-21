@@ -7,15 +7,15 @@ import toml
 from invoke import Context as InvokeContext
 from pydantic import ValidationError
 
-from toolbox.commands.format import run_format
-from toolbox.commands.init import run_init
-from toolbox.commands.lint import lint, lint_pycodestyle, lint_pydocstyle, lint_pylint
-from toolbox.commands.switch_python_version import switch_python_version
-from toolbox.commands.test import coverage_open, coverage_report, test_all, test_integration, test_unit
-from toolbox.commands.typecheck import typecheck
-from toolbox.commands.verify_all import verify_all
-from toolbox.config import PyProjectToml
-from toolbox.contexts import AppContext
+from rads_toolbox.commands.format import run_format
+from rads_toolbox.commands.init import run_init
+from rads_toolbox.commands.lint import lint, lint_pycodestyle, lint_pydocstyle, lint_pylint
+from rads_toolbox.commands.switch_python_version import switch_python_version
+from rads_toolbox.commands.test import coverage_open, coverage_report, test_all, test_integration, test_unit
+from rads_toolbox.commands.typecheck import typecheck
+from rads_toolbox.commands.verify_all import verify_all
+from rads_toolbox.config import PyProjectToml
+from rads_toolbox.contexts import AppContext
 
 
 @click.group()
@@ -40,7 +40,9 @@ def main(project_root: Optional[Path] = None):
         py_project_toml = PyProjectToml(file_path=file_path, **toml.load(file_path))
     except (FileNotFoundError, ValidationError) as exc:
         click.secho(
-            f"Toolbox appears to be misconfigured: {exc}\nPlease run `toolbox {run_init.name}`.", fg="red", err=True
+            f"Toolbox appears to be misconfigured: {exc}\nPlease run `rads-toolbox {run_init.name}`.",
+            fg="red",
+            err=True,
         )
         raise click.Abort() from exc
 

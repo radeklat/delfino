@@ -1,8 +1,8 @@
 import click
 import invoke
 
-from toolbox.contexts import AppContext, pass_app_context
-from toolbox.utils import ensure_pre_commit, print_header
+from rads_toolbox.contexts import AppContext, pass_app_context
+from rads_toolbox.utils import ensure_pre_commit, print_header
 
 
 def _check_result(result: invoke.Result, check: bool, msg: str):
