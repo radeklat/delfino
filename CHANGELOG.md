@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.3.0] - 2021-11-21
+
+### Added
+
+- Detect package manager (currently only `poetry` and `pipenv`)
+
 ## [0.2.0] - 2021-11-21
 
 ### Added
@@ -30,6 +36,7 @@ Types of changes are:
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.2.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.3.0...HEAD
+[0.3.0]: https://github.com/radeklat/settings-doc/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/radeklat/settings-doc/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/radeklat/settings-doc/compare/initial...0.1.0

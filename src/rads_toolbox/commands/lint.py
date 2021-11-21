@@ -29,7 +29,7 @@ def lint_pydocstyle(app_context: AppContext):
     with a few exceptions. Note that pylint also carries out additional documentation
     style checks.
     """
-    toolbox = app_context.py_project_toml.tool.toolbox
+    toolbox = app_context.external_py_project_toml.tool.toolbox
     print_header("documentation style", level=2)
     ensure_reports_dir(toolbox)
 
@@ -53,7 +53,7 @@ def lint_pycodestyle(app_context: AppContext):
     Why pycodestyle and pylint? So far, pylint does not check against every convention in PEP8. As pylint's
     functionality grows, we should move all PEP8 checking to pylint and remove pycodestyle.
     """
-    toolbox = app_context.py_project_toml.tool.toolbox
+    toolbox = app_context.external_py_project_toml.tool.toolbox
     print_header("code style (PEP8)", level=2)
     ensure_reports_dir(toolbox)
 
@@ -79,7 +79,7 @@ def lint_pycodestyle(app_context: AppContext):
 @handle_invoke_exceptions
 def run_pylint(app_context: AppContext, source_dirs: List[Path], report_path: Path, pylintrc_fpath: Path):
     print_header(", ".join(map(str, source_dirs)), level=3)
-    ensure_reports_dir(app_context.py_project_toml.tool.toolbox)
+    ensure_reports_dir(app_context.external_py_project_toml.tool.toolbox)
 
     try:
         app_context.ctx.run(f"pylint --rcfile {pylintrc_fpath} {' '.join(map(str, source_dirs))} > {report_path}")
@@ -100,7 +100,7 @@ def lint_pylint(app_context: AppContext):
     found in the `.pylintrc` file.
     """
     print_header("pylint", level=2)
-    toolbox = app_context.py_project_toml.tool.toolbox
+    toolbox = app_context.external_py_project_toml.tool.toolbox
 
     run_pylint(
         app_context,

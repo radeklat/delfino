@@ -8,10 +8,34 @@ from typing import List
 
 import click
 import invoke
-from click import secho
+from click import Command, secho
 from invoke import Context
 
-from rads_toolbox.config import Toolbox
+from rads_toolbox.constants import PackageManager
+from rads_toolbox.contexts import AppContext
+from rads_toolbox.models.external_config import PyProjectToml, Toolbox
+
+
+def run_command_str(command: Command, app_context: AppContext) -> str:
+    return (
+        f"{app_context.package_manager.value} run "
+        f"{app_context.internal_py_project_toml.tool.poetry.name} {command.name}"
+    )
+
+
+def get_package_manager(project_root: Path, py_project_toml: PyProjectToml) -> PackageManager:
+    if py_project_toml.tool.poetry is not None or (project_root / "poetry.lock").exists():
+        return PackageManager.POETRY
+    if (project_root / "Pipfile").exists() or (project_root / "Pipfile.lock").exists():
+        return PackageManager.PIPENV
+
+    click.secho(
+        "Cannot determine package manager used in this project. Only the following ones are supported: "
+        + ", ".join(member.value for member in PackageManager.__members__.values()),
+        fg="red",
+        err=True,
+    )
+    raise click.Abort()
 
 
 def ensure_reports_dir(toolbox: Toolbox) -> None:
