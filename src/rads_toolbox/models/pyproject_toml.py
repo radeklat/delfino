@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Extra, Field
 
@@ -14,6 +14,7 @@ class Toolbox(BaseModel):
 class Poetry(BaseModel):
     name: str
     version: str
+    scripts: Optional[Dict[str, str]] = None
 
 
 class Tool(BaseModel):
@@ -24,8 +25,8 @@ class Tool(BaseModel):
         allow_population_by_field_name = True
 
 
-class PyProjectToml(BaseModel):
-    file_path: Path
+class PyprojectToml(BaseModel):
+    file_path: Optional[Path] = None
     tool: Tool = Field(default_factory=Tool)
 
     class Config:

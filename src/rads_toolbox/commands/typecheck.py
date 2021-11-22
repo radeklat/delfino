@@ -30,7 +30,7 @@ def typecheck(app_context: AppContext, summary_only: bool):
     print_header("RUNNING TYPE CHECKER")
 
     tail = " | tail -n 1" if summary_only else ""
-    toolbox = app_context.external_py_project_toml.tool.toolbox
+    toolbox = app_context.py_project_toml.tool.toolbox
     reports_dir = toolbox.reports_directory / "typecheck" / "junit.xml"
 
     ensure_reports_dir(toolbox)

@@ -15,7 +15,7 @@ from rads_toolbox.commands.test import coverage_open, coverage_report, test_all,
 from rads_toolbox.commands.typecheck import typecheck
 from rads_toolbox.commands.verify_all import verify_all
 from rads_toolbox.contexts import AppContext
-from rads_toolbox.models import external_config, internal_config
+from rads_toolbox.models.pyproject_toml import PyprojectToml
 from rads_toolbox.utils import get_package_manager
 
 
@@ -38,10 +38,8 @@ def main(project_root: Optional[Path] = None):
         context.obj = file_path
         return
 
-    int_py_project_toml = internal_config.PyProjectToml(**toml.load(Path(__file__).parent.parent.parent / filename))
-
     try:
-        ext_py_project_toml = external_config.PyProjectToml(file_path=file_path, **toml.load(file_path))
+        py_project_toml = PyprojectToml(file_path=file_path, **toml.load(file_path))
     except (FileNotFoundError, ValidationError) as exc:
         click.secho(
             f"Toolbox appears to be misconfigured: {exc}\nPlease run `rads-toolbox {run_init.name}`.",
@@ -52,10 +50,9 @@ def main(project_root: Optional[Path] = None):
 
     context.obj = AppContext(
         project_root=project_root,
-        external_py_project_toml=ext_py_project_toml,
-        internal_py_project_toml=int_py_project_toml,
+        py_project_toml=py_project_toml,
         ctx=InvokeContext(),
-        package_manager=get_package_manager(project_root, ext_py_project_toml),
+        package_manager=get_package_manager(project_root, py_project_toml),
     )
 
 

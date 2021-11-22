@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.3.1] - 2021-11-22
+
+### Fixed
+
+- Reference to the tool's entry point move to a constant instead of reading it from `pyproject.toml` (which is not distributed with the package).
+
 ## [0.3.0] - 2021-11-21
 
 ### Added
@@ -36,7 +42,8 @@ Types of changes are:
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.3.1...HEAD
+[0.3.1]: https://github.com/radeklat/settings-doc/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/radeklat/settings-doc/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/radeklat/settings-doc/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/radeklat/settings-doc/compare/initial...0.1.0

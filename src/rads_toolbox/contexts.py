@@ -5,13 +5,12 @@ from invoke import Context
 from pydantic import BaseModel
 
 from rads_toolbox.constants import PackageManager
-from rads_toolbox.models import external_config, internal_config
+from rads_toolbox.models.pyproject_toml import PyprojectToml
 
 
 class AppContext(BaseModel):
     project_root: Path
-    external_py_project_toml: external_config.PyProjectToml
-    internal_py_project_toml: internal_config.PyProjectToml
+    py_project_toml: PyprojectToml
     ctx: Context
     package_manager: PackageManager
 

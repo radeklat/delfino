@@ -15,7 +15,7 @@ from rads_toolbox.utils import ensure_reports_dir, handle_invoke_exceptions, pri
 @handle_invoke_exceptions
 def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) -> None:
     """Execute the tests for a given test type."""
-    toolbox = app_context.external_py_project_toml.tool.toolbox
+    toolbox = app_context.py_project_toml.tool.toolbox
 
     if name not in toolbox.test_types or not toolbox.tests_directory:
         return
@@ -75,7 +75,7 @@ def coverage_report(app_context: AppContext):
     Combines all test types.
     """
     print_header("Generating coverage report", icon="📃")
-    toolbox = app_context.external_py_project_toml.tool.toolbox
+    toolbox = app_context.py_project_toml.tool.toolbox
     ensure_reports_dir(toolbox)
 
     coverage_dat_combined = toolbox.reports_directory / "coverage.dat"
@@ -124,9 +124,7 @@ def test_all(click_context: click.Context):
 @click.command(help="Open coverage results in default browser.")
 @pass_app_context
 def coverage_open(app_context: AppContext):
-    report_index = (
-        app_context.external_py_project_toml.tool.toolbox.reports_directory / "coverage-report" / "index.html"
-    )
+    report_index = app_context.py_project_toml.tool.toolbox.reports_directory / "coverage-report" / "index.html"
     if not report_index.exists():
         click.secho(
             f"Could not find coverage report '{report_index}'. Ensure that the report has been built.\n"

@@ -28,7 +28,7 @@ def run_format(app_context: AppContext, check: bool, quiet: bool):
     """Runs black code formatter and isort on source code."""
     ensure_pre_commit(app_context.ctx)
 
-    toolbox = app_context.external_py_project_toml.tool.toolbox
+    toolbox = app_context.py_project_toml.tool.toolbox
     dirs = f"{toolbox.sources_directory} {toolbox.tests_directory}"
     flags = []
 

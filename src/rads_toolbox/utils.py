@@ -11,19 +11,16 @@ import invoke
 from click import Command, secho
 from invoke import Context
 
-from rads_toolbox.constants import PackageManager
+from rads_toolbox.constants import ENTRY_POINT, PackageManager
 from rads_toolbox.contexts import AppContext
-from rads_toolbox.models.external_config import PyProjectToml, Toolbox
+from rads_toolbox.models.pyproject_toml import PyprojectToml, Toolbox
 
 
 def run_command_str(command: Command, app_context: AppContext) -> str:
-    return (
-        f"{app_context.package_manager.value} run "
-        f"{app_context.internal_py_project_toml.tool.poetry.name} {command.name}"
-    )
+    return f"{app_context.package_manager.value} run {ENTRY_POINT} {command.name}"
 
 
-def get_package_manager(project_root: Path, py_project_toml: PyProjectToml) -> PackageManager:
+def get_package_manager(project_root: Path, py_project_toml: PyprojectToml) -> PackageManager:
     if py_project_toml.tool.poetry is not None or (project_root / "poetry.lock").exists():
         return PackageManager.POETRY
     if (project_root / "Pipfile").exists() or (project_root / "Pipfile.lock").exists():
