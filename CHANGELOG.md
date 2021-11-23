@@ -14,6 +14,18 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.4.0] - 2021-11-23
+
+### Removed
+
+- Dependency on `invoke` (replaced with `subprocess.run`) and `termcolor` (replaced with `click.secho`).
+
+### Added
+
+- Icon to `typecheck` header.
+- Reversing right icon in header if it has more than 1 emoji.
+- `switch-python-version` detects if package manager is not installed and installs it if not.
+
 ## [0.3.1] - 2021-11-22
 
 ### Fixed
@@ -42,7 +54,8 @@ Types of changes are:
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.3.1...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.4.0...HEAD
+[0.4.0]: https://github.com/radeklat/settings-doc/compare/0.3.1...0.4.0
 [0.3.1]: https://github.com/radeklat/settings-doc/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/radeklat/settings-doc/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/radeklat/settings-doc/compare/0.1.0...0.2.0

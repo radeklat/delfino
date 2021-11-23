@@ -1,26 +1,17 @@
 """Linting checks on source code."""
 
-import os
 from pathlib import Path
+from subprocess import PIPE
 from typing import List
 
 import click
-from termcolor import cprint
 
 from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.utils import (
-    command_names,
-    ensure_reports_dir,
-    format_messages,
-    handle_invoke_exceptions,
-    print_header,
-    read_contents,
-)
+from rads_toolbox.utils import OnError, command_names, print_header, print_no_issues_found, run
 
 
 @click.command()
 @pass_app_context
-@handle_invoke_exceptions
 def lint_pydocstyle(app_context: AppContext):
     """Run docstring linting on source code.
 
@@ -31,20 +22,14 @@ def lint_pydocstyle(app_context: AppContext):
     """
     toolbox = app_context.py_project_toml.tool.toolbox
     print_header("documentation style", level=2)
-    ensure_reports_dir(toolbox)
 
-    report_pydocstyle_fpath = toolbox.reports_directory / "pydocstyle-report.log"
+    run(["pydocstyle", toolbox.sources_directory], stdout=PIPE, on_error=OnError.ABORT)
 
-    try:
-        app_context.ctx.run(f"pydocstyle {toolbox.sources_directory} > {report_pydocstyle_fpath}")
-    finally:
-        if os.path.exists(report_pydocstyle_fpath):
-            format_messages(read_contents(report_pydocstyle_fpath))
+    print_no_issues_found()
 
 
 @click.command()
 @pass_app_context
-@handle_invoke_exceptions
 def lint_pycodestyle(app_context: AppContext):
     """Run PEP8 checking on code.
 
@@ -55,40 +40,38 @@ def lint_pycodestyle(app_context: AppContext):
     """
     toolbox = app_context.py_project_toml.tool.toolbox
     print_header("code style (PEP8)", level=2)
-    ensure_reports_dir(toolbox)
 
-    dirs = f"{toolbox.sources_directory} {toolbox.tests_directory}"
-    report_pycodestyle_fpath = toolbox.reports_directory / "pycodestyle-report.log"
+    dirs = [toolbox.sources_directory, toolbox.tests_directory]
 
-    try:
-        app_context.ctx.run(
-            f"pycodestyle --ignore=E501,W503,E231,E203,E402 "
-            "--exclude=.svn,CVS,.bzr,.hg,.git,__pycache__,.tox,*_config_parser.py "
-            f"{dirs} > {report_pycodestyle_fpath}"
-        )
-        # Ignores explained:
-        # - E501: Line length is checked by PyLint
-        # - W503: Disable checking of "Line break before binary operator". PEP8 recently (~2019) switched to
-        #         "line break before the operator" style, so we should permit this usage.
-        # - E231: "missing whitespace after ','" is a false positive. Handled by black formatter.
-    finally:
-        if os.path.exists(report_pycodestyle_fpath):
-            format_messages(read_contents(report_pycodestyle_fpath))
+    # TODO(Radek): Implement unofficial config support in pyproject.toml by parsing it
+    #  and outputting the result into a supported format?
+    #  See:
+    #    - https://github.com/PyCQA/pycodestyle/issues/813
+    #    - https://github.com/PyCQA/pydocstyle/issues/447
+    args = [
+        "pycodestyle",
+        "--ignore",
+        "E501,W503,E231,E203,E402",
+        "--exclude",
+        ".svn,CVS,.bzr,.hg,.git,__pycache__,.tox,*_config_parser.py",
+        *dirs,
+    ]
+    run(args, stdout=PIPE, on_error=OnError.ABORT)
+    # Ignores explained:
+    # - E501: Line length is checked by PyLint
+    # - W503: Disable checking of "Line break before binary operator". PEP8 recently (~2019) switched to
+    #         "line break before the operator" style, so we should permit this usage.
+    # - E231: "missing whitespace after ','" is a false positive. Handled by black formatter.
+
+    print_no_issues_found()
 
 
-@handle_invoke_exceptions
-def run_pylint(app_context: AppContext, source_dirs: List[Path], report_path: Path, pylintrc_fpath: Path):
+def run_pylint(source_dirs: List[Path], pylintrc_folder: Path):
     print_header(", ".join(map(str, source_dirs)), level=3)
-    ensure_reports_dir(app_context.py_project_toml.tool.toolbox)
 
-    try:
-        app_context.ctx.run(f"pylint --rcfile {pylintrc_fpath} {' '.join(map(str, source_dirs))} > {report_path}")
-    except Exception:  # pylint: disable=broad-except
-        if os.path.exists(report_path):
-            print(read_contents(report_path))
-        raise
-    else:
-        cprint("✔ No issues found.", "green")
+    run(["pylint", "--rcfile", pylintrc_folder / ".pylintrc", *source_dirs], stdout=PIPE, on_error=OnError.ABORT)
+
+    print_no_issues_found()
 
 
 @click.command()
@@ -102,20 +85,10 @@ def lint_pylint(app_context: AppContext):
     print_header("pylint", level=2)
     toolbox = app_context.py_project_toml.tool.toolbox
 
-    run_pylint(
-        app_context,
-        [toolbox.sources_directory],
-        toolbox.reports_directory / "pylint-report.log",
-        app_context.project_root / ".pylintrc",
-    )
+    run_pylint([toolbox.sources_directory], app_context.project_root)
 
     if toolbox.tests_directory:
-        run_pylint(
-            app_context,
-            [toolbox.tests_directory],
-            toolbox.reports_directory / "pylint-report-tests.log",
-            toolbox.tests_directory / ".pylintrc",
-        )
+        run_pylint([toolbox.tests_directory], toolbox.tests_directory)
 
 
 _COMMANDS = [lint_pylint, lint_pycodestyle, lint_pydocstyle]

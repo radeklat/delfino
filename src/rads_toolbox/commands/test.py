@@ -4,15 +4,14 @@ import re
 import shutil
 import webbrowser
 from pathlib import Path
+from subprocess import PIPE
 
 import click
-import invoke
 
 from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.utils import ensure_reports_dir, handle_invoke_exceptions, print_header, run_command_str
+from rads_toolbox.utils import OnError, ensure_reports_dir, print_header, run, run_command_str
 
 
-@handle_invoke_exceptions
 def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) -> None:
     """Execute the tests for a given test type."""
     toolbox = app_context.py_project_toml.tool.toolbox
@@ -22,16 +21,22 @@ def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) ->
 
     print_header(f"️Running {name} tests️", icon="🔎🐛")
     ensure_reports_dir(toolbox)
-    app_context.ctx.run(
-        f"""
-        pytest \
-            --cov={toolbox.sources_directory} \
-            --cov-report="xml:{toolbox.reports_directory / f"coverage-{name}.xml"}" \
-            --cov-branch -vv --maxfail={maxfail} {"-s" if debug else ""}\
-            {toolbox.tests_directory / name}
-        """,
-        env={"COVERAGE_FILE": toolbox.reports_directory / f"coverage-{name}.dat"},
-        pty=True,
+    run(
+        [
+            "pytest",
+            "--cov",
+            toolbox.sources_directory,
+            "--cov-report",
+            f"xml:{toolbox.reports_directory / f'coverage-{name}.xml'}",
+            "--cov-branch",
+            "-vv",
+            "--maxfail",
+            str(maxfail),
+            "-s" if debug else "",
+            toolbox.tests_directory / name,
+        ],
+        env_update={"COVERAGE_FILE": toolbox.reports_directory / f"coverage-{name}.dat"},
+        on_error=OnError.ABORT,
     )
 
 
@@ -52,14 +57,11 @@ def test_integration(app_context: AppContext, maxfail: int, debug: bool):
     _run_tests(app_context, "integration", maxfail=maxfail, debug=debug)
 
 
-def _get_total_coverage(ctx: invoke.Context, coverage_dat: Path) -> str:
+def _get_total_coverage(coverage_dat: Path) -> str:
     """Return coverage percentage, as captured in coverage dat file; e.g., returns "100%"."""
-    output = ctx.run(
-        f"""
-        export COVERAGE_FILE="{coverage_dat}"
-        coverage report""",
-        hide=True,
-    ).stdout
+    output = run(
+        "coverage report", stdout=PIPE, env_update={"COVERAGE_FILE": coverage_dat}, on_error=OnError.EXIT
+    ).stdout.decode()
     match = re.search(r"TOTAL.*?([\d.]+%)", output)
     if match is None:
         raise RuntimeError(f"Regex failed on output: {output}")
@@ -68,7 +70,6 @@ def _get_total_coverage(ctx: invoke.Context, coverage_dat: Path) -> str:
 
 @click.command()
 @pass_app_context
-@handle_invoke_exceptions
 def coverage_report(app_context: AppContext):
     """Analyse coverage and generate a term/HTML report.
 
@@ -80,8 +81,8 @@ def coverage_report(app_context: AppContext):
 
     coverage_dat_combined = toolbox.reports_directory / "coverage.dat"
     coverage_html = toolbox.reports_directory / "coverage-report/"
-
     coverage_files = []  # we'll make a copy because `combine` will erase them
+
     for test_type in toolbox.test_types:
         coverage_dat = toolbox.reports_directory / f"coverage-{test_type}.dat"
 
@@ -91,20 +92,17 @@ def coverage_report(app_context: AppContext):
                 fg="yellow",
             )
         else:
-            print(f"{test_type.title()} test coverage: {_get_total_coverage(app_context.ctx, coverage_dat)}")
+            print(f"{test_type.title()} test coverage: {_get_total_coverage(coverage_dat)}")
 
             temp_copy = coverage_dat.with_name(coverage_dat.name.replace(".dat", "-copy.dat"))
             shutil.copy(coverage_dat, temp_copy)
-            coverage_files.append(str(temp_copy))
+            coverage_files.append(temp_copy)
 
-    app_context.ctx.run(
-        f"""
-            export COVERAGE_FILE="{coverage_dat_combined}"
-            coverage combine {" ".join(coverage_files)}
-            coverage html -d {coverage_html}
-        """
-    )
-    print(f"Total coverage: {_get_total_coverage(app_context.ctx, coverage_dat_combined)}\n")
+    env = {"COVERAGE_FILE": coverage_dat_combined}
+    run(["coverage", "combine", *coverage_files], env_update=env, stdout=PIPE, on_error=OnError.EXIT)
+    run(["coverage", "html", "-d", coverage_html], env_update=env, stdout=PIPE, on_error=OnError.EXIT)
+
+    print(f"Total coverage: {_get_total_coverage(coverage_dat_combined)}\n")
     print(
         f"Refer to coverage report for full analysis in '{coverage_html}/index.html'\n"
         f"Or open the report in your default browser with:\n"

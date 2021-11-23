@@ -1,17 +1,22 @@
+from subprocess import PIPE
+
 import click
 
+from rads_toolbox.constants import PackageManager
 from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.utils import handle_invoke_exceptions, print_header
+from rads_toolbox.utils import OnError, print_header, run
 
 
-@click.command(help="Switches Python venv to a different Python version.")
-@click.option("--version", type=str, help="Desired Python version. You can use only MAJOR.MINOR (for example 3.6).")
+@click.command()
+@click.argument("version", type=str)
 @pass_app_context
-@handle_invoke_exceptions
 def switch_python_version(app_context: AppContext, version: str):
-    """Use this to test the sub-packages with a different Python version.
+    """Switches Python venv to a different Python version.
 
-    CI pipeline always checks all supported versions automatically.
+    - VERSION: Desired Python version. You can use only MAJOR.MINOR (for example 3.6).
+
+    Use this to test the sub-packages with a different Python version. CI pipeline always
+    checks all supported versions automatically.
 
     Notes:
         This task calls `deactivate` as a precaution for cases when the task is called
@@ -21,7 +26,7 @@ def switch_python_version(app_context: AppContext, version: str):
 
     pyenv_python_version = None
     python_versions = sorted(
-        (_ for _ in app_context.ctx.run("pyenv versions --bare", hide="stdout").stdout.split("\n") if _),
+        (_ for _ in run("pyenv versions --bare", stdout=PIPE, on_error=OnError.EXIT).stdout.decode().split("\n") if _),
         key=lambda value: list(map(int, value.split("."))),  # sort numerically
     )
 
@@ -42,7 +47,29 @@ def switch_python_version(app_context: AppContext, version: str):
         )
         raise click.Abort()
 
-    app_context.ctx.run(
-        f"source deactivate; git clean -fxd .venv && pyenv local {pyenv_python_version} && poetry install",
-        pty=True,
-    )
+    package_manager = app_context.package_manager
+    if package_manager == PackageManager.POETRY:
+        install_command = "poetry install --no-root"
+    elif package_manager == PackageManager.PIPENV:
+        install_command = "pipenv install -d --deploy"
+    else:
+        click.secho("No compatible package manager detected. Skipping package installation.", fg="red", err=True)
+        raise click.Abort()
+
+    click.secho("ℹ Removing current virtualenv ...\n", fg="blue")
+    run("git clean -fxd .venv", stdout=PIPE, stderr=PIPE, on_error=OnError.EXIT)
+
+    click.secho(f"ℹ Switching to Python {pyenv_python_version} ...\n", fg="blue")
+    run(["pyenv", "local", pyenv_python_version], stdout=PIPE, stderr=PIPE, on_error=OnError.EXIT)
+
+    click.secho(f"✔ Detected {package_manager.value.capitalize()} package manager.\n", fg="green")
+
+    if run(
+        f"pip show -q {package_manager.value}", stdout=PIPE, stderr=PIPE, on_error=OnError.PASS, shell=True
+    ).returncode:
+        click.secho(f"⚠ {package_manager.value.capitalize()} is not installed. Installing ...\n", fg="yellow")
+        run(f"pip install {package_manager.value}", stdout=PIPE, stderr=PIPE, on_error=OnError.EXIT)
+    else:
+        click.secho(f"✔ {package_manager.value.capitalize()} is installed.\n", fg="green")
+
+    run(install_command, on_error=OnError.EXIT)
