@@ -4,7 +4,6 @@ from typing import Optional
 
 import click
 import toml
-from invoke import Context as InvokeContext
 from pydantic import ValidationError
 
 from rads_toolbox.commands.format import run_format
@@ -51,7 +50,6 @@ def main(project_root: Optional[Path] = None):
     context.obj = AppContext(
         project_root=project_root,
         py_project_toml=py_project_toml,
-        ctx=InvokeContext(),
         package_manager=get_package_manager(project_root, py_project_toml),
     )
 
