@@ -14,6 +14,17 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.5.0] - 2021-11-23
+
+### Removed
+
+- Drop support for Python 3.6.
+
+### Changed
+
+- Commands are loaded as plugins dynamically.
+- Split of `utils` into more focused modules.
+
 ## [0.4.0] - 2021-11-23
 
 ### Removed
@@ -54,7 +65,8 @@ Types of changes are:
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.4.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.5.0...HEAD
+[0.5.0]: https://github.com/radeklat/settings-doc/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/radeklat/settings-doc/compare/0.3.1...0.4.0
 [0.3.1]: https://github.com/radeklat/settings-doc/compare/0.3.0...0.3.1
 [0.3.0]: https://github.com/radeklat/settings-doc/compare/0.2.0...0.3.0

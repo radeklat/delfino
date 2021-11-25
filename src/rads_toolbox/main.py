@@ -6,16 +6,12 @@ import click
 import toml
 from pydantic import ValidationError
 
-from rads_toolbox.commands.format import run_format
+from rads_toolbox import commands
 from rads_toolbox.commands.init import run_init
-from rads_toolbox.commands.lint import lint, lint_pycodestyle, lint_pydocstyle, lint_pylint
-from rads_toolbox.commands.switch_python_version import switch_python_version
-from rads_toolbox.commands.test import coverage_open, coverage_report, test_all, test_integration, test_unit
-from rads_toolbox.commands.typecheck import typecheck
-from rads_toolbox.commands.verify_all import verify_all
+from rads_toolbox.constants import PYPROJECT_TOML
 from rads_toolbox.contexts import AppContext
 from rads_toolbox.models.pyproject_toml import PyprojectToml
-from rads_toolbox.utils import get_package_manager
+from rads_toolbox.utils import find_commands, get_package_manager
 
 
 @click.group()
@@ -29,8 +25,7 @@ def main(project_root: Optional[Path] = None):
     if not project_root:
         project_root = Path(os.getcwd())
 
-    filename = "pyproject.toml"
-    file_path = (project_root / filename).relative_to(project_root)
+    file_path = (project_root / PYPROJECT_TOML).relative_to(project_root)
     context = click.get_current_context()
 
     if context.invoked_subcommand == run_init.name:
@@ -54,24 +49,7 @@ def main(project_root: Optional[Path] = None):
     )
 
 
-_COMMANDS = [
-    run_format,
-    typecheck,
-    lint_pydocstyle,
-    lint_pycodestyle,
-    lint_pylint,
-    lint,
-    test_unit,
-    test_integration,
-    coverage_report,
-    test_all,
-    coverage_open,
-    switch_python_version,
-    verify_all,
-    run_init,
-]
-
-for command in _COMMANDS:
+for command in find_commands(commands.__package__):
     main.add_command(command, command.name)
 
 if __name__ == "__main__":
