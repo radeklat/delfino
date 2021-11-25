@@ -49,7 +49,11 @@ def main(project_root: Optional[Path] = None):
     )
 
 
-for command in find_commands(commands.__package__):
+_COMMANDS = find_commands(commands.__package__, required=True)
+_COMMANDS.extend(find_commands("commands", required=False))
+_COMMANDS.extend(find_commands("tasks", required=False, new_name="commands"))
+
+for command in _COMMANDS:
     main.add_command(command, command.name)
 
 if __name__ == "__main__":

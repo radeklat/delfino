@@ -14,7 +14,13 @@ Types of changes are:
 
 ## [Unreleased]
 
-## [0.5.0] - 2021-11-23
+## [0.6.0] - 2021-11-25
+
+### Added
+
+- Loading commands from local `tasks` module.
+
+## [0.5.0] - 2021-11-25
 
 ### Removed
 
@@ -65,7 +71,8 @@ Types of changes are:
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.5.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.6.0...HEAD
+[0.6.0]: https://github.com/radeklat/settings-doc/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/radeklat/settings-doc/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/radeklat/settings-doc/compare/0.3.1...0.4.0
 [0.3.1]: https://github.com/radeklat/settings-doc/compare/0.3.0...0.3.1

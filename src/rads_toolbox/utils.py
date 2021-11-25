@@ -1,7 +1,7 @@
 from importlib import import_module, resources
 from importlib.resources import Package
 from pathlib import Path
-from typing import Iterator, List, Union
+from typing import List, Union
 
 import click
 
@@ -36,15 +36,34 @@ def command_names(commands: List[click.Command]) -> str:
     return ", ".join(command.name for command in commands if command.name)
 
 
-def find_commands(package: Package) -> Iterator[click.Command]:
+def find_commands(package: Package, *, required: bool, new_name: str = "") -> List[click.Command]:
     """Finds all instances of ``click.Command`` in given module.
 
     Does not traverse modules recursively.
+
+    Args:
+        package: Package to search.
+        new_name: If set, ``package`` is a legacy name and ``new_name`` should be used instead.
+        required: This package is required.
     """
-    for filename in resources.contents(package):
+    try:
+        files = resources.contents(package)
+    except ModuleNotFoundError:
+        if required:
+            raise
+        return []
+
+    commands = []
+
+    for filename in files:
         if filename.startswith("_") or not filename.endswith(".py"):
             continue
         plugin = import_module(f"{package}.{filename[:-3]}")
         for obj in vars(plugin).values():
             if isinstance(obj, click.Command):
-                yield obj
+                commands.append(obj)
+
+    if commands and new_name:
+        click.secho(f"⚠ Plugin module '{package}' is deprecated. Please use '{new_name}' instead.", fg="yellow")
+
+    return commands
