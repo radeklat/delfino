@@ -3,7 +3,8 @@ from subprocess import PIPE, CompletedProcess
 import click
 
 from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.utils import OnError, print_header, run, run_command_str
+from rads_toolbox.execution import OnError, run
+from rads_toolbox.terminal_output import print_header, run_command_example
 
 
 def _check_result(app_context: AppContext, result: CompletedProcess, check: bool, msg: str):
@@ -11,7 +12,7 @@ def _check_result(app_context: AppContext, result: CompletedProcess, check: bool
         click.secho(
             f"{msg} before commit. Try following:\n"
             f" * Enable pre-commit hook by running `pre-commit install` in the repository.\n"
-            f" * Run formatter manually with `{run_command_str(run_format, app_context)}` before committing code.",
+            f" * Run formatter manually with `{run_command_example(run_format, app_context)}` before committing code.",
             fg="red",
             err=True,
         )

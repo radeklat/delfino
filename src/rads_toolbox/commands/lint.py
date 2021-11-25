@@ -7,7 +7,9 @@ from typing import List
 import click
 
 from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.utils import OnError, command_names, print_header, print_no_issues_found, run
+from rads_toolbox.execution import OnError, run
+from rads_toolbox.terminal_output import print_header, print_no_issues_found
+from rads_toolbox.utils import command_names
 
 
 @click.command()

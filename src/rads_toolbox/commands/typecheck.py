@@ -3,7 +3,9 @@
 import click
 
 from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.utils import ArgsList, OnError, ensure_reports_dir, print_header, run
+from rads_toolbox.execution import OnError, run
+from rads_toolbox.terminal_output import print_header
+from rads_toolbox.utils import ArgsList, ensure_reports_dir
 
 
 @click.command()

@@ -12,10 +12,10 @@ parameters:
     default: ~/rads_toolbox
   python_version:
     type: string
-    default: "3.6"
+    default: "3.7"
   cache_version:
     type: string
-    default: "2"
+    default: "3"
   git_trunk_branch:
     type: string
     default: "main"
@@ -88,7 +88,7 @@ jobs: # A basic unit of work in a run
     steps:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/bin
-      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python<< pipeline.parameters.python_version >>/site-packages
       - restore_cache:
           key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< pipeline.parameters.python_version >>-{{ checksum "poetry.lock" }}
       - run:
@@ -154,7 +154,7 @@ workflows:
           context: << pipeline.parameters.project_name >>
           matrix:
             parameters:
-              python_version: [ "3.6", "3.7", "3.8", "3.9", "3.10" ]
+              python_version: [ "3.7", "3.8", "3.9", "3.10" ]
       - build:
           name: Build
           requires:

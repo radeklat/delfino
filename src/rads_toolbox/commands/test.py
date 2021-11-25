@@ -9,7 +9,9 @@ from subprocess import PIPE
 import click
 
 from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.utils import OnError, ensure_reports_dir, print_header, run, run_command_str
+from rads_toolbox.execution import OnError, run
+from rads_toolbox.terminal_output import print_header, run_command_example
+from rads_toolbox.utils import ensure_reports_dir
 
 
 def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) -> None:
@@ -106,7 +108,7 @@ def coverage_report(app_context: AppContext):
     print(
         f"Refer to coverage report for full analysis in '{coverage_html}/index.html'\n"
         f"Or open the report in your default browser with:\n"
-        f"  {run_command_str(coverage_open, app_context)}"
+        f"  {run_command_example(coverage_open, app_context)}"
     )
 
 
@@ -127,9 +129,9 @@ def coverage_open(app_context: AppContext):
         click.secho(
             f"Could not find coverage report '{report_index}'. Ensure that the report has been built.\n"
             "Try one of the following:\n"
-            f"  {run_command_str(coverage_report, app_context)}\n"
+            f"  {run_command_example(coverage_report, app_context)}\n"
             f"or\n"
-            f"  {run_command_str(test_all, app_context)}",
+            f"  {run_command_example(test_all, app_context)}",
             fg="red",
         )
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rads-toolbox"
-version = "0.4.0"
+version = "0.4.1"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"
@@ -11,7 +11,7 @@ homepage = "https://github.com/radeklat/rads-toolbox"
 rads-toolbox = "rads_toolbox.main:main"
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
+python = "^3.7.0"
 toml = "^0.10.2"
 click = "^8.0.3"
 pydantic = "^1.8.2"
