@@ -1,10 +1,10 @@
 import click
 
-from rads_toolbox.commands.format import run_format
-from rads_toolbox.commands.lint import lint
-from rads_toolbox.commands.test import test_all
-from rads_toolbox.commands.typecheck import typecheck
-from rads_toolbox.utils import command_names
+from delfino.commands.format import run_format
+from delfino.commands.lint import lint
+from delfino.commands.test import test_all
+from delfino.commands.typecheck import typecheck
+from delfino.utils import command_names
 
 _COMMANDS = [run_format, lint, typecheck, test_all]
 

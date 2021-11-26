@@ -1,7 +1,7 @@
 import toml
 
-from rads_toolbox.constants import ENTRY_POINT, PYPROJECT_TOML
-from rads_toolbox.models.pyproject_toml import PyprojectToml
+from delfino.constants import ENTRY_POINT, PYPROJECT_TOML
+from delfino.models.pyproject_toml import PyprojectToml
 from tests.constants import PROJECT_ROOT
 
 

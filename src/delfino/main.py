@@ -6,12 +6,12 @@ import click
 import toml
 from pydantic import ValidationError
 
-from rads_toolbox import commands
-from rads_toolbox.commands.init import run_init
-from rads_toolbox.constants import PYPROJECT_TOML
-from rads_toolbox.contexts import AppContext
-from rads_toolbox.models.pyproject_toml import PyprojectToml
-from rads_toolbox.utils import find_commands, get_package_manager
+from delfino import commands
+from delfino.commands.init import run_init
+from delfino.constants import ENTRY_POINT, PYPROJECT_TOML
+from delfino.contexts import AppContext
+from delfino.models.pyproject_toml import PyprojectToml
+from delfino.utils import find_commands, get_package_manager
 
 
 @click.group()
@@ -36,7 +36,7 @@ def main(project_root: Optional[Path] = None):
         py_project_toml = PyprojectToml(file_path=file_path, **toml.load(file_path))
     except (FileNotFoundError, ValidationError) as exc:
         click.secho(
-            f"Toolbox appears to be misconfigured: {exc}\nPlease run `rads-toolbox {run_init.name}`.",
+            f"Delfino appears to be misconfigured: {exc}\nPlease run `{ENTRY_POINT} {run_init.name}`.",
             fg="red",
             err=True,
         )

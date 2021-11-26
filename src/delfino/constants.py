@@ -1,6 +1,6 @@
 from enum import Enum
 
-ENTRY_POINT: str = "rads-toolbox"
+ENTRY_POINT: str = "delfino"
 PYPROJECT_TOML = "pyproject.toml"
 
 

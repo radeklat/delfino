@@ -2,9 +2,9 @@ from subprocess import PIPE, CompletedProcess
 
 import click
 
-from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.execution import OnError, run
-from rads_toolbox.terminal_output import print_header, run_command_example
+from delfino.contexts import AppContext, pass_app_context
+from delfino.execution import OnError, run
+from delfino.terminal_output import print_header, run_command_example
 
 
 def _check_result(app_context: AppContext, result: CompletedProcess, check: bool, msg: str):
@@ -31,8 +31,8 @@ def run_format(app_context: AppContext, check: bool, quiet: bool):
     # ensure pre-commit is installed
     run("pre-commit install", stdout=PIPE, on_error=OnError.EXIT)
 
-    toolbox = app_context.py_project_toml.tool.toolbox
-    dirs = [toolbox.sources_directory, toolbox.tests_directory]
+    delfino = app_context.py_project_toml.tool.delfino
+    dirs = [delfino.sources_directory, delfino.tests_directory]
     flags = []
 
     if check:

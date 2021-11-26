@@ -1,14 +1,17 @@
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra
 
 
-class Toolbox(BaseModel):
+class Delfino(BaseModel):
     sources_directory: Path
     tests_directory: Path
     reports_directory: Path
     test_types: List[str]
+
+    class Config:
+        extra = Extra.allow
 
 
 class Poetry(BaseModel):
@@ -19,7 +22,7 @@ class Poetry(BaseModel):
 
 class Tool(BaseModel):
     poetry: Optional[Poetry] = None
-    toolbox: Toolbox = Field(..., alias="rads_toolbox")
+    delfino: Delfino
 
     class Config:
         allow_population_by_field_name = True

@@ -8,36 +8,36 @@ from subprocess import PIPE
 
 import click
 
-from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.execution import OnError, run
-from rads_toolbox.terminal_output import print_header, run_command_example
-from rads_toolbox.utils import ensure_reports_dir
+from delfino.contexts import AppContext, pass_app_context
+from delfino.execution import OnError, run
+from delfino.terminal_output import print_header, run_command_example
+from delfino.utils import ensure_reports_dir
 
 
 def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) -> None:
     """Execute the tests for a given test type."""
-    toolbox = app_context.py_project_toml.tool.toolbox
+    delfino = app_context.py_project_toml.tool.delfino
 
-    if name not in toolbox.test_types or not toolbox.tests_directory:
+    if name not in delfino.test_types or not delfino.tests_directory:
         return
 
     print_header(f"️Running {name} tests️", icon="🔎🐛")
-    ensure_reports_dir(toolbox)
+    ensure_reports_dir(delfino)
     run(
         [
             "pytest",
             "--cov",
-            toolbox.sources_directory,
+            delfino.sources_directory,
             "--cov-report",
-            f"xml:{toolbox.reports_directory / f'coverage-{name}.xml'}",
+            f"xml:{delfino.reports_directory / f'coverage-{name}.xml'}",
             "--cov-branch",
             "-vv",
             "--maxfail",
             str(maxfail),
             "-s" if debug else "",
-            toolbox.tests_directory / name,
+            delfino.tests_directory / name,
         ],
-        env_update={"COVERAGE_FILE": toolbox.reports_directory / f"coverage-{name}.dat"},
+        env_update={"COVERAGE_FILE": delfino.reports_directory / f"coverage-{name}.dat"},
         on_error=OnError.ABORT,
     )
 
@@ -78,15 +78,15 @@ def coverage_report(app_context: AppContext):
     Combines all test types.
     """
     print_header("Generating coverage report", icon="📃")
-    toolbox = app_context.py_project_toml.tool.toolbox
-    ensure_reports_dir(toolbox)
+    delfino = app_context.py_project_toml.tool.delfino
+    ensure_reports_dir(delfino)
 
-    coverage_dat_combined = toolbox.reports_directory / "coverage.dat"
-    coverage_html = toolbox.reports_directory / "coverage-report/"
+    coverage_dat_combined = delfino.reports_directory / "coverage.dat"
+    coverage_html = delfino.reports_directory / "coverage-report/"
     coverage_files = []  # we'll make a copy because `combine` will erase them
 
-    for test_type in toolbox.test_types:
-        coverage_dat = toolbox.reports_directory / f"coverage-{test_type}.dat"
+    for test_type in delfino.test_types:
+        coverage_dat = delfino.reports_directory / f"coverage-{test_type}.dat"
 
         if not coverage_dat.exists():
             click.secho(
@@ -124,7 +124,7 @@ def test_all(click_context: click.Context):
 @click.command(help="Open coverage results in default browser.")
 @pass_app_context
 def coverage_open(app_context: AppContext):
-    report_index = app_context.py_project_toml.tool.toolbox.reports_directory / "coverage-report" / "index.html"
+    report_index = app_context.py_project_toml.tool.delfino.reports_directory / "coverage-report" / "index.html"
     if not report_index.exists():
         click.secho(
             f"Could not find coverage report '{report_index}'. Ensure that the report has been built.\n"

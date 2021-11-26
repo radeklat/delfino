@@ -3,8 +3,8 @@ from pathlib import Path
 from click import make_pass_decorator
 from pydantic import BaseModel
 
-from rads_toolbox.constants import PackageManager
-from rads_toolbox.models.pyproject_toml import PyprojectToml
+from delfino.constants import PackageManager
+from delfino.models.pyproject_toml import PyprojectToml
 
 
 class AppContext(BaseModel):

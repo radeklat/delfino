@@ -3,8 +3,8 @@ import shutil
 
 import click
 
-from rads_toolbox.constants import ENTRY_POINT
-from rads_toolbox.contexts import AppContext
+from delfino.constants import ENTRY_POINT
+from delfino.contexts import AppContext
 
 
 def print_no_issues_found():

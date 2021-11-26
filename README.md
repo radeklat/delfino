@@ -1,19 +1,19 @@
-<h1 align="center" style="border-bottom: none;">🧰&nbsp;&nbsp;Rad's Toolbox&nbsp;&nbsp;🧰</h1>
+<h1 align="center" style="border-bottom: none;">🧰&nbsp;&nbsp;Delfino&nbsp;&nbsp;🧰</h1>
 <h3 align="center">A collection of command line helper scripts wrapping tools used during Python development.</h3>
 
 <p align="center">
-    <a href="https://app.circleci.com/pipelines/github/radeklat/rads-toolbox?branch=main">
-        <img alt="CircleCI" src="https://img.shields.io/circleci/build/github/radeklat/rads-toolbox">
+    <a href="https://app.circleci.com/pipelines/github/radeklat/delfino?branch=main">
+        <img alt="CircleCI" src="https://img.shields.io/circleci/build/github/radeklat/delfino">
     </a>
-    <a href="https://app.codecov.io/gh/radeklat/rads-toolbox/">
-        <img alt="Codecov" src="https://img.shields.io/codecov/c/github/radeklat/rads-toolbox">
+    <a href="https://app.codecov.io/gh/radeklat/delfino/">
+        <img alt="Codecov" src="https://img.shields.io/codecov/c/github/radeklat/delfino">
     </a>
-    <a href="https://github.com/radeklat/rads-toolbox/tags">
-        <img alt="GitHub tag (latest SemVer)" src="https://img.shields.io/github/tag/radeklat/rads-toolbox">
+    <a href="https://github.com/radeklat/delfino/tags">
+        <img alt="GitHub tag (latest SemVer)" src="https://img.shields.io/github/tag/radeklat/delfino">
     </a>
     <img alt="Maintenance" src="https://img.shields.io/maintenance/yes/2021">
-    <a href="https://github.com/radeklat/rads-toolbox/commits/main">
-        <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/radeklat/rads-toolbox">
+    <a href="https://github.com/radeklat/delfino/commits/main">
+        <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/radeklat/delfino">
     </a>
 </p>
 
@@ -77,10 +77,10 @@ complete -F _complete_invoke -o default invoke inv
 Put into `~/.bashrc`:
 
 ```bash
-_complete_rads_toolbox() {
-    eval "$(_RADS_TOOLBOX_COMPLETE=bash_source rads-toolbox)";
+_complete_delfino() {
+    eval "$(_DELFINO_COMPLETE=bash_source delfino)";
 }
-complete -F _complete_rads_toolbox -o default invoke rads-toolbox
+complete -F _complete_delfino -o default invoke delfino
 ```
 
 -->

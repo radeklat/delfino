@@ -5,8 +5,8 @@ from typing import List, Union
 
 import click
 
-from rads_toolbox.constants import PackageManager
-from rads_toolbox.models.pyproject_toml import PyprojectToml, Toolbox
+from delfino.constants import PackageManager
+from delfino.models.pyproject_toml import Delfino, PyprojectToml
 
 ArgsList = List[Union[str, bytes, Path]]
 ArgsType = Union[str, bytes, List]
@@ -27,9 +27,9 @@ def get_package_manager(project_root: Path, py_project_toml: PyprojectToml) -> P
     raise click.Abort()
 
 
-def ensure_reports_dir(toolbox: Toolbox) -> None:
+def ensure_reports_dir(delfino: Delfino) -> None:
     """Ensures that the reports directory exists."""
-    toolbox.reports_directory.mkdir(parents=True, exist_ok=True)
+    delfino.reports_directory.mkdir(parents=True, exist_ok=True)
 
 
 def command_names(commands: List[click.Command]) -> str:

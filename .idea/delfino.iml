@@ -9,7 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/reports" />
       <excludeFolder url="file://$MODULE_DIR$/dist" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.9 (rads-toolbox)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.7 (delfino)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">
