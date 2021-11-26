@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -48,6 +49,8 @@ def main(project_root: Optional[Path] = None):
         package_manager=get_package_manager(project_root, py_project_toml),
     )
 
+
+sys.path.append(os.getcwd())
 
 _COMMANDS = find_commands(commands.__package__, required=True)
 _COMMANDS.extend(find_commands("commands", required=False))

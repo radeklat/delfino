@@ -2,7 +2,7 @@
 name = "astroid"
 version = "2.9.0"
 description = "An abstract syntax tree for Python with inference support."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "~=3.6"
 
@@ -16,7 +16,7 @@ wrapt = ">=1.11,<1.14"
 name = "atomicwrites"
 version = "1.4.0"
 description = "Atomic file writes."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -24,7 +24,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 name = "attrs"
 version = "21.2.0"
 description = "Classes Without Boilerplate"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -38,7 +38,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 name = "backports.entry-points-selectable"
 version = "1.1.1"
 description = "Compatibility shim providing selectable entry points for older implementations"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7"
 
@@ -53,7 +53,7 @@ testing = ["pytest", "pytest-flake8", "pytest-cov", "pytest-black (>=0.3.7)", "p
 name = "black"
 version = "21.11b1"
 description = "The uncompromising code formatter."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.2"
 
@@ -81,7 +81,7 @@ uvloop = ["uvloop (>=0.15.2)"]
 name = "cfgv"
 version = "3.3.1"
 description = "Validate configuration and produce human readable error messages."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.1"
 
@@ -109,7 +109,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "coverage"
 version = "6.1.2"
 description = "Code coverage measurement for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -123,7 +123,7 @@ toml = ["tomli"]
 name = "distlib"
 version = "0.3.3"
 description = "Distribution utilities"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -131,7 +131,7 @@ python-versions = "*"
 name = "filelock"
 version = "3.4.0"
 description = "A platform independent file lock."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -143,7 +143,7 @@ testing = ["covdefaults (>=1.2.0)", "coverage (>=4)", "pytest (>=4)", "pytest-co
 name = "identify"
 version = "2.4.0"
 description = "File identification library for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.1"
 
@@ -171,7 +171,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 name = "iniconfig"
 version = "1.1.1"
 description = "iniconfig: brain-dead simple config-ini parsing"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -179,7 +179,7 @@ python-versions = "*"
 name = "isort"
 version = "5.10.1"
 description = "A Python utility / library to sort Python imports."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.1,<4.0"
 
@@ -193,7 +193,7 @@ plugins = ["setuptools"]
 name = "lazy-object-proxy"
 version = "1.6.0"
 description = "A fast and thorough lazy object proxy."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
@@ -201,7 +201,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 name = "mccabe"
 version = "0.6.1"
 description = "McCabe checker, plugin for flake8"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -209,7 +209,7 @@ python-versions = "*"
 name = "mypy"
 version = "0.910"
 description = "Optional static typing for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.5"
 
@@ -227,7 +227,7 @@ python2 = ["typed-ast (>=1.4.0,<1.5.0)"]
 name = "mypy-extensions"
 version = "0.4.3"
 description = "Experimental type system extensions for programs checked with the mypy typechecker."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -235,7 +235,7 @@ python-versions = "*"
 name = "nodeenv"
 version = "1.6.0"
 description = "Node.js virtual environment builder"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -243,7 +243,7 @@ python-versions = "*"
 name = "packaging"
 version = "21.3"
 description = "Core utilities for Python packages"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -254,7 +254,7 @@ pyparsing = ">=2.0.2,<3.0.5 || >3.0.5"
 name = "pathspec"
 version = "0.9.0"
 description = "Utility library for gitignore style pattern matching of file paths."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
@@ -262,7 +262,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 name = "platformdirs"
 version = "2.4.0"
 description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -274,7 +274,7 @@ test = ["appdirs (==1.4.4)", "pytest (>=6)", "pytest-cov (>=2.7)", "pytest-mock 
 name = "pluggy"
 version = "1.0.0"
 description = "plugin and hook calling mechanisms for python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -289,7 +289,7 @@ testing = ["pytest", "pytest-benchmark"]
 name = "pre-commit"
 version = "2.15.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.1"
 
@@ -306,7 +306,7 @@ virtualenv = ">=20.0.8"
 name = "py"
 version = "1.11.0"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -314,7 +314,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "pycodestyle"
 version = "2.8.0"
 description = "Python style guide checker"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -337,7 +337,7 @@ email = ["email-validator (>=1.0.3)"]
 name = "pydocstyle"
 version = "6.1.1"
 description = "Python docstring style checker"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -351,7 +351,7 @@ toml = ["toml"]
 name = "pylint"
 version = "2.12.1"
 description = "python code static checker"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.2"
 
@@ -368,7 +368,7 @@ typing-extensions = {version = ">=3.10.0", markers = "python_version < \"3.10\""
 name = "pyparsing"
 version = "3.0.6"
 description = "Python parsing module"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -379,7 +379,7 @@ diagrams = ["jinja2", "railroad-diagrams"]
 name = "pytest"
 version = "6.2.5"
 description = "pytest: simple powerful testing with Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -401,7 +401,7 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xm
 name = "pytest-cov"
 version = "3.0.0"
 description = "Pytest plugin for measuring coverage."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -416,7 +416,7 @@ testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtuale
 name = "pytest-dotenv"
 version = "0.5.2"
 description = "A py.test plugin that parses environment files before running tests"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -428,7 +428,7 @@ python-dotenv = ">=0.9.1"
 name = "pytest-mock"
 version = "3.6.1"
 description = "Thin-wrapper around the mock package for easier use with pytest"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -442,7 +442,7 @@ dev = ["pre-commit", "tox", "pytest-asyncio"]
 name = "python-dotenv"
 version = "0.19.2"
 description = "Read key-value pairs from a .env file and set them as environment variables"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.5"
 
@@ -453,7 +453,7 @@ cli = ["click (>=5.0)"]
 name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -461,7 +461,7 @@ python-versions = ">=3.6"
 name = "regex"
 version = "2021.11.10"
 description = "Alternative regular expression module, to replace re."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -469,7 +469,7 @@ python-versions = "*"
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -477,7 +477,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "snowballstemmer"
 version = "2.2.0"
 description = "This package provides 29 stemmers for 28 languages generated from Snowball algorithms."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -493,7 +493,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "tomli"
 version = "1.2.2"
 description = "A lil' TOML parser"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -501,7 +501,7 @@ python-versions = ">=3.6"
 name = "typed-ast"
 version = "1.4.3"
 description = "a fork of Python 2 and 3 ast modules with type comment support"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -533,7 +533,7 @@ python-versions = ">=3.6"
 name = "virtualenv"
 version = "20.10.0"
 description = "Virtual Python Environment builder"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
@@ -553,7 +553,7 @@ testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", 
 name = "wrapt"
 version = "1.13.3"
 description = "Module for decorators, wrappers and monkey patching."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
@@ -570,16 +570,16 @@ docs = ["sphinx", "jaraco.packaging (>=8.2)", "rst.linker (>=1.9)"]
 testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-cov", "pytest-enabler (>=1.0.1)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
 
 [extras]
-all = []
-format = []
-lint = []
-test = []
-typecheck = []
+all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "pytest-dotenv", "pytest-mock", "mypy", "pylint", "pycodestyle", "pydocstyle"]
+format = ["black", "isort", "pre-commit"]
+lint = ["pylint", "pycodestyle", "pydocstyle"]
+test = ["pytest", "coverage", "pytest-cov", "pytest-dotenv", "pytest-mock"]
+typecheck = ["mypy"]
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.0"
-content-hash = "bd639065cf003406fd14a6bd23df5b293609e36f66850af3ae709adc8be194c1"
+content-hash = "b9ee6a883dff8f4f100ba7cbf06550acca525246dac24339990fa4df201bf8e3"
 
 [metadata.files]
 astroid = [
