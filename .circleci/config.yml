@@ -136,14 +136,14 @@ jobs: # A basic unit of work in a run
       - run:
           name: Check if current version has been released
           command: |
-            echo "export VERSION=$(poetry version -s)" >> $BASH_ENV
+            VERSION=$(poetry version -s)
             if [[ $(gh release view $VERSION >/dev/null 2>&1; echo $?) -eq 0 ]]; then
               echo "Tag '$VERSION' already exists. Skipping."
               circleci-agent step halt
             fi
       - run:
           name: Create a release
-          command: gh release create $VERSION -F CHANGELOG.md
+          command: gh release create $(poetry version -s) -F CHANGELOG.md
 
 workflows:
   version: 2
