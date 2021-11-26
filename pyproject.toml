@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "delfino"
-version = "0.7.0"
+version = "0.7.1"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"
@@ -16,6 +16,18 @@ python = "^3.7.0"
 toml = "^0.10.2"
 click = "^8.0.3"
 pydantic = "^1.8.2"
+black = {version = "*", optional = true}
+isort = {version = "*", optional = true}
+pre-commit = {version = "*", optional = true}
+pytest = {version = "*", optional = true}
+coverage = {version = "*", optional = true}
+pytest-cov = {version = "*", optional = true}
+pytest-dotenv = {version = "*", optional = true}
+pytest-mock = {version = "*", optional = true}
+mypy = {version = "*", optional = true}
+pylint = {version = "*", optional = true}
+pycodestyle = {version = "*", optional = true}
+pydocstyle = {version = "*", optional = true}
 
 
 [tool.poetry.dev-dependencies]

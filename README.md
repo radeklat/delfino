@@ -37,6 +37,25 @@ TODO
 
 <!--
 
+## Minimal plugin
+
+```python
+import click
+
+from delfino.contexts import pass_app_context, AppContext
+
+
+@click.command()
+@pass_app_context
+def plugin_test(app_context: AppContext):
+    """Tests commands placed in the `commands` folder are loaded."""
+    print(app_context.py_project_toml.tool.delfino.plugins)
+```
+
+ -->
+
+<!--
+
 # Install completions
 
 Based on [Click documentation](https://click.palletsprojects.com/en/8.0.x/shell-completion/?highlight=completions#enabling-completion) and Invoke implementation of dynamic completion:

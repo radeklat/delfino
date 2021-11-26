@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.7.1] - 2021-11-26
+
+### Fixed
+
+- Missing optional requirements.
+
 ## [0.7.0] - 2021-11-26
 
 ### Changed
@@ -77,7 +83,8 @@ Types of changes are:
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.7.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.7.1...HEAD
+[0.7.1]: https://github.com/radeklat/settings-doc/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/radeklat/settings-doc/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/radeklat/settings-doc/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/radeklat/settings-doc/compare/0.4.0...0.5.0
