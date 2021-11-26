@@ -579,7 +579,7 @@ typecheck = ["mypy"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.0"
-content-hash = "b9ee6a883dff8f4f100ba7cbf06550acca525246dac24339990fa4df201bf8e3"
+content-hash = "2d37b7d9bc1a7aba9b036ba29387ff6ec465edffb749276c8bae51119def9a82"
 
 [metadata.files]
 astroid = [
