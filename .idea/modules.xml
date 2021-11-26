@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/rads-toolbox.iml" filepath="$PROJECT_DIR$/.idea/rads-toolbox.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/delfino.iml" filepath="$PROJECT_DIR$/.idea/delfino.iml" />
     </modules>
   </component>
 </project>

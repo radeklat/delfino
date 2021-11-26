@@ -2,10 +2,10 @@
 
 import click
 
-from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.execution import OnError, run
-from rads_toolbox.terminal_output import print_header
-from rads_toolbox.utils import ArgsList, ensure_reports_dir
+from delfino.contexts import AppContext, pass_app_context
+from delfino.execution import OnError, run
+from delfino.terminal_output import print_header
+from delfino.utils import ArgsList, ensure_reports_dir
 
 
 @click.command()
@@ -18,10 +18,10 @@ def typecheck(app_context: AppContext, summary_only: bool):
     """
     print_header("RUNNING TYPE CHECKER", icon="🔠")
 
-    toolbox = app_context.py_project_toml.tool.toolbox
-    reports_file = toolbox.reports_directory / "typecheck" / "junit.xml"
+    delfino = app_context.py_project_toml.tool.delfino
+    reports_file = delfino.reports_directory / "typecheck" / "junit.xml"
 
-    ensure_reports_dir(toolbox)
+    ensure_reports_dir(delfino)
 
     args: ArgsList = [
         "mypy",
@@ -35,11 +35,11 @@ def typecheck(app_context: AppContext, summary_only: bool):
         "silent",
         "--junit-xml",
         reports_file,
-        toolbox.sources_directory,
-        toolbox.tests_directory,
+        delfino.sources_directory,
+        delfino.tests_directory,
     ]
 
     if summary_only:
         args.extend(["|", "tail", "-n", "1"])
 
-    run(args, env_update_path={"MYPYPATH": toolbox.sources_directory}, shell=summary_only, on_error=OnError.ABORT)
+    run(args, env_update_path={"MYPYPATH": delfino.sources_directory}, shell=summary_only, on_error=OnError.ABORT)

@@ -1,4 +1,4 @@
-from rads_toolbox.main import main
+from delfino.main import main
 
 
 class TestProject:

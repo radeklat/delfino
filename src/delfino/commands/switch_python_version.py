@@ -2,10 +2,10 @@ from subprocess import PIPE
 
 import click
 
-from rads_toolbox.constants import PackageManager
-from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.execution import OnError, run
-from rads_toolbox.terminal_output import print_header
+from delfino.constants import PackageManager
+from delfino.contexts import AppContext, pass_app_context
+from delfino.execution import OnError, run
+from delfino.terminal_output import print_header
 
 
 @click.command()

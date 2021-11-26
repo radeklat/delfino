@@ -6,10 +6,10 @@ orbs:
 parameters:
   project_name:
     type: string
-    default: rads-toolbox
+    default: delfino
   working_directory:
     type: string
-    default: ~/rads_toolbox
+    default: ~/delfino
   python_version:
     type: string
     default: "3.7"
@@ -21,7 +21,7 @@ parameters:
     default: "main"
   command_prefix:
     type: string
-    default: "poetry run python src/rads_toolbox/main.py"
+    default: "poetry run python src/delfino/main.py"
 
 jobs: # A basic unit of work in a run
   test:

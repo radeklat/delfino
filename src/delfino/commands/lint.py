@@ -6,10 +6,10 @@ from typing import List
 
 import click
 
-from rads_toolbox.contexts import AppContext, pass_app_context
-from rads_toolbox.execution import OnError, run
-from rads_toolbox.terminal_output import print_header, print_no_issues_found
-from rads_toolbox.utils import command_names
+from delfino.contexts import AppContext, pass_app_context
+from delfino.execution import OnError, run
+from delfino.terminal_output import print_header, print_no_issues_found
+from delfino.utils import command_names
 
 
 @click.command()
@@ -22,10 +22,10 @@ def lint_pydocstyle(app_context: AppContext):
     with a few exceptions. Note that pylint also carries out additional documentation
     style checks.
     """
-    toolbox = app_context.py_project_toml.tool.toolbox
+    delfino = app_context.py_project_toml.tool.delfino
     print_header("documentation style", level=2)
 
-    run(["pydocstyle", toolbox.sources_directory], stdout=PIPE, on_error=OnError.ABORT)
+    run(["pydocstyle", delfino.sources_directory], stdout=PIPE, on_error=OnError.ABORT)
 
     print_no_issues_found()
 
@@ -40,10 +40,10 @@ def lint_pycodestyle(app_context: AppContext):
     Why pycodestyle and pylint? So far, pylint does not check against every convention in PEP8. As pylint's
     functionality grows, we should move all PEP8 checking to pylint and remove pycodestyle.
     """
-    toolbox = app_context.py_project_toml.tool.toolbox
+    delfino = app_context.py_project_toml.tool.delfino
     print_header("code style (PEP8)", level=2)
 
-    dirs = [toolbox.sources_directory, toolbox.tests_directory]
+    dirs = [delfino.sources_directory, delfino.tests_directory]
 
     # TODO(Radek): Implement unofficial config support in pyproject.toml by parsing it
     #  and outputting the result into a supported format?
@@ -85,12 +85,12 @@ def lint_pylint(app_context: AppContext):
     found in the `.pylintrc` file.
     """
     print_header("pylint", level=2)
-    toolbox = app_context.py_project_toml.tool.toolbox
+    delfino = app_context.py_project_toml.tool.delfino
 
-    run_pylint([toolbox.sources_directory], app_context.project_root)
+    run_pylint([delfino.sources_directory], app_context.project_root)
 
-    if toolbox.tests_directory:
-        run_pylint([toolbox.tests_directory], toolbox.tests_directory)
+    if delfino.tests_directory:
+        run_pylint([delfino.tests_directory], delfino.tests_directory)
 
 
 _COMMANDS = [lint_pylint, lint_pycodestyle, lint_pydocstyle]

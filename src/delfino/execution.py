@@ -6,7 +6,7 @@ from typing import Any, Dict
 
 import click
 
-from rads_toolbox.utils import ArgsType
+from delfino.utils import ArgsType
 
 
 class OnError(Enum):
