@@ -100,3 +100,11 @@ def run(
         return subprocess.run(args, *popenargs, check=on_error != OnError.PASS, **kwargs)
     except subprocess.CalledProcessError as exc:
         raise _called_process_error_to_click_exception(args, on_error, exc) from exc
+
+
+def pip_package_installed(name: str) -> bool:
+    result = run(
+        f"pip show -q {name}", stdout=subprocess.PIPE, stderr=subprocess.PIPE, on_error=OnError.PASS, shell=True
+    )
+
+    return result.returncode == 0
