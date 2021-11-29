@@ -65,7 +65,7 @@ def build_docker(app_context: AppContext, push: bool):
     project_version = poetry.version
 
     python_version = Version(poetry.dependencies["python"].strip("<>=~^"))
-    flags.extend(["--build-arg", f"PYTHON_VERSION='{python_version.major}.{python_version.minor}'"])
+    flags.extend(["--build-arg", f"PYTHON_VERSION={python_version.major}.{python_version.minor}"])
 
     dockerhub = delfino.dockerhub
     flags.extend(["--platform", ",".join(dockerhub.build_for_platforms)])
