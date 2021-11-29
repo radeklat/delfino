@@ -14,6 +14,32 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.8.0] - 2021-11-29
+
+### Added
+
+- Command `upload-to-pypi` to push packages to Pypi using `twine`.
+- `tool.delfino.disable_commands` option in `pyproject.toml` to disable commands not needed in the current project.
+
+#### Command `build-docker`
+
+To build and push multi-platform docker images.
+Requires `tool.delfino.dockerhub` defined in `pyproject.toml`. Example:
+
+```toml
+username = "radeklat"
+build_for_platforms = [
+    "linux/amd64",
+    "linux/arm64",
+    "linux/arm/v7",
+]
+```
+
+#### Validation support
+
+Commands can raise `AssertionError` exceptions to tell `delfino` some pre-conditions haven't been met. It will be automatically translated into a `click.exceptions.Exit` exception and the exception string will be printed with the command name that has caused it.
+
+
 ## [0.7.1] - 2021-11-26
 
 ### Fixed
@@ -83,7 +109,8 @@ Types of changes are:
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.7.1...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.8.0...HEAD
+[0.8.0]: https://github.com/radeklat/settings-doc/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/radeklat/settings-doc/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/radeklat/settings-doc/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/radeklat/settings-doc/compare/0.5.0...0.6.0

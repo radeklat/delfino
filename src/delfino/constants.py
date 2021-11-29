@@ -1,7 +1,7 @@
 from enum import Enum
 
 ENTRY_POINT: str = "delfino"
-PYPROJECT_TOML = "pyproject.toml"
+PYPROJECT_TOML_FILENAME = "pyproject.toml"
 
 
 class PackageManager(Enum):

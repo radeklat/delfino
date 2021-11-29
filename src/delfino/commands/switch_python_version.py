@@ -4,7 +4,7 @@ import click
 
 from delfino.constants import PackageManager
 from delfino.contexts import AppContext, pass_app_context
-from delfino.execution import OnError, run
+from delfino.execution import OnError, pip_package_installed, run
 from delfino.terminal_output import print_header
 
 
@@ -65,9 +65,7 @@ def switch_python_version(app_context: AppContext, version: str):
 
     click.secho(f"✔ Detected {package_manager.value.capitalize()} package manager.\n", fg="green")
 
-    if run(
-        f"pip show -q {package_manager.value}", stdout=PIPE, stderr=PIPE, on_error=OnError.PASS, shell=True
-    ).returncode:
+    if not pip_package_installed(package_manager.value):
         click.secho(f"⚠ {package_manager.value.capitalize()} is not installed. Installing ...\n", fg="yellow")
         run(f"pip install {package_manager.value}", stdout=PIPE, stderr=PIPE, on_error=OnError.EXIT)
     else:
