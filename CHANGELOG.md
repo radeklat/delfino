@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.8.1] - 2021-11-29
+
+### Fixed
+
+- `build-docker` passing Python version to the build incorrectly.
+
 ## [0.8.0] - 2021-11-29
 
 ### Added
@@ -109,7 +115,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.8.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.8.1...HEAD
+[0.8.1]: https://github.com/radeklat/settings-doc/compare/0.8.0...0.8.1
 [0.8.0]: https://github.com/radeklat/settings-doc/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/radeklat/settings-doc/compare/0.7.0...0.7.1
 [0.7.0]: https://github.com/radeklat/settings-doc/compare/0.6.0...0.7.0
