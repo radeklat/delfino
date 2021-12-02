@@ -1,10 +1,10 @@
 import click
 
+from delfino.click_utils import command_names
 from delfino.commands.format import run_format
 from delfino.commands.lint import lint
 from delfino.commands.test import test_all
 from delfino.commands.typecheck import typecheck
-from delfino.utils import command_names
 
 _COMMANDS = [run_format, lint, typecheck, test_all]
 

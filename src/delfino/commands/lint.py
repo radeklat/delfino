@@ -6,10 +6,11 @@ from typing import List
 
 import click
 
+from delfino.click_utils import command_names
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, print_no_issues_found
-from delfino.utils import command_names
+from delfino.validation import assert_pip_package_installed
 
 
 @click.command()
@@ -22,7 +23,9 @@ def lint_pydocstyle(app_context: AppContext):
     with a few exceptions. Note that pylint also carries out additional documentation
     style checks.
     """
-    delfino = app_context.py_project_toml.tool.delfino
+    assert_pip_package_installed("pydocstyle")
+
+    delfino = app_context.pyproject_toml.tool.delfino
     print_header("documentation style", level=2)
 
     run(["pydocstyle", delfino.sources_directory], stdout=PIPE, on_error=OnError.ABORT)
@@ -40,7 +43,9 @@ def lint_pycodestyle(app_context: AppContext):
     Why pycodestyle and pylint? So far, pylint does not check against every convention in PEP8. As pylint's
     functionality grows, we should move all PEP8 checking to pylint and remove pycodestyle.
     """
-    delfino = app_context.py_project_toml.tool.delfino
+    assert_pip_package_installed("pycodestyle")
+
+    delfino = app_context.pyproject_toml.tool.delfino
     print_header("code style (PEP8)", level=2)
 
     dirs = [delfino.sources_directory, delfino.tests_directory]
@@ -84,8 +89,10 @@ def lint_pylint(app_context: AppContext):
     The bulk of our code conventions are enforced via pylint. The pylint config can be
     found in the `.pylintrc` file.
     """
+    assert_pip_package_installed("pylint")
+
     print_header("pylint", level=2)
-    delfino = app_context.py_project_toml.tool.delfino
+    delfino = app_context.pyproject_toml.tool.delfino
 
     run_pylint([delfino.sources_directory], app_context.project_root)
 

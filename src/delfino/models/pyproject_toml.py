@@ -5,15 +5,15 @@ from pydantic import BaseModel, Extra, Field
 
 
 class Dockerhub(BaseModel):
-    build_for_platforms: List[str] = Field(..., min_items=1)
+    build_for_platforms: List[str] = Field(["linux/amd64", "linux/arm64", "linux/arm/v7"], min_items=1)
     username: str
 
 
 class Delfino(BaseModel):
-    sources_directory: Path
-    tests_directory: Path
-    reports_directory: Path
-    test_types: List[str]
+    sources_directory: Path = Path("src")
+    tests_directory: Path = Path("tests")
+    reports_directory: Path = Path("reports")
+    test_types: List[str] = ["unit", "integration"]
     disable_commands: Set[str] = Field(default_factory=set)
 
     dockerhub: Optional[Dockerhub] = None

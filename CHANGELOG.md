@@ -14,6 +14,27 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.9.0] - 2021-12-02
+
+### Added
+
+- Checks if optional Python packages in commands are installed.
+- `-h` option as an alias for `--help` everywhere.
+
+### Changed
+
+- Styling of disabled commands in help text.
+- Rename `contexts.AppContext.py_project_toml` to `pyproject_toml`.
+
+### Removed
+
+- Dependency on `pytest-dotenv` and `pytest-mock` as they are not required by any of the commands.
+
+### Fixed
+
+- Unhandled exception when unknown command used in command line.
+- Auto-complete failing when `pyproject.toml` is not in the current working directory or is missing required fields.
+
 ## [0.8.1] - 2021-11-29
 
 ### Fixed
@@ -115,7 +136,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.8.1...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.9.0...HEAD
+[0.9.0]: https://github.com/radeklat/settings-doc/compare/0.8.1...0.9.0
 [0.8.1]: https://github.com/radeklat/settings-doc/compare/0.8.0...0.8.1
 [0.8.0]: https://github.com/radeklat/settings-doc/compare/0.7.1...0.8.0
 [0.7.1]: https://github.com/radeklat/settings-doc/compare/0.7.0...0.7.1

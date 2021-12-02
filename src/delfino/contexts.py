@@ -9,7 +9,7 @@ from delfino.models.pyproject_toml import PyprojectToml
 
 class AppContext(BaseModel):
     project_root: Path
-    py_project_toml: PyprojectToml
+    pyproject_toml: PyprojectToml
     package_manager: PackageManager
 
     class Config:
