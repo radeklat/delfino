@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "delfino"
-version = "0.8.1"
+version = "0.9.0"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"
@@ -16,14 +16,13 @@ python = "^3.7.0"
 toml = "^0.10.2"
 click = "^8.0.3"
 pydantic = "^1.8.2"
+importlib-metadata = {version = "*", python = "<3.8"}
 black = {version = "*", optional = true}
 isort = {version = "*", optional = true}
 pre-commit = {version = "*", optional = true}
 pytest = {version = "*", optional = true}
 coverage = {version = "*", optional = true}
 pytest-cov = {version = "*", optional = true}
-pytest-dotenv = {version = "*", optional = true}
-pytest-mock = {version = "*", optional = true}
 mypy = {version = "*", optional = true}
 pylint = {version = "*", optional = true}
 pycodestyle = {version = "*", optional = true}
@@ -48,10 +47,10 @@ types-termcolor = "*"
 types-toml = "*"
 
 [tool.poetry.extras]
-all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "pytest-dotenv", "pytest-mock", "mypy", "pylint", "pycodestyle", "pydocstyle", "twine", "packaging"]
-verify_all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "pytest-dotenv", "pytest-mock", "mypy", "pylint", "pycodestyle", "pydocstyle"]
+all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "mypy", "pylint", "pycodestyle", "pydocstyle", "twine", "packaging"]
+verify_all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "mypy", "pylint", "pycodestyle", "pydocstyle"]
 format = ["black", "isort", "pre-commit"]
-test = ["pytest", "coverage", "pytest-cov", "pytest-dotenv", "pytest-mock"]
+test = ["pytest", "coverage", "pytest-cov"]
 typecheck = ["mypy"]
 lint = ["pylint", "pycodestyle", "pydocstyle"]
 upload_to_pypi = ["twine"]

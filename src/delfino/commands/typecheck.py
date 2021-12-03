@@ -6,6 +6,7 @@ from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header
 from delfino.utils import ArgsList, ensure_reports_dir
+from delfino.validation import assert_pip_package_installed
 
 
 @click.command()
@@ -16,9 +17,11 @@ def typecheck(app_context: AppContext, summary_only: bool):
 
     A non-zero return code from this task indicates invalid types were discovered.
     """
+    assert_pip_package_installed("mypy")
+
     print_header("RUNNING TYPE CHECKER", icon="🔠")
 
-    delfino = app_context.py_project_toml.tool.delfino
+    delfino = app_context.pyproject_toml.tool.delfino
     reports_file = delfino.reports_directory / "typecheck" / "junit.xml"
 
     ensure_reports_dir(delfino)

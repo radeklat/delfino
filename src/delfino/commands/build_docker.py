@@ -45,7 +45,7 @@ def _install_emulators(build_for_platforms: List[str]) -> None:
 @pass_app_context
 def build_docker(app_context: AppContext, push: bool):
     """Build and push a docker image."""
-    delfino = app_context.py_project_toml.tool.delfino
+    delfino = app_context.pyproject_toml.tool.delfino
     dockerfile = Path("Dockerfile")
 
     assert (
@@ -53,14 +53,14 @@ def build_docker(app_context: AppContext, push: bool):
     ), f"Only the '{PackageManager.POETRY.value}' package manager is supported by this command."
     assert_pip_package_installed("packaging")
     assert dockerfile.exists() and dockerfile.is_file(), "File 'Dockerfile' not found but required by this command."
-    assert app_context.py_project_toml.tool.poetry, pyproject_toml_key_missing("tool.poetry")
+    assert app_context.pyproject_toml.tool.poetry, pyproject_toml_key_missing("tool.poetry")
     assert delfino.dockerhub, pyproject_toml_key_missing("tool.delfino.dockerhub")
 
     print_header("Running Docker build")
 
     flags: ArgsList = []
 
-    poetry = app_context.py_project_toml.tool.poetry
+    poetry = app_context.pyproject_toml.tool.poetry
     project_name = poetry.name
     project_version = poetry.version
 

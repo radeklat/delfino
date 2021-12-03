@@ -8,10 +8,11 @@ import toml
 from pydantic import ValidationError
 
 from delfino import commands
+from delfino.click_utils import extended_help_option, find_commands
 from delfino.constants import ENTRY_POINT, PYPROJECT_TOML_FILENAME
 from delfino.contexts import AppContext
 from delfino.models.pyproject_toml import PyprojectToml
-from delfino.utils import find_commands, get_package_manager
+from delfino.utils import get_package_manager
 
 
 class Commands(click.MultiCommand):
@@ -38,6 +39,9 @@ class Commands(click.MultiCommand):
         self._plugins.update(find_commands("commands", required=False))
         self._plugins.update(find_commands("tasks", required=False, new_name="commands"))
 
+        for name, cmd in list(self._plugins.items()):
+            self._plugins[name] = extended_help_option(cmd)
+
     def list_commands(self, ctx: click.Context) -> List[str]:
         """Override to hide commands marked as hidden in the ``pyproject.toml`` file."""
         del ctx
@@ -45,17 +49,22 @@ class Commands(click.MultiCommand):
 
     def get_command(self, ctx: click.Context, cmd_name: str) -> Optional[click.Command]:
         """Override to give all commands a common ``AppContext`` or fail if ``pyproject.toml`` is broken/missing."""
+        cmd = self._plugins.get(cmd_name, None)
+
+        if ctx.resilient_parsing:  # do not fail on auto-completion
+            return cmd
+
         if isinstance(self._pyproject_toml, Exception):
             click.secho(f"Delfino appears to be misconfigured: {self._pyproject_toml}", fg="red", err=True)
             raise click.Abort() from self._pyproject_toml
 
         ctx.obj = AppContext(
             project_root=self._project_root,
-            py_project_toml=self._pyproject_toml,
+            pyproject_toml=self._pyproject_toml,
             package_manager=get_package_manager(self._project_root, self._pyproject_toml),
         )
 
-        return self._plugins[cmd_name]
+        return cmd
 
     def invoke(self, ctx: click.Context) -> Any:
         """Override to turn ``AssertionError`` exception into ``click.exceptions.Exit``."""
@@ -69,20 +78,22 @@ class Commands(click.MultiCommand):
         help_str = super().get_help(*args, **kwargs)
 
         if self._hidden_plugins:
-            help_str += (
+            help_str += click.style(
                 f"\n\nDisabled command{'s' if len(self._hidden_plugins) > 1 else ''}: "
                 + ", ".join(sorted(self._hidden_plugins))
-                + f" (see 'tool.{ENTRY_POINT}.disable_commands' in '{PYPROJECT_TOML_FILENAME}')"
+                + f" (see 'tool.{ENTRY_POINT}.disable_commands' in '{PYPROJECT_TOML_FILENAME}')",
+                fg="white",
             )
 
         return help_str
 
 
-# @click.group(cls=Commands)
-# def main():
-#     context = click.get_current_context()
+@click.group(cls=Commands)
+@click.version_option()
+@extended_help_option
+def main():
+    pass
 
-main = Commands()
 
 if __name__ == "__main__":
     main()

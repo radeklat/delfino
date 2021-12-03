@@ -5,6 +5,7 @@ import click
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, run_command_example
+from delfino.validation import assert_pip_package_installed
 
 
 def _check_result(app_context: AppContext, result: CompletedProcess, check: bool, msg: str):
@@ -28,10 +29,14 @@ def _check_result(app_context: AppContext, result: CompletedProcess, check: bool
 @pass_app_context
 def run_format(app_context: AppContext, check: bool, quiet: bool):
     """Runs black code formatter and isort on source code."""
+    assert_pip_package_installed("pre-commit")
+    assert_pip_package_installed("isort")
+    assert_pip_package_installed("black")
+
     # ensure pre-commit is installed
     run("pre-commit install", stdout=PIPE, on_error=OnError.EXIT)
 
-    delfino = app_context.py_project_toml.tool.delfino
+    delfino = app_context.pyproject_toml.tool.delfino
     dirs = [delfino.sources_directory, delfino.tests_directory]
     flags = []
 

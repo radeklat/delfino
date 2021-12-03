@@ -12,11 +12,16 @@ from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, run_command_example
 from delfino.utils import ensure_reports_dir
+from delfino.validation import assert_pip_package_installed
 
 
 def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) -> None:
     """Execute the tests for a given test type."""
-    delfino = app_context.py_project_toml.tool.delfino
+    assert_pip_package_installed("pytest")
+    assert_pip_package_installed("pytest-cov")
+    assert_pip_package_installed("coverage")
+
+    delfino = app_context.pyproject_toml.tool.delfino
 
     if name not in delfino.test_types or not delfino.tests_directory:
         return
@@ -77,8 +82,10 @@ def coverage_report(app_context: AppContext):
 
     Combines all test types.
     """
+    assert_pip_package_installed("coverage")
+
     print_header("Generating coverage report", icon="📃")
-    delfino = app_context.py_project_toml.tool.delfino
+    delfino = app_context.pyproject_toml.tool.delfino
     ensure_reports_dir(delfino)
 
     coverage_dat_combined = delfino.reports_directory / "coverage.dat"
@@ -124,7 +131,7 @@ def test_all(click_context: click.Context):
 @click.command(help="Open coverage results in default browser.")
 @pass_app_context
 def coverage_open(app_context: AppContext):
-    report_index = app_context.py_project_toml.tool.delfino.reports_directory / "coverage-report" / "index.html"
+    report_index = app_context.pyproject_toml.tool.delfino.reports_directory / "coverage-report" / "index.html"
     if not report_index.exists():
         click.secho(
             f"Could not find coverage report '{report_index}'. Ensure that the report has been built.\n"
