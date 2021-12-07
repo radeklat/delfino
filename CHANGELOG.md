@@ -14,6 +14,13 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.10.0] - 2021-12-07
+
+### Added
+
+- `--show-completion` and `--install-completion` root parameters. Currently, only Bash is supported.
+- Optional dependency `completion` to install `shellingham`, required by the new parameters.
+
 ## [0.9.0] - 2021-12-02
 
 ### Added
@@ -136,7 +143,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.9.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.10.0...HEAD
+[0.10.0]: https://github.com/radeklat/settings-doc/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/radeklat/settings-doc/compare/0.8.1...0.9.0
 [0.8.1]: https://github.com/radeklat/settings-doc/compare/0.8.0...0.8.1
 [0.8.0]: https://github.com/radeklat/settings-doc/compare/0.7.1...0.8.0

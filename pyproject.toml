@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "delfino"
-version = "0.9.0"
+version = "0.10.0"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"
@@ -28,6 +28,7 @@ pylint = {version = "*", optional = true}
 pycodestyle = {version = "*", optional = true}
 pydocstyle = {version = "*", optional = true}
 twine = {version = "*", optional = true}
+shellingham = {version = "*", optional = true}
 
 
 [tool.poetry.dev-dependencies]
@@ -43,11 +44,12 @@ pytest-mock = "^3.6.1"
 pre-commit = "^2.15.0"
 pycodestyle = "^2.8.0"
 pydocstyle = "^6.1.1"
+shellingham = "^1.4.0"
 types-termcolor = "*"
 types-toml = "*"
 
 [tool.poetry.extras]
-all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "mypy", "pylint", "pycodestyle", "pydocstyle", "twine", "packaging"]
+all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "mypy", "pylint", "pycodestyle", "pydocstyle", "twine", "packaging", "shellingham"]
 verify_all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "mypy", "pylint", "pycodestyle", "pydocstyle"]
 format = ["black", "isort", "pre-commit"]
 test = ["pytest", "coverage", "pytest-cov"]
@@ -55,6 +57,7 @@ typecheck = ["mypy"]
 lint = ["pylint", "pycodestyle", "pydocstyle"]
 upload_to_pypi = ["twine"]
 build_docker = ["packaging"]
+completion = ["shellingham"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -119,6 +122,7 @@ follow_imports = "silent"
 module = [
     "invoke.*",
     "pipenv.*",
+    "shellingham.*",
 ]
 ignore_missing_imports = true
 

@@ -6,7 +6,7 @@ from typing import List
 
 import click
 
-from delfino.click_utils import command_names
+from delfino.click_utils.command import command_names
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, print_no_issues_found

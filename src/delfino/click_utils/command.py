@@ -1,6 +1,6 @@
 from importlib import import_module, resources
 from importlib.resources import Package
-from typing import Dict, List, Union
+from typing import Dict, List
 
 import click
 
@@ -41,23 +41,3 @@ def find_commands(package: Package, *, required: bool, new_name: str = "") -> Di
         click.secho(f"⚠ Plugin module '{package}' is deprecated. Please use '{new_name}' instead.", fg="yellow")
 
     return commands
-
-
-def _print_help(ctx: click.Context, param: Union[click.Option, click.Parameter], value: bool):
-    del param
-    if not value or ctx.resilient_parsing:
-        return
-    click.echo(ctx.get_help())
-    ctx.exit()
-
-
-extended_help_option = click.option(
-    "-h",
-    "--help",
-    is_flag=True,
-    expose_value=False,
-    is_eager=True,
-    callback=_print_help,
-    help="Show this message and exit.",
-)
-"""Adds ``-h`` alongside the built-in ``--help`` option."""

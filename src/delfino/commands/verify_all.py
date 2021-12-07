@@ -1,6 +1,6 @@
 import click
 
-from delfino.click_utils import command_names
+from delfino.click_utils.command import command_names
 from delfino.commands.format import run_format
 from delfino.commands.lint import lint
 from delfino.commands.test import test_all
