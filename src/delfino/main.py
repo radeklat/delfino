@@ -8,7 +8,9 @@ import toml
 from pydantic import ValidationError
 
 from delfino import commands
-from delfino.click_utils import extended_help_option, find_commands
+from delfino.click_utils.command import find_commands
+from delfino.click_utils.completion import install_completion_option, show_completion_option
+from delfino.click_utils.help import extended_help_option
 from delfino.constants import ENTRY_POINT, PYPROJECT_TOML_FILENAME
 from delfino.contexts import AppContext
 from delfino.models.pyproject_toml import PyprojectToml
@@ -89,8 +91,10 @@ class Commands(click.MultiCommand):
 
 
 @click.group(cls=Commands)
-@click.version_option()
 @extended_help_option
+@click.version_option()
+@show_completion_option
+@install_completion_option
 def main():
     pass
 

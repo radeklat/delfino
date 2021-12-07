@@ -43,6 +43,8 @@ Each project may use different sub-set of commands. Therefore, dependencies of a
 
 Using `[all]` installs all the [optional dependencies](https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies) used by all the built-in commands. If you want only a sub-set of those dependencies, there are finer-grained groups available:
 
+- For top-level parameters:
+  - `completion` - for `--show-completion` and `--install-completion`
 - For individual commands (matches the command names):
   - `upload_to_pypi`
   - `build_docker`
@@ -82,61 +84,23 @@ Run `delfino --help` to see all available commands and their usage.
 
 ## Auto-completion
 
-<!--
-Based on [Click documentation](https://click.palletsprojects.com/en/8.0.x/shell-completion/?highlight=completions#enabling-completion) and Invoke implementation of dynamic completion:
+You can either attempt to install completions automatically with:
 
-```bash
-# Invoke tab-completion script to be sourced with Bash shell.
-# Known to work on Bash 3.x, untested on 4.x.
-
-_complete_invoke() {
-    local candidates
-
-    # COMP_WORDS contains the entire command string up til now (including
-    # program name).
-    # We hand it to Invoke so it can figure out the current context: spit back
-    # core options, task names, the current task's options, or some combo.
-    candidates=`invoke --complete -- ${COMP_WORDS[*]}`
-
-    # `compgen -W` takes list of valid options & a partial word & spits back
-    # possible matches. Necessary for any partial word completions (vs
-    # completions performed when no partial words are present).
-    #
-    # $2 is the current word or token being tabbed on, either empty string or a
-    # partial word, and thus wants to be compgen'd to arrive at some subset of
-    # our candidate list which actually matches.
-    #
-    # COMPREPLY is the list of valid completions handed back to `complete`.
-    COMPREPLY=( $(compgen -W "${candidates}" -- $2) )
-}
-
-
-# Tell shell builtin to use the above for completing our invocations.
-# * -F: use given function name to generate completions.
-# * -o default: when function generates no results, use filenames.
-# * positional args: program names to complete for.
-complete -F _complete_invoke -o default invoke inv
+```shell script
+delfino --install-completion
 ```
--->
+
+or generate it with:
+
+```shell script
+delfino --show-completion
+```
+
+and manually put it in the relevant RC file.
 
 The auto-completion implementation is dynamic so that every time it is invoked, it uses the current project. Each project can have different plugins or disable certain commands it doesn't use. And dynamic auto-completion makes sure only the currently available commands will be suggested.
 
 The downside of this approach is that evaluating what is available each time is slower than a static list of commands.
-
-### Bash
-
-Put the following code into your `~/.bashrc`:
-
-```bash
-_complete_delfino() {
-    eval "$(_DELFINO_COMPLETE=bash_source delfino)";
-}
-complete -F _complete_delfino -o default invoke delfino
-```
-
-### Zsh
-
-TODO
 
 # Development
 
