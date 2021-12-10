@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.11.0] - 2021-12-10
+
+### Changed
+
+- Completion scripts are generated into a separate file.
+
 ## [0.10.0] - 2021-12-07
 
 ### Added
@@ -143,7 +149,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.10.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.11.0...HEAD
+[0.11.0]: https://github.com/radeklat/settings-doc/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/radeklat/settings-doc/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/radeklat/settings-doc/compare/0.8.1...0.9.0
 [0.8.1]: https://github.com/radeklat/settings-doc/compare/0.8.0...0.8.1

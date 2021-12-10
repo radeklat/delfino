@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "delfino"
-version = "0.10.0"
+version = "0.11.0"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"

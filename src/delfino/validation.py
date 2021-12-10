@@ -26,7 +26,7 @@ def pip_package_installed(name: str, sub_process: bool = False) -> bool:
     return True
 
 
-def assert_pip_package_installed(name: str):
+def assert_pip_package_installed(name: str, required_by: str = "this command"):
     assert pip_package_installed(
         name
-    ), f"Optional Python package '{name}' is required by this command but not installed."
+    ), f"Optional Python package '{name}' is required by {required_by} but not installed."
