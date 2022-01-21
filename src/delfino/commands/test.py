@@ -29,7 +29,7 @@ def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) ->
     print_header(f"️Running {name} tests️", icon="🔎🐛")
     ensure_reports_dir(delfino)
     run(
-        list
+        list(
             filter(
                 None,
                 [
@@ -44,9 +44,9 @@ def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) ->
                     str(maxfail),
                     "-s" if debug else None,
                     delfino.tests_directory / name,
-                ]
+                ],
             )
-        ],
+        ),
         env_update={"COVERAGE_FILE": delfino.reports_directory / f"coverage-{name}.dat"},
         on_error=OnError.ABORT,
     )
