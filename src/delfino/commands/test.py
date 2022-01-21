@@ -29,18 +29,23 @@ def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) ->
     print_header(f"️Running {name} tests️", icon="🔎🐛")
     ensure_reports_dir(delfino)
     run(
-        [
-            "pytest",
-            "--cov",
-            delfino.sources_directory,
-            "--cov-report",
-            f"xml:{delfino.reports_directory / f'coverage-{name}.xml'}",
-            "--cov-branch",
-            "-vv",
-            "--maxfail",
-            str(maxfail),
-            "-s" if debug else "",
-            delfino.tests_directory / name,
+        list
+            filter(
+                None,
+                [
+                    "pytest",
+                    "--cov",
+                    delfino.sources_directory,
+                    "--cov-report",
+                    f"xml:{delfino.reports_directory / f'coverage-{name}.xml'}",
+                    "--cov-branch",
+                    "-vv",
+                    "--maxfail",
+                    str(maxfail),
+                    "-s" if debug else None,
+                    delfino.tests_directory / name,
+                ]
+            )
         ],
         env_update={"COVERAGE_FILE": delfino.reports_directory / f"coverage-{name}.dat"},
         on_error=OnError.ABORT,
