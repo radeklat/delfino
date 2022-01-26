@@ -34,8 +34,10 @@ class Commands(click.MultiCommand):
         try:
             self._pyproject_toml = PyprojectToml(file_path=pyproject_toml_path, **toml.load(pyproject_toml_path))
             self._hidden_plugins = self._pyproject_toml.tool.delfino.disable_commands
-        except (FileNotFoundError, ValidationError) as exc:
+        except ValidationError as exc:
             self._pyproject_toml = exc
+        except FileNotFoundError:
+            self._pyproject_toml = PyprojectToml()
 
         self._plugins: Dict[str, click.Command] = find_commands(commands.__package__, required=True)
         self._plugins.update(find_commands("commands", required=False))

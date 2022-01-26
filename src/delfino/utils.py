@@ -1,8 +1,6 @@
 from pathlib import Path
 from typing import List, Union
 
-import click
-
 from delfino.constants import PackageManager
 from delfino.models.pyproject_toml import Delfino, PyprojectToml
 
@@ -16,13 +14,7 @@ def get_package_manager(project_root: Path, pyproject_toml: PyprojectToml) -> Pa
     if (project_root / "Pipfile").exists() or (project_root / "Pipfile.lock").exists():
         return PackageManager.PIPENV
 
-    click.secho(
-        "Cannot determine package manager used in this project. Only the following ones are supported: "
-        + ", ".join(member.value for member in PackageManager.__members__.values()),
-        fg="red",
-        err=True,
-    )
-    raise click.Abort()
+    return PackageManager.UNKNOWN
 
 
 def ensure_reports_dir(delfino: Delfino) -> None:

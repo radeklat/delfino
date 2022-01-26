@@ -3,7 +3,7 @@ import shutil
 
 import click
 
-from delfino.constants import ENTRY_POINT
+from delfino.constants import ENTRY_POINT, PackageManager
 from delfino.contexts import AppContext
 
 
@@ -30,4 +30,7 @@ def print_header(text: str, level: int = 1, icon: str = ""):
 
 
 def run_command_example(command: click.Command, app_context: AppContext) -> str:
-    return f"{app_context.package_manager.value} run {ENTRY_POINT} {command.name}"
+    prefix = ""
+    if app_context.package_manager != PackageManager.UNKNOWN:
+        prefix = f"{app_context.package_manager.value} run "
+    return f"{prefix}{ENTRY_POINT} {command.name}"

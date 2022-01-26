@@ -7,3 +7,4 @@ PYPROJECT_TOML_FILENAME = "pyproject.toml"
 class PackageManager(Enum):
     POETRY = "poetry"
     PIPENV = "pipenv"
+    UNKNOWN = "unknown"

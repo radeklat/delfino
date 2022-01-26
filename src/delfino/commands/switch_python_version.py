@@ -1,3 +1,4 @@
+from pathlib import Path
 from subprocess import PIPE
 
 import click
@@ -6,7 +7,7 @@ from delfino.constants import PackageManager
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header
-from delfino.validation import pip_package_installed
+from delfino.validation import assert_package_manager_is_known, pip_package_installed
 
 
 @click.command()
@@ -32,14 +33,16 @@ def switch_python_version(app_context: AppContext, version: str):
         key=lambda value: list(map(int, value.split("."))),  # sort numerically
     )
 
+    assert Path(".venv").exists(), "Folder '.venv'."
+
     for python_version in python_versions:
         if python_version.startswith(version):
             pyenv_python_version = python_version
-            click.secho(f"✔ Found pyenv Python version '{pyenv_python_version}'.\n", fg="green")
+            click.secho(f"✔ Found pyenv Python version '{pyenv_python_version}'.", fg="green")
 
     if not pyenv_python_version:
         available_python_versions = ", ".join(f"'{_}'" for _ in python_versions)
-        click.secho(f"❌ No pyenv Python version matching Python {version} found.\n", fg="red")
+        click.secho(f"❌ No pyenv Python version matching Python {version} found.", fg="red")
         print(
             f"Available versions: {available_python_versions}.\n"
             f"See all installable versions with:\n"
@@ -50,6 +53,7 @@ def switch_python_version(app_context: AppContext, version: str):
         raise click.Abort()
 
     package_manager = app_context.package_manager
+    assert_package_manager_is_known(package_manager)
     if package_manager == PackageManager.POETRY:
         install_command = "poetry install --no-root"
     elif package_manager == PackageManager.PIPENV:
@@ -58,18 +62,18 @@ def switch_python_version(app_context: AppContext, version: str):
         click.secho("No compatible package manager detected. Skipping package installation.", fg="red", err=True)
         raise click.Abort()
 
-    click.secho("ℹ Removing current virtualenv ...\n", fg="blue")
+    click.secho("ℹ Removing current virtualenv ...", fg="blue")
     run("git clean -fxd .venv", stdout=PIPE, stderr=PIPE, on_error=OnError.EXIT)
 
-    click.secho(f"ℹ Switching to Python {pyenv_python_version} ...\n", fg="blue")
+    click.secho(f"ℹ Switching to Python {pyenv_python_version} ...", fg="blue")
     run(["pyenv", "local", pyenv_python_version], stdout=PIPE, stderr=PIPE, on_error=OnError.EXIT)
 
-    click.secho(f"✔ Detected {package_manager.value.capitalize()} package manager.\n", fg="green")
+    click.secho(f"✔ Detected {package_manager.value.capitalize()} package manager.", fg="green")
 
     if not pip_package_installed(package_manager.value, sub_process=True):
-        click.secho(f"⚠ {package_manager.value.capitalize()} is not installed. Installing ...\n", fg="yellow")
+        click.secho(f"⚠ {package_manager.value.capitalize()} is not installed. Installing ...", fg="yellow")
         run(f"pip install {package_manager.value}", stdout=PIPE, stderr=PIPE, on_error=OnError.EXIT)
     else:
-        click.secho(f"✔ {package_manager.value.capitalize()} is installed.\n", fg="green")
+        click.secho(f"✔ {package_manager.value.capitalize()} is installed.", fg="green")
 
     run(install_command, on_error=OnError.EXIT)

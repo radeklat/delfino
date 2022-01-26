@@ -36,7 +36,7 @@ class Poetry(BaseModel):
 
 class Tool(BaseModel):
     poetry: Optional[Poetry] = None
-    delfino: Delfino
+    delfino: Delfino = Field(default_factory=Delfino)
 
     class Config:
         allow_population_by_field_name = True
@@ -44,7 +44,7 @@ class Tool(BaseModel):
 
 class PyprojectToml(BaseModel):
     file_path: Optional[Path] = None
-    tool: Tool
+    tool: Tool = Field(default_factory=Tool)
 
     class Config:
         extra = Extra.allow
