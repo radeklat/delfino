@@ -14,6 +14,16 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.12.0] - 2022-01-26
+
+### Added
+
+- `--serialized` option to `build-docker` command to prevent parallelized build of multiple platforms.
+
+### Fixed
+
+- Presence of `pyproject.toml` or know package manager is no longer required when running without arguments or with `-h`/`--help`.
+
 ## [0.11.0] - 2021-12-10
 
 ### Changed
@@ -149,7 +159,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.11.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.12.0...HEAD
+[0.12.0]: https://github.com/radeklat/settings-doc/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/radeklat/settings-doc/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/radeklat/settings-doc/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/radeklat/settings-doc/compare/0.8.1...0.9.0

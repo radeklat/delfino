@@ -10,4 +10,4 @@ class TestEntrypointConstant:
     def should_match_entrypoint_in_pyproject_toml():
         file_path = PROJECT_ROOT / PYPROJECT_TOML_FILENAME
         pyproject_toml = PyprojectToml(**toml.load(file_path))
-        assert ENTRY_POINT in pyproject_toml.tool.poetry.scripts
+        assert ENTRY_POINT in pyproject_toml.tool.poetry.scripts  # pylint: disable=no-member
