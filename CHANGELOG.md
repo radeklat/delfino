@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.12.1] - 2022-01-28
+
+### Fixed
+
+- Fixed a bug where tests are not correctly filtered on their test type if the `--debug` flag is omitted.
+
 ## [0.12.0] - 2022-01-26
 
 ### Added
@@ -159,7 +165,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.12.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.12.1...HEAD
+[0.12.1]: https://github.com/radeklat/settings-doc/compare/0.12.0...0.12.1
 [0.12.0]: https://github.com/radeklat/settings-doc/compare/0.11.0...0.12.0
 [0.11.0]: https://github.com/radeklat/settings-doc/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/radeklat/settings-doc/compare/0.9.0...0.10.0
