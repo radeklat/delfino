@@ -21,8 +21,8 @@ def find_commands(package: Package, *, required: bool, new_name: str = "") -> Di
     """
     try:
         files = resources.contents(package)
-    except ModuleNotFoundError:
-        if required:
+    except ModuleNotFoundError as exc:
+        if required or f"'{package}'" not in str(exc):
             raise
         return {}
 
