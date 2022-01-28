@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 from pathlib import Path
@@ -11,6 +12,7 @@ from delfino import commands
 from delfino.click_utils.command import find_commands
 from delfino.click_utils.completion import install_completion_option, show_completion_option
 from delfino.click_utils.help import extended_help_option
+from delfino.click_utils.verbosity import log_level_option
 from delfino.constants import ENTRY_POINT, PYPROJECT_TOML_FILENAME
 from delfino.contexts import AppContext
 from delfino.models.pyproject_toml import PyprojectToml
@@ -82,12 +84,13 @@ class Commands(click.MultiCommand):
         help_str = super().get_help(*args, **kwargs)
 
         if self._hidden_plugins:
-            help_str += click.style(
-                f"\n\nDisabled command{'s' if len(self._hidden_plugins) > 1 else ''}: "
-                + ", ".join(sorted(self._hidden_plugins))
-                + f" (see 'tool.{ENTRY_POINT}.disable_commands' in '{PYPROJECT_TOML_FILENAME}')",
-                fg="white",
-            )
+            if logging.root.level == logging.DEBUG:
+                help_str += click.style(
+                    f"\n\nDisabled command{'s' if len(self._hidden_plugins) > 1 else ''}: "
+                    + ", ".join(sorted(self._hidden_plugins))
+                    + f" (see 'tool.{ENTRY_POINT}.disable_commands' in '{PYPROJECT_TOML_FILENAME}')",
+                    fg="white",
+                )
 
         return help_str
 
@@ -95,10 +98,11 @@ class Commands(click.MultiCommand):
 @click.group(cls=Commands)
 @extended_help_option
 @click.version_option()
+@log_level_option
 @show_completion_option
 @install_completion_option
-def main():
-    pass
+def main(log_level=None):
+    del log_level
 
 
 if __name__ == "__main__":

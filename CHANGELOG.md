@@ -14,6 +14,16 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.13.0] - 2022-01-28
+
+### Added
+
+- `--log-level` option to set logging level globally.
+
+### Changed
+
+- Disabled commands show up in help only in the DEBUG log level.
+
 ## [0.12.2] - 2022-01-28
 
 ### Fixed
@@ -171,7 +181,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.12.2...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.13.0...HEAD
+[0.13.0]: https://github.com/radeklat/settings-doc/compare/0.12.2...0.13.0
 [0.12.2]: https://github.com/radeklat/settings-doc/compare/0.12.1...0.12.2
 [0.12.1]: https://github.com/radeklat/settings-doc/compare/0.12.0...0.12.1
 [0.12.0]: https://github.com/radeklat/settings-doc/compare/0.11.0...0.12.0
