@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.13.1] - 2022-07-06
+
+### Fixed
+
+- `build-docker --serialized` also serializes emulators installation
+
 ## [0.13.0] - 2022-01-28
 
 ### Added
