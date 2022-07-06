@@ -101,9 +101,6 @@ def build_docker(app_context: AppContext, push: bool, serialized: bool):
 
     dockerhub = delfino.dockerhub
 
-    joined_build_platforms = ",".join(dockerhub.build_for_platforms)
-    build_platforms: List[str] = dockerhub.build_for_platforms if serialized else [joined_build_platforms]
-
     if push:
         dockerhub_password = getenv("DOCKERHUB_PERSONAL_ACCESS_TOKEN")
         if not dockerhub_password:
@@ -114,11 +111,18 @@ def build_docker(app_context: AppContext, push: bool, serialized: bool):
     if getenv("CI"):  # https://circleci.com/docs/2.0/env-vars/#built-in-environment-variables
         flags.extend(["--progress", "plain"])
 
-    _install_emulators(dockerhub.build_for_platforms)
+    joined_build_platforms = ",".join(dockerhub.build_for_platforms)
+    if serialized:
+        build_platforms: List[str] = dockerhub.build_for_platforms
+    else:
+        build_platforms = [joined_build_platforms]
+        _install_emulators(dockerhub.build_for_platforms)
 
     # If serialized build is selected, run build individually. Results are cached so the second
     # build below will only push and not build again.
     for platform in build_platforms:
+        if serialized:
+            _install_emulators([platform])
         print_header(f"Build {dockerhub.username}/{project_name}:latest for {platform}", level=2, icon="🔨")
         _docker_build(project_name, dockerhub, flags, platform)
 
