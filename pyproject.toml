@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "delfino"
-version = "0.13.1"
+version = "0.14.0"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"
@@ -12,10 +12,10 @@ delfino = "delfino.main:main"
 mike = "delfino.main:main"
 
 [tool.poetry.dependencies]
-python = "^3.7.0"
-toml = "^0.10.2"
-click = "^8.0.3"
-pydantic = "^1.8.2"
+python = "^3.7"
+toml = "^0.10"
+click = "^8.0"
+pydantic = "^1.8"
 importlib-metadata = {version = "*", python = "<3.8"}
 black = {version = "*", optional = true}
 isort = {version = "*", optional = true}
@@ -32,29 +32,31 @@ shellingham = {version = "*", optional = true}
 
 
 [tool.poetry.dev-dependencies]
-black = "^21.9b0"
+black = "^22.6"
 isort = "^5.9.3"
-coverage = "^6.0.2"
-pylint = "^2.11.1"
-mypy = "^0.910"
-pytest = "^6.2.5"
-pytest-cov = "^3.0.0"
-pytest-dotenv = "^0.5.2"
-pytest-mock = "^3.6.1"
-pre-commit = "^2.15.0"
-pycodestyle = "^2.8.0"
-pydocstyle = "^6.1.1"
-shellingham = "^1.4.0"
+coverage = "^6.0"
+pylint = "^2.11"
+mypy = "^0.961"
+pytest = "^7.1"
+pytest-cov = "^3.0"
+pytest-dotenv = "^0.5"
+pytest-mock = "^3.6"
+pre-commit = "^2.15"
+pycodestyle = "^2.8"
+pydocstyle = "^6.1"
+shellingham = "^1.4"
+psutil = "*"
 types-termcolor = "*"
 types-toml = "*"
+types-psutil = "*"
 
 [tool.poetry.extras]
-all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "mypy", "pylint", "pycodestyle", "pydocstyle", "twine", "packaging", "shellingham"]
-verify_all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "mypy", "pylint", "pycodestyle", "pydocstyle"]
+all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "mypy", "pylint", "pycodestyle", "pydocstyle", "twine", "packaging", "shellingham", "psutil"]
+verify_all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "mypy", "pylint", "pycodestyle", "pydocstyle", "psutil"]
 format = ["black", "isort", "pre-commit"]
 test = ["pytest", "coverage", "pytest-cov"]
 typecheck = ["mypy"]
-lint = ["pylint", "pycodestyle", "pydocstyle"]
+lint = ["pylint", "pycodestyle", "pydocstyle", "psutil"]
 upload_to_pypi = ["twine"]
 build_docker = ["packaging"]
 completion = ["shellingham"]
