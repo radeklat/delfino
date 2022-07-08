@@ -1,5 +1,6 @@
 """Linting checks on source code."""
-
+import logging
+from functools import lru_cache
 from pathlib import Path
 from subprocess import PIPE
 from typing import List
@@ -10,7 +11,7 @@ from delfino.click_utils.command import command_names
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, print_no_issues_found
-from delfino.validation import assert_pip_package_installed
+from delfino.validation import assert_pip_package_installed, pip_package_installed
 
 
 @click.command()
@@ -76,9 +77,31 @@ def lint_pycodestyle(app_context: AppContext):
 def run_pylint(source_dirs: List[Path], pylintrc_folder: Path):
     print_header(", ".join(map(str, source_dirs)), level=3)
 
-    run(["pylint", "--rcfile", pylintrc_folder / ".pylintrc", *source_dirs], stdout=PIPE, on_error=OnError.ABORT)
+    run(
+        ["pylint", "-j", str(cpu_count()), "--rcfile", pylintrc_folder / ".pylintrc", *source_dirs],
+        stdout=PIPE,
+        on_error=OnError.ABORT,
+    )
 
     print_no_issues_found()
+
+
+@lru_cache(maxsize=1)
+def cpu_count():
+    log = logging.getLogger("cpu_count")
+    fallback_msg = "Number of CPUs could not be determined. Falling back to 1."
+
+    if pip_package_installed("psutil"):
+        import psutil  # pylint: disable=import-outside-toplevel
+
+        count = psutil.cpu_count(logical=True)
+        if not count:
+            log.warning(fallback_msg)
+            return 1
+        return count
+
+    log.warning(f"`psutil` is not installed. {fallback_msg}")
+    return 1
 
 
 @click.command()

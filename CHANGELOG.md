@@ -14,11 +14,21 @@ Types of changes are:
 
 ## [Unreleased]
 
-## [0.13.1] - 2022-07-06
+## [0.14.0] - 2022-07-08
+
+### Added
+
+- `lint-pylint` uses maximum number of available CPU cores to speed up execution.
 
 ### Fixed
 
-- `build-docker --serialized` also serializes emulators installation
+- Dependencies update
+
+## [0.13.1] - 2022-07-06
+
+### Fixed
+- 
+- `build-docker --serialized` also serializes emulators installation.
 
 ## [0.13.0] - 2022-01-28
 
@@ -187,7 +197,9 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.13.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.14.0...HEAD
+[0.14.0]: https://github.com/radeklat/settings-doc/compare/0.13.1...0.14.0
+[0.13.1]: https://github.com/radeklat/settings-doc/compare/0.13.0...0.13.1
 [0.13.0]: https://github.com/radeklat/settings-doc/compare/0.12.2...0.13.0
 [0.12.2]: https://github.com/radeklat/settings-doc/compare/0.12.1...0.12.2
 [0.12.1]: https://github.com/radeklat/settings-doc/compare/0.12.0...0.12.1
