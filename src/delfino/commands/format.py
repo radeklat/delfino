@@ -16,7 +16,7 @@ def _check_result(app_context: AppContext, result: CompletedProcess, check: bool
             f" * Run formatter manually with `{run_command_example(run_format, app_context)}` before committing code.",
         ]
         if not app_context.pyproject_toml.tool.delfino.disable_pre_commit:
-            msg_lines.insert(1, f" * Enable pre-commit hook by running `pre-commit install` in the repository.",)
+            msg_lines.insert(1, f" * Enable pre-commit hook by running `pre-commit install` in the repository.")
 
         click.secho(
             "\n".join(msg_lines),

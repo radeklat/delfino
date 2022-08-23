@@ -68,6 +68,7 @@ sources_directory = "src"
 tests_directory = "tests"
 test_types = ["unit", "integration"]
 disable_commands = []
+disable_pre_commit = false
 
 [tool.delfino.dockerhub]
 username = ""
