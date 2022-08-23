@@ -19,7 +19,10 @@ def verify_all(click_context: click.Context, app_context: AppContext):
     delfino = app_context.pyproject_toml.tool.delfino
 
     root = get_root_command(click_context)
-    commands: Dict[str, click.Command] = {command: cast(click.Command, root.get_command(click_context, command)) for command in root.list_commands(click_context)}
+    commands: Dict[str, click.Command] = {
+        command: cast(click.Command, root.get_command(click_context, command))
+        for command in root.list_commands(click_context)
+    }
 
     target_names = [
         command_name for command_name in delfino.verify_commands if command_name not in delfino.disable_commands
