@@ -15,6 +15,7 @@ class Delfino(BaseModel):
     reports_directory: Path = Path("reports")
     test_types: List[str] = ["unit", "integration"]
     disable_commands: Set[str] = Field(default_factory=set)
+    disable_pre_commit: bool = False
 
     dockerhub: Optional[Dockerhub] = None
 
