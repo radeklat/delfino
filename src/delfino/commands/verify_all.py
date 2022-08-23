@@ -24,9 +24,6 @@ def verify_all(click_context: click.Context, app_context: AppContext):
         for command in root.list_commands(click_context)
     }
 
-    target_names = [
-        command_name for command_name in delfino.verify_commands if command_name not in delfino.disable_commands
-    ]
     target_commands = [
         commands[target_name]
         for target_name in delfino.verify_commands
