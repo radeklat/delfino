@@ -14,6 +14,16 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.15.0] - 2022-08-23
+
+### Added
+
+- A new configuration field `verify_commands` can be configured to fine-tune which commands are run as part of `verify-all`
+
+### Changed
+
+- The `verify-all` command now respects overridden commands and disabled commands
+
 ## [0.14.0] - 2022-07-08
 
 ### Added

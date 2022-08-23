@@ -1,6 +1,6 @@
 from importlib import import_module, resources
 from importlib.resources import Package
-from typing import Dict, List
+from typing import Dict, List, cast
 
 import click
 
@@ -41,3 +41,13 @@ def find_commands(package: Package, *, required: bool, new_name: str = "") -> Di
         click.secho(f"⚠ Plugin module '{package}' is deprecated. Please use '{new_name}' instead.", fg="yellow")
 
     return commands
+
+
+def get_root_command(click_context: click.Context) -> click.MultiCommand:
+    """Find the root command.
+
+    In the context of `delfino`, this is generally the ``main.Commands`` instance.
+    """
+    while click_context.parent:
+        click_context = click_context.parent
+    return cast(click.MultiCommand, click_context.command)
