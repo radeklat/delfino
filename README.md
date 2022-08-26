@@ -68,6 +68,7 @@ sources_directory = "src"
 tests_directory = "tests"
 test_types = ["unit", "integration"]
 disable_commands = []
+verify_commands = ["format", "lint", "typecheck", "test-all"]
 
 [tool.delfino.dockerhub]
 username = ""
