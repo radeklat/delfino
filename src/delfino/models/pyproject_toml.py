@@ -16,9 +16,8 @@ class Delfino(BaseModel):
     test_types: List[str] = ["unit", "integration"]
     disable_commands: Set[str] = Field(default_factory=set)
     verify_commands: Tuple[str, ...] = ("format", "lint", "typecheck", "test-all")
-
+    disable_pre_commit: bool = False
     dockerhub: Optional[Dockerhub] = None
-
     plugins: Dict[str, Any] = Field(default_factory=dict, description="Any additional config given by plugins.")
 
     class Config:

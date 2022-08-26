@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.16.0] - 2022-08-23
+
+### Added
+
+- Configuration now supports a `disable_pre_commit` flag. If set, pre-commit integration is disabled.
+
 ## [0.15.0] - 2022-08-23
 
 ### Added
