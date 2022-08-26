@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from pydantic import BaseModel, Extra, Field
 
@@ -15,6 +15,7 @@ class Delfino(BaseModel):
     reports_directory: Path = Path("reports")
     test_types: List[str] = ["unit", "integration"]
     disable_commands: Set[str] = Field(default_factory=set)
+    verify_commands: Tuple[str, ...] = ("format", "lint", "typecheck", "test-all")
 
     dockerhub: Optional[Dockerhub] = None
 
