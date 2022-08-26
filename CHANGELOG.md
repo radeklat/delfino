@@ -14,7 +14,7 @@ Types of changes are:
 
 ## [Unreleased]
 
-## [0.15.0] - 2022-08-23
+## [0.16.0] - 2022-08-23
 
 ### Added
 
