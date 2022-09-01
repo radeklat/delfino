@@ -15,7 +15,7 @@ _COMMANDS = [run_format, lint, typecheck, test_all]
 @click.command(help="Runs all verification commands. Configured by the ``verify_commands`` setting.")
 @click.pass_context
 @pass_app_context
-def verify_all(click_context: click.Context, app_context: AppContext):
+def verify_all(app_context: AppContext, click_context: click.Context):
     delfino = app_context.pyproject_toml.tool.delfino
 
     root = get_root_command(click_context)
