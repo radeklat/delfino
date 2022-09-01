@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.16.1] - 2022-09-01
+
+### Fix
+
+- Fix AttributeError when executing verify-all command.
+
 ## [0.16.0] - 2022-08-23
 
 ### Added
