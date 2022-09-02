@@ -46,6 +46,9 @@ def run_format(app_context: AppContext, check: bool, quiet: bool):
         run("pre-commit install", stdout=PIPE, on_error=OnError.EXIT)
 
     dirs = [delfino.sources_directory, delfino.tests_directory]
+    if app_context.commands_directory.exists():
+        dirs.append(app_context.commands_directory)
+
     flags = []
 
     if check:

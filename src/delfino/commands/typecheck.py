@@ -42,6 +42,9 @@ def typecheck(app_context: AppContext, summary_only: bool):
         delfino.tests_directory,
     ]
 
+    if app_context.commands_directory.exists():
+        args.append(app_context.commands_directory)
+
     if summary_only:
         args.extend(["|", "tail", "-n", "1"])
 
