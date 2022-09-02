@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.16.1] - 2022-09-01
+
+### Fix
+
+- Fix AttributeError when executing verify-all command.
+
 ## [0.16.0] - 2022-08-23
 
 ### Added
@@ -213,7 +219,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.16.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.16.1...HEAD
+[0.16.1]: https://github.com/radeklat/settings-doc/compare/0.16.0...0.16.1
 [0.16.0]: https://github.com/radeklat/settings-doc/compare/0.15.0...0.16.0
 [0.15.0]: https://github.com/radeklat/settings-doc/compare/0.14.0...0.15.0
 [0.14.0]: https://github.com/radeklat/settings-doc/compare/0.13.1...0.14.0
