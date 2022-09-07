@@ -127,7 +127,7 @@ def coverage_report(app_context: AppContext):
 @click.command(help="Run all tests, and generate coverage report.")
 @click.pass_context
 def test_all(click_context: click.Context):
-    print_header("Linting", icon="🔎")
+    print_header("Run all tests, and generate coverage report.", icon="🔎🐛📃")
     click_context.forward(test_unit)
     click_context.forward(test_integration)
     click_context.forward(coverage_report)
