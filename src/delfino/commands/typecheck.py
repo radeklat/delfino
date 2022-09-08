@@ -1,5 +1,7 @@
 """Type checking on source code."""
 
+from typing import List
+
 import click
 
 from delfino.contexts import AppContext, pass_app_context
@@ -11,8 +13,10 @@ from delfino.validation import assert_pip_package_installed
 
 @click.command()
 @click.option("--summary-only", is_flag=True, help="Suppress error messages and show only summary error count.")
+@click.option("--path", "-p", multiple=True, default=[], help="Directory/File paths to type check.")
+@click.option("--strict", "-s", default=False, is_flag=True, show_default=True, help="Add --strict flag to mypy.")
 @pass_app_context
-def typecheck(app_context: AppContext, summary_only: bool):
+def typecheck(app_context: AppContext, summary_only: bool, path: List[str], strict: bool):
     """Run type checking on source code.
 
     A non-zero return code from this task indicates invalid types were discovered.
@@ -34,13 +38,17 @@ def typecheck(app_context: AppContext, summary_only: bool):
         "--warn-unused-config",
         "--warn-unused-ignores",
         "--color-output",
+        "--allow-untyped-decorators",
         "--follow-imports",
         "silent",
         "--junit-xml",
         reports_file,
-        delfino.sources_directory,
-        delfino.tests_directory,
     ]
+    if strict:
+        args.append("--strict")
+
+    _path: ArgsList = list(path) or [delfino.sources_directory, delfino.tests_directory]
+    args.extend(_path)
 
     if app_context.commands_directory.exists():
         args.append(app_context.commands_directory)
