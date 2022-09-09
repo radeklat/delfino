@@ -13,7 +13,7 @@ from delfino.click_utils.command import find_commands
 from delfino.click_utils.completion import install_completion_option, show_completion_option
 from delfino.click_utils.help import extended_help_option
 from delfino.click_utils.verbosity import log_level_option
-from delfino.constants import ENTRY_POINT, PYPROJECT_TOML_FILENAME
+from delfino.constants import COMMANDS_DIRECTORY_NAME, ENTRY_POINT, PYPROJECT_TOML_FILENAME
 from delfino.contexts import AppContext
 from delfino.models.pyproject_toml import PyprojectToml
 from delfino.utils import get_package_manager
@@ -42,7 +42,7 @@ class Commands(click.MultiCommand):
             self._pyproject_toml = PyprojectToml()
 
         self._plugins: Dict[str, click.Command] = find_commands(commands.__package__, required=True)
-        self._plugins.update(find_commands("commands", required=False))
+        self._plugins.update(find_commands(COMMANDS_DIRECTORY_NAME, required=False))
         self._plugins.update(find_commands("tasks", required=False, new_name="commands"))
 
         for name, cmd in list(self._plugins.items()):

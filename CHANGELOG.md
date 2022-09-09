@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.17.0] - 2022-09-02
+
+### Added
+
+- Lint/typecheck/format commands will be applied to the "commands" directory if exists.
+
 ## [0.16.1] - 2022-09-01
 
 ### Fix
@@ -219,7 +225,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.16.1...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.17.0...HEAD
+[0.17.0]: https://github.com/radeklat/settings-doc/compare/0.16.1...0.17.0
 [0.16.1]: https://github.com/radeklat/settings-doc/compare/0.16.0...0.16.1
 [0.16.0]: https://github.com/radeklat/settings-doc/compare/0.15.0...0.16.0
 [0.15.0]: https://github.com/radeklat/settings-doc/compare/0.14.0...0.15.0

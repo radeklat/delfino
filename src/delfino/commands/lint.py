@@ -50,6 +50,8 @@ def lint_pycodestyle(app_context: AppContext):
     print_header("code style (PEP8)", level=2)
 
     dirs = [delfino.sources_directory, delfino.tests_directory]
+    if app_context.commands_directory.exists():
+        dirs.append(app_context.commands_directory)
 
     # TODO(Radek): Implement unofficial config support in pyproject.toml by parsing it
     #  and outputting the result into a supported format?
