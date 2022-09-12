@@ -43,7 +43,7 @@ class Commands(click.MultiCommand):
 
         self._plugins: Dict[str, click.Command] = find_commands(commands.__package__, required=True)
         self._plugins.update(find_commands(COMMANDS_DIRECTORY_NAME, required=False))
-        self._plugins.update(find_commands("tasks", required=False, new_name="commands"))
+        self._plugins.update(find_commands("tasks", required=False, new_name=COMMANDS_DIRECTORY_NAME))
 
         for name, cmd in list(self._plugins.items()):
             self._plugins[name] = extended_help_option(cmd)
