@@ -15,6 +15,7 @@ Types of changes are:
 ## [Unreleased]
 
 - Fix typo in the test command header message.
+- Add two options --strict/--path to the typecheck command.
 
 ## [0.17.1] - 2022-09-12
 
