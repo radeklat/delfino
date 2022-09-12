@@ -14,6 +14,8 @@ Types of changes are:
 
 ## [Unreleased]
 
+- Fix typo in the test command header message.
+
 ## [0.17.1] - 2022-09-12
 
 ### Fixed
