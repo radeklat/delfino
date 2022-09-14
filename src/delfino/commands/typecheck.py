@@ -1,5 +1,8 @@
 """Type checking on source code."""
 
+from ctypes.wintypes import tagMSG
+from itertools import groupby
+from pathlib import Path
 from typing import List
 
 import click
@@ -11,25 +14,7 @@ from delfino.utils import ArgsList, ensure_reports_dir
 from delfino.validation import assert_pip_package_installed
 
 
-@click.command()
-@click.option("--summary-only", is_flag=True, help="Suppress error messages and show only summary error count.")
-@click.option("--path", "-p", multiple=True, default=[], help="Directory/File paths to type check.")
-@click.option("--strict", "-s", default=False, is_flag=True, show_default=True, help="Add --strict flag to mypy.")
-@pass_app_context
-def typecheck(app_context: AppContext, summary_only: bool, path: List[str], strict: bool):
-    """Run type checking on source code.
-
-    A non-zero return code from this task indicates invalid types were discovered.
-    """
-    assert_pip_package_installed("mypy")
-
-    print_header("RUNNING TYPE CHECKER", icon="🔠")
-
-    delfino = app_context.pyproject_toml.tool.delfino
-    reports_file = delfino.reports_directory / "typecheck" / "junit.xml"
-
-    ensure_reports_dir(delfino)
-
+def _run_typecheck(paths: List[Path], strict: bool, reports_file: Path, summary_only: bool, mypypath: Path):
     args: ArgsList = [
         "mypy",
         "--show-column-numbers",
@@ -44,16 +29,60 @@ def typecheck(app_context: AppContext, summary_only: bool, path: List[str], stri
         "--junit-xml",
         reports_file,
     ]
+
     if strict:
         args.append("--strict")
 
-    _path: ArgsList = list(path) or [delfino.sources_directory, delfino.tests_directory]
-    args.extend(_path)
-
-    if app_context.commands_directory.exists():
-        args.append(app_context.commands_directory)
+    args.extend(paths)
 
     if summary_only:
         args.extend(["|", "tail", "-n", "1"])
 
-    run(args, env_update_path={"MYPYPATH": delfino.sources_directory}, shell=summary_only, on_error=OnError.ABORT)
+    run(args, env_update_path={"MYPYPATH": mypypath}, on_error=OnError.ABORT)
+
+
+def is_path_relative_to_paths(path: Path, paths: List[Path]) -> bool:
+    for p in paths:
+        if path.is_relative_to(p):
+            return True
+    return False
+
+
+@click.command()
+@click.option("--summary-only", is_flag=True, help="Suppress error messages and show only summary error count.")
+@click.option(
+    "--path",
+    "-p",
+    multiple=True,
+    default=[],
+    help="Directory/File paths to type check. Overrides default path when passed.",
+)
+@pass_app_context
+def typecheck(app_context: AppContext, summary_only: bool, path: List[str]):
+    """Run type checking on source code.
+
+    A non-zero return code from this task indicates invalid types were discovered.
+    """
+    assert_pip_package_installed("mypy")
+
+    print_header("RUNNING TYPE CHECKER", icon="🔠")
+
+    delfino = app_context.pyproject_toml.tool.delfino
+    ensure_reports_dir(delfino)
+
+    target_paths: List[Path] = []
+    if path:
+        target_paths = [Path(p) for p in path]
+    else:
+        target_paths = [delfino.sources_directory, delfino.tests_directory]
+        if app_context.commands_directory.exists():
+            target_paths.append(app_context.commands_directory)
+
+    strict_paths = delfino.typecheck.strict_directories
+    grouped_paths = groupby(target_paths, lambda current_path: is_path_relative_to_paths(current_path, strict_paths))
+
+    for force_typing, group in grouped_paths:
+        report_filepath = (
+            delfino.reports_directory / "typecheck" / f"junit-{'strict' if force_typing else 'nonstrict'}.xml"
+        )
+        _run_typecheck(list(group), force_typing, report_filepath, summary_only, delfino.sources_directory)

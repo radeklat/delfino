@@ -147,6 +147,9 @@ tests_directory = "tests"
 test_types = ["unit", "integration"]
 disable_commands = ["build-docker"]
 
+#[tool.delfino.typecheck]
+#strict_directories = ['src']
+
 #[tool.delfino.dockerhub]
 #username = "radeklat"
 #build_for_platforms = [

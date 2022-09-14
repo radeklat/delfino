@@ -9,6 +9,10 @@ class Dockerhub(BaseModel):
     username: str
 
 
+class Typecheck(BaseModel):
+    strict_directories: List[Path] = []
+
+
 class Delfino(BaseModel):
     sources_directory: Path = Path("src")
     tests_directory: Path = Path("tests")
@@ -19,6 +23,8 @@ class Delfino(BaseModel):
     disable_pre_commit: bool = False
     dockerhub: Optional[Dockerhub] = None
     plugins: Dict[str, Any] = Field(default_factory=dict, description="Any additional config given by plugins.")
+
+    typecheck: Typecheck = Field(default_factory=Typecheck)
 
     class Config:
         extra = Extra.allow
