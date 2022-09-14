@@ -18,7 +18,8 @@ Types of changes are:
 
 ### Added
 
-- Add two options --strict/--path to the typecheck command.
+- Add "strict_directories" config for the typecheck command.
+- Add --path option to the typecheck command.
 
 ### Fixed
 
