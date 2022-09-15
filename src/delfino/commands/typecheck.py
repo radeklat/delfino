@@ -1,12 +1,12 @@
 """Type checking on source code."""
 
-from ctypes.wintypes import tagMSG
 from itertools import groupby
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 import click
 
+from delfino.click_utils.filepaths import filepaths_argument
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header
@@ -50,15 +50,9 @@ def is_path_relative_to_paths(path: Path, paths: List[Path]) -> bool:
 
 @click.command()
 @click.option("--summary-only", is_flag=True, help="Suppress error messages and show only summary error count.")
-@click.option(
-    "--path",
-    "-p",
-    multiple=True,
-    default=[],
-    help="Directory/File paths to type check. Overrides default path when passed.",
-)
+@filepaths_argument
 @pass_app_context
-def typecheck(app_context: AppContext, summary_only: bool, path: List[str]):
+def typecheck(app_context: AppContext, summary_only: bool, filepaths: Tuple[str]):
     """Run type checking on source code.
 
     A non-zero return code from this task indicates invalid types were discovered.
@@ -71,8 +65,8 @@ def typecheck(app_context: AppContext, summary_only: bool, path: List[str]):
     ensure_reports_dir(delfino)
 
     target_paths: List[Path] = []
-    if path:
-        target_paths = [Path(p) for p in path]
+    if filepaths:
+        target_paths = [Path(p) for p in filepaths]
     else:
         target_paths = [delfino.sources_directory, delfino.tests_directory]
         if app_context.commands_directory.exists():
