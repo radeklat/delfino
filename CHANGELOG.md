@@ -19,7 +19,7 @@ Types of changes are:
 ### Added
 
 - Add "strict_directories" config for the typecheck command.
-- Add --path option to the typecheck command.
+- Add path argument to the typecheck command.
 
 ### Fixed
 
