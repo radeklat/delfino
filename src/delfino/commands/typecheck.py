@@ -42,8 +42,8 @@ def _run_typecheck(paths: List[Path], strict: bool, reports_file: Path, summary_
 
 
 def is_path_relative_to_paths(path: Path, paths: List[Path]) -> bool:
-    for p in paths:
-        if path.is_relative_to(p):
+    for _path in paths:
+        if path.is_relative_to(_path):
             return True
     return False
 
@@ -66,7 +66,7 @@ def typecheck(app_context: AppContext, summary_only: bool, filepaths: Tuple[str]
 
     target_paths: List[Path] = []
     if filepaths:
-        target_paths = [Path(p) for p in filepaths]
+        target_paths = [Path(path) for path in filepaths]
     else:
         target_paths = [delfino.sources_directory, delfino.tests_directory]
         if app_context.commands_directory.exists():
