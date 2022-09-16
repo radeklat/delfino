@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Dict, Iterator, List, Optional, Set, Tuple, Union
 
 import click
 import toml
@@ -18,8 +18,18 @@ from delfino.contexts import AppContext
 from delfino.models.pyproject_toml import PyprojectToml
 from delfino.utils import get_package_manager
 
+if sys.version_info < (3, 10):
+    from importlib_metadata import Distribution, distributions
+else:
+    from importlib.metadata import Distribution, distributions
+
 
 class Commands(click.MultiCommand):
+
+    PRESET_COMMAND_PACKAGE = commands.__package__
+    DEFAULT_COMMAND_PACKAGE = COMMANDS_DIRECTORY_NAME
+    DEPRECATED_COMMAND_PACKAGES = ["tasks"]
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -31,31 +41,27 @@ class Commands(click.MultiCommand):
         # When evaluating available commands, the program should not fail. We save the exception
         # to show it only when a command is executed.
         self._pyproject_toml: Union[PyprojectToml, Exception]
-        self._hidden_plugins: Set[str] = set()
+        self._hidden_commands: Set[str] = set()
 
         try:
             self._pyproject_toml = PyprojectToml(file_path=pyproject_toml_path, **toml.load(pyproject_toml_path))
-            self._hidden_plugins = self._pyproject_toml.tool.delfino.disable_commands
+            self._hidden_commands = self._pyproject_toml.tool.delfino.disable_commands
+            self._hidden_plugin_commands = self._pyproject_toml.tool.delfino.disable_plugin_commands
         except ValidationError as exc:
             self._pyproject_toml = exc
         except FileNotFoundError:
             self._pyproject_toml = PyprojectToml()
 
-        self._plugins: Dict[str, click.Command] = find_commands(commands.__package__, required=True)
-        self._plugins.update(find_commands(COMMANDS_DIRECTORY_NAME, required=False))
-        self._plugins.update(find_commands("tasks", required=False, new_name=COMMANDS_DIRECTORY_NAME))
-
-        for name, cmd in list(self._plugins.items()):
-            self._plugins[name] = extended_help_option(cmd)
+        self._commands: Dict[str, click.Command] = {}
 
     def list_commands(self, ctx: click.Context) -> List[str]:
         """Override to hide commands marked as hidden in the ``pyproject.toml`` file."""
         del ctx
-        return sorted(set(self._plugins.keys()).difference(self._hidden_plugins))
+        return sorted(set(self._get_commands().keys()).difference(self._hidden_commands))
 
     def get_command(self, ctx: click.Context, cmd_name: str) -> Optional[click.Command]:
         """Override to give all commands a common ``AppContext`` or fail if ``pyproject.toml`` is broken/missing."""
-        cmd = self._plugins.get(cmd_name, None)
+        cmd = self._get_commands().get(cmd_name, None)
 
         if ctx.resilient_parsing:  # do not fail on auto-completion
             return cmd
@@ -83,16 +89,75 @@ class Commands(click.MultiCommand):
     def get_help(self, *args, **kwargs) -> str:
         help_str = super().get_help(*args, **kwargs)
 
-        if self._hidden_plugins:
+        if self._hidden_commands:
             if logging.root.level == logging.DEBUG:
                 help_str += click.style(
-                    f"\n\nDisabled command{'s' if len(self._hidden_plugins) > 1 else ''}: "
-                    + ", ".join(sorted(self._hidden_plugins))
+                    f"\n\nDisabled command{'s' if len(self._hidden_commands) > 1 else ''}: "
+                    + ", ".join(sorted(self._hidden_commands))
                     + f" (see 'tool.{ENTRY_POINT}.disable_commands' in '{PYPROJECT_TOML_FILENAME}')",
                     fg="white",
                 )
 
         return help_str
+
+    def _get_commands(self) -> Dict[str, click.Command]:
+        if self._commands:
+            return self._commands
+
+        # default
+        self._commands.update(find_commands(self.PRESET_COMMAND_PACKAGE, required=True))
+
+        # external
+        # Note: The meaning of the word 'plugin' is a bit different here
+        # 'plugin' is an distribution that contains commands
+        self._commands.update(self.ExternalCommandsLoader(self._hidden_plugin_commands).load())
+
+        # local
+        self._commands.update(find_commands(COMMANDS_DIRECTORY_NAME, required=False))
+        self._commands.update(find_commands("tasks", required=False, new_name=COMMANDS_DIRECTORY_NAME))
+
+        return self._commands
+
+    class ExternalCommandsLoader:
+
+        PLUGIN_GROUP_NAME = "delfino.commands"
+
+        def __init__(self, disabled_commands: Dict[str, Set[str]] = None):
+            self.disabled_commands = disabled_commands or {}
+
+        def load(self) -> Dict[str, click.Command]:
+            _commands: Dict[str, click.Command] = {}
+            for plugin in self._load_plugins():
+                for name, command in self._load_commands_for_plugin(plugin):
+                    if self._is_disabled_command(plugin.name, name):
+                        continue
+                    if _commands.get(name, False):
+                        raise RuntimeError(
+                            f"Command '{name}' is already registered with {plugin.name}-{plugin.version}."
+                        )
+                    _commands[name] = command
+            return _commands
+
+        def _is_disabled_command(self, plugin_name, command_name):
+            return command_name in self.disabled_commands.get(plugin_name, set())
+
+        @property
+        def _plugin_group_name(self):
+            return self.PLUGIN_GROUP_NAME
+
+        def _load_plugins(self) -> Iterator[Distribution]:
+            for distribution in distributions():
+                for entry_point in distribution.entry_points.select(group=self._plugin_group_name):
+                    if not entry_point:
+                        continue
+                    yield distribution
+
+        @staticmethod
+        def _load_commands_for_plugin(plugin: Distribution) -> Iterator[Tuple[str, click.Command]]:
+            for entry_point in plugin.entry_points:
+                package = entry_point.load()
+                for name, command in find_commands(package, required=True).items():
+                    yield name, command
 
 
 @click.group(cls=Commands)

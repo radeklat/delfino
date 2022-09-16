@@ -14,6 +14,8 @@ Types of changes are:
 
 ## [Unreleased]
 
+- Implement plugin system for commands
+
 ## [0.18.0] - 2022-09-13
 
 ### Added

@@ -125,6 +125,7 @@ module = [
     "invoke.*",
     "pipenv.*",
     "shellingham.*",
+    "setuptools.*",
 ]
 ignore_missing_imports = true
 

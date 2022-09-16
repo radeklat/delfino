@@ -23,6 +23,7 @@ class Delfino(BaseModel):
     disable_pre_commit: bool = False
     dockerhub: Optional[Dockerhub] = None
     plugins: Dict[str, Any] = Field(default_factory=dict, description="Any additional config given by plugins.")
+    disable_plugin_commands: Dict[str, Set[str]] = Field(default_factory=dict)
 
     typecheck: Typecheck = Field(default_factory=Typecheck)
 

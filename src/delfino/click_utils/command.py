@@ -31,14 +31,15 @@ def find_commands(package: Package, *, required: bool, new_name: str = "") -> Di
     for filename in files:
         if filename.startswith("_") or not filename.endswith(".py"):
             continue
-        plugin = import_module(f"{package}.{filename[:-3]}")
+        package_name = package if isinstance(package, str) else package.__package__
+        plugin = import_module(f"{package_name}.{filename[:-3]}")
 
         for obj in vars(plugin).values():
             if isinstance(obj, click.Command) and obj.name is not None:
                 commands[obj.name] = obj
 
     if commands and new_name:
-        click.secho(f"⚠ Plugin module '{package}' is deprecated. Please use '{new_name}' instead.", fg="yellow")
+        click.secho(f"⚠ Plugin module '{package_name}' is deprecated. Please use '{new_name}' instead.", fg="yellow")
 
     return commands
 
