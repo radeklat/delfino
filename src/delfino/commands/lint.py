@@ -1,22 +1,26 @@
 """Linting checks on source code."""
 import logging
 from functools import lru_cache
+from itertools import groupby
 from pathlib import Path
 from subprocess import PIPE
-from typing import List
+from typing import List, Tuple
 
 import click
 
 from delfino.click_utils.command import command_names
+from delfino.click_utils.filepaths import filepaths_argument
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, print_no_issues_found
+from delfino.utils import build_target_paths, is_path_relative_to_paths
 from delfino.validation import assert_pip_package_installed, pip_package_installed
 
 
 @click.command()
+@filepaths_argument
 @pass_app_context
-def lint_pydocstyle(app_context: AppContext):
+def lint_pydocstyle(app_context: AppContext, filepaths: Tuple[str]):
     """Run docstring linting on source code.
 
     Docstring linting is done via pydocstyle. The pydocstyle config can be found in the
@@ -26,17 +30,18 @@ def lint_pydocstyle(app_context: AppContext):
     """
     assert_pip_package_installed("pydocstyle")
 
-    delfino = app_context.pyproject_toml.tool.delfino
     print_header("documentation style", level=2)
+    dirs = build_target_paths(app_context, filepaths, False, False)
 
-    run(["pydocstyle", delfino.sources_directory], stdout=PIPE, on_error=OnError.ABORT)
+    run(["pydocstyle", *dirs], stdout=PIPE, on_error=OnError.ABORT)
 
     print_no_issues_found()
 
 
 @click.command()
+@filepaths_argument
 @pass_app_context
-def lint_pycodestyle(app_context: AppContext):
+def lint_pycodestyle(app_context: AppContext, filepaths: Tuple[str]):
     """Run PEP8 checking on code.
 
     PEP8 checking is done via pycodestyle.
@@ -46,12 +51,9 @@ def lint_pycodestyle(app_context: AppContext):
     """
     assert_pip_package_installed("pycodestyle")
 
-    delfino = app_context.pyproject_toml.tool.delfino
     print_header("code style (PEP8)", level=2)
 
-    dirs = [delfino.sources_directory, delfino.tests_directory]
-    if app_context.commands_directory.exists():
-        dirs.append(app_context.commands_directory)
+    dirs = build_target_paths(app_context, filepaths)
 
     # TODO(Radek): Implement unofficial config support in pyproject.toml by parsing it
     #  and outputting the result into a supported format?
@@ -107,8 +109,9 @@ def cpu_count():
 
 
 @click.command()
+@filepaths_argument
 @pass_app_context
-def lint_pylint(app_context: AppContext):
+def lint_pylint(app_context: AppContext, filepaths: Tuple[str]):
     """Run pylint on code.
 
     The bulk of our code conventions are enforced via pylint. The pylint config can be
@@ -119,18 +122,24 @@ def lint_pylint(app_context: AppContext):
     print_header("pylint", level=2)
     delfino = app_context.pyproject_toml.tool.delfino
 
-    run_pylint([delfino.sources_directory], app_context.project_root)
+    def get_pylintrc_folder(path: Path) -> Path:
+        if is_path_relative_to_paths(path, [delfino.tests_directory]):
+            return delfino.tests_directory
+        return app_context.project_root
 
-    if delfino.tests_directory:
-        run_pylint([delfino.tests_directory], delfino.tests_directory)
+    target_paths = build_target_paths(app_context, filepaths)
+    grouped_paths = groupby(target_paths, get_pylintrc_folder)
+    for pylintrc_folder, paths in grouped_paths:
+        run_pylint(list(paths), pylintrc_folder)
 
 
 _COMMANDS = [lint_pylint, lint_pycodestyle, lint_pydocstyle]
 
 
 @click.command(help=f"Run linting on the entire code base.\n\n" f"Alias for the {command_names(_COMMANDS)} commands.")
+@filepaths_argument
 @click.pass_context
-def lint(click_context: click.Context):
+def lint(click_context: click.Context, filepaths: Tuple[str]):
     print_header("Linting", icon="🔎")
     for command in _COMMANDS:
-        click_context.forward(command)
+        click_context.forward(command, filepaths=filepaths)

@@ -1,10 +1,13 @@
 from subprocess import PIPE, CompletedProcess
+from typing import Tuple
 
 import click
 
+from delfino.click_utils.filepaths import filepaths_argument
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, run_command_example
+from delfino.utils import build_target_paths
 from delfino.validation import assert_pip_package_installed
 
 
@@ -32,8 +35,9 @@ def _check_result(app_context: AppContext, result: CompletedProcess, check: bool
 @click.command("format")
 @click.option("--check", is_flag=True, help="Only check formatting, don't reformat the code.")
 @click.option("--quiet", is_flag=True, help="Don't show progress. Only errors.")
+@filepaths_argument
 @pass_app_context
-def run_format(app_context: AppContext, check: bool, quiet: bool):
+def run_format(app_context: AppContext, check: bool, quiet: bool, filepaths: Tuple[str]):
     """Runs black code formatter and isort on source code."""
     delfino = app_context.pyproject_toml.tool.delfino
 
@@ -45,9 +49,7 @@ def run_format(app_context: AppContext, check: bool, quiet: bool):
         # ensure pre-commit is installed
         run("pre-commit install", stdout=PIPE, on_error=OnError.EXIT)
 
-    dirs = [delfino.sources_directory, delfino.tests_directory]
-    if app_context.commands_directory.exists():
-        dirs.append(app_context.commands_directory)
+    dirs = build_target_paths(app_context, filepaths)
 
     flags = []
 

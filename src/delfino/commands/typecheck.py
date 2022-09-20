@@ -10,7 +10,7 @@ from delfino.click_utils.filepaths import filepaths_argument
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header
-from delfino.utils import ArgsList, ensure_reports_dir
+from delfino.utils import ArgsList, build_target_paths, ensure_reports_dir, is_path_relative_to_paths
 from delfino.validation import assert_pip_package_installed
 
 
@@ -41,16 +41,6 @@ def _run_typecheck(paths: List[Path], strict: bool, reports_file: Path, summary_
     run(args, env_update_path={"MYPYPATH": mypypath}, on_error=OnError.ABORT)
 
 
-def is_path_relative_to_paths(path: Path, paths: List[Path]) -> bool:
-    for _path in paths:
-        try:
-            path.relative_to(_path)
-            return True
-        except ValueError:
-            continue
-    return False
-
-
 @click.command()
 @click.option("--summary-only", is_flag=True, help="Suppress error messages and show only summary error count.")
 @filepaths_argument
@@ -67,14 +57,7 @@ def typecheck(app_context: AppContext, summary_only: bool, filepaths: Tuple[str]
     delfino = app_context.pyproject_toml.tool.delfino
     ensure_reports_dir(delfino)
 
-    target_paths: List[Path] = []
-    if filepaths:
-        target_paths = [Path(path) for path in filepaths]
-    else:
-        target_paths = [delfino.sources_directory, delfino.tests_directory]
-        if app_context.commands_directory.exists():
-            target_paths.append(app_context.commands_directory)
-
+    target_paths: List[Path] = build_target_paths(app_context, filepaths)
     strict_paths = delfino.typecheck.strict_directories
     grouped_paths = groupby(target_paths, lambda current_path: is_path_relative_to_paths(current_path, strict_paths))
 
