@@ -14,6 +14,8 @@ Types of changes are:
 
 ## [Unreleased]
 
+- Add "filepaths" argument to the lint and format commands.
+
 ## [0.18.0] - 2022-09-13
 
 ### Added
