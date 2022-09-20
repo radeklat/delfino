@@ -71,6 +71,8 @@ disable_commands = []
 verify_commands = ["format", "lint", "typecheck", "test-all"]
 disable_pre_commit = false
 
+[tool.delfino.typecheck]
+strict_directories = ['src']
 
 [tool.delfino.dockerhub]
 username = ""
