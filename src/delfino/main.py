@@ -108,8 +108,6 @@ class Commands(click.MultiCommand):
         self._commands.update(find_commands(self.PRESET_COMMAND_PACKAGE, required=True))
 
         # external
-        # Note: The meaning of the word 'plugin' is a bit different here
-        # 'plugin' is an distribution that contains commands
         self._commands.update(self.ExternalCommandsLoader(self._hidden_plugin_commands).load())
 
         # local
