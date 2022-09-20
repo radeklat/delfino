@@ -43,8 +43,11 @@ def _run_typecheck(paths: List[Path], strict: bool, reports_file: Path, summary_
 
 def is_path_relative_to_paths(path: Path, paths: List[Path]) -> bool:
     for _path in paths:
-        if path.is_relative_to(_path):
+        try:
+            path.relative_to(_path)
             return True
+        except ValueError:
+            continue
     return False
 
 
