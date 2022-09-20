@@ -8,5 +8,5 @@ setup(
     author_email="john@cookpad.com",
     description="Dummy plugin",
     packages=find_packages(),
-    entry_points={"delfino.commands": "fake_delfino_commands_plugin = fake_plugin_a.commands"},
+    entry_points={"delfino.commands": "NOT_USING_THIS = fake_plugin_a.commands"},
 )
