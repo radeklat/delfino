@@ -14,6 +14,15 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.18.0] - 2022-09-13
+
+### Added
+
+- Add "strict_directories" config for the typecheck command.
+- Add path argument to the typecheck command.
+
+### Fixed
+
 - Fix typo in the test command header message.
 
 ## [0.17.1] - 2022-09-12
@@ -233,7 +242,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.17.1...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.18.0...HEAD
+[0.18.0]: https://github.com/radeklat/settings-doc/compare/0.17.1...0.18.0
 [0.17.1]: https://github.com/radeklat/settings-doc/compare/0.17.0...0.17.1
 [0.17.0]: https://github.com/radeklat/settings-doc/compare/0.16.1...0.17.0
 [0.16.1]: https://github.com/radeklat/settings-doc/compare/0.16.0...0.16.1
