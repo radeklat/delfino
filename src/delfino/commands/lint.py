@@ -13,7 +13,7 @@ from delfino.click_utils.filepaths import filepaths_argument
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, print_no_issues_found
-from delfino.utils import build_target_paths, is_path_relative_to_paths
+from delfino.utils import _is_path_relative_to_paths, build_target_paths
 from delfino.validation import assert_pip_package_installed, pip_package_installed
 
 
@@ -123,7 +123,7 @@ def lint_pylint(app_context: AppContext, filepaths: Tuple[str]):
     delfino = app_context.pyproject_toml.tool.delfino
 
     def get_pylintrc_folder(path: Path) -> Path:
-        if is_path_relative_to_paths(path, [delfino.tests_directory]):
+        if _is_path_relative_to_paths(path, [delfino.tests_directory]):
             return delfino.tests_directory
         return app_context.project_root
 

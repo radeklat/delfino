@@ -10,7 +10,7 @@ from delfino.click_utils.filepaths import filepaths_argument
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header
-from delfino.utils import ArgsList, build_target_paths, ensure_reports_dir, is_path_relative_to_paths
+from delfino.utils import ArgsList, _is_path_relative_to_paths, build_target_paths, ensure_reports_dir
 from delfino.validation import assert_pip_package_installed
 
 
@@ -59,7 +59,7 @@ def typecheck(app_context: AppContext, summary_only: bool, filepaths: Tuple[str]
 
     target_paths: List[Path] = build_target_paths(app_context, filepaths)
     strict_paths = delfino.typecheck.strict_directories
-    grouped_paths = groupby(target_paths, lambda current_path: is_path_relative_to_paths(current_path, strict_paths))
+    grouped_paths = groupby(target_paths, lambda current_path: _is_path_relative_to_paths(current_path, strict_paths))
 
     for force_typing, group in grouped_paths:
         report_filepath = (
