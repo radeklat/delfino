@@ -75,7 +75,7 @@ disable_pre_commit = false
 strict_directories = ['src']
 
 [tool.delfino.disable_plugin_commands]
-"fake_plugin_b" =  ["typecheck"]
+"fake-plugin-b" =  ["typecheck"]
 
 [tool.delfino.dockerhub]
 username = ""
