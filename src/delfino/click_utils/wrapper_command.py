@@ -10,9 +10,10 @@ def wrapper_command(cmd, **attrs) -> Callable:
             f"Please see `{cmd} --help` for more usage."
         )
         attrs["help"] = attrs.get("help", "") + " " + additional_help
-        attrs["context_settings"] = attrs.get("context_settings", {}) | dict(
-            ignore_unknown_options=True, allow_extra_args=True
-        )
+        attrs["context_settings"] = {
+            **attrs.get("context_settings", {}),
+            **dict(ignore_unknown_options=True, allow_extra_args=True),
+        }
         _func = click.pass_context(func)
         return click.command(**attrs)(_func)
 
