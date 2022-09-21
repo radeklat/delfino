@@ -14,8 +14,6 @@ Types of changes are:
 
 ## [Unreleased]
 
-- Update README. Add example for the strict_directories config.
-
 ## [0.18.0] - 2022-09-13
 
 ### Added
