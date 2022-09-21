@@ -14,6 +14,8 @@ Types of changes are:
 
 ## [Unreleased]
 
+- Pass through undefined options/arguments to mypy
+
 ## [0.18.0] - 2022-09-13
 
 ### Added
