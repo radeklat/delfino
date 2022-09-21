@@ -23,6 +23,7 @@ def ensure_reports_dir(delfino: Delfino) -> None:
 
 
 def build_args_from_dict(**params: Union[str, int, bool, Path]) -> ArgsList:
+    """Builds a list of arguments from a dictionary like click.Context.params."""
     args: ArgsList = []
     for key, val in params.items():
         if val is None:
