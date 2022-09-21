@@ -1,32 +1,31 @@
 import logging
 import os
 import sys
+from collections import defaultdict
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 import click
 import toml
 from pydantic import ValidationError
 
-from delfino import commands
+from delfino import commands as delfino_commands
 from delfino.click_utils.command import find_commands
 from delfino.click_utils.completion import install_completion_option, show_completion_option
 from delfino.click_utils.help import extended_help_option
 from delfino.click_utils.verbosity import log_level_option
 from delfino.constants import COMMANDS_DIRECTORY_NAME, ENTRY_POINT, PYPROJECT_TOML_FILENAME
 from delfino.contexts import AppContext
+from delfino.models.command_package import CommandPackage
 from delfino.models.pyproject_toml import PyprojectToml
+from delfino.plugin import discover_packages
 from delfino.utils import get_package_manager
-
-if sys.version_info < (3, 10):
-    from importlib_metadata import Distribution, distributions
-else:
-    from importlib.metadata import Distribution, distributions
 
 
 class Commands(click.MultiCommand):
 
-    PRESET_COMMAND_PACKAGE = commands.__package__
+    PRESET_COMMAND_PACKAGE = delfino_commands.__package__
     DEFAULT_COMMAND_PACKAGE = COMMANDS_DIRECTORY_NAME
     DEPRECATED_COMMAND_PACKAGES = ["tasks"]
 
@@ -42,6 +41,7 @@ class Commands(click.MultiCommand):
         # to show it only when a command is executed.
         self._pyproject_toml: Union[PyprojectToml, Exception]
         self._hidden_commands: Set[str] = set()
+        self._hidden_plugin_commands: Dict[str, Set[str]] = {}
 
         try:
             self._pyproject_toml = PyprojectToml(file_path=pyproject_toml_path, **toml.load(pyproject_toml_path))
@@ -104,58 +104,60 @@ class Commands(click.MultiCommand):
         if self._commands:
             return self._commands
 
-        # default
-        self._commands.update(find_commands(self.PRESET_COMMAND_PACKAGE, required=True))
+        command_packages = [
+            CommandPackage(package=self.PRESET_COMMAND_PACKAGE, plugin_name="delfino"),
+            *list(discover_packages()),
+            CommandPackage(package=COMMANDS_DIRECTORY_NAME, required=False),
+            CommandPackage(package="tasks", required=False, new_name=COMMANDS_DIRECTORY_NAME),
+        ]
 
-        # external
-        self._commands.update(self.ExternalCommandsLoader(self._hidden_plugin_commands).load())
+        registry = _CommandRegistry(self._hidden_plugin_commands)
+        for command_package in command_packages:
+            registry.register_command_package(command_package)
 
-        # local
-        self._commands.update(find_commands(COMMANDS_DIRECTORY_NAME, required=False))
-        self._commands.update(find_commands("tasks", required=False, new_name=COMMANDS_DIRECTORY_NAME))
+        self._commands = registry.as_dict()
 
         return self._commands
 
-    class ExternalCommandsLoader:
 
-        PLUGIN_GROUP_NAME = "delfino.commands"
+class _CommandRegistry:
+    """An internal command registry which can raise error with duplicated commands.
 
-        def __init__(self, disabled_commands: Dict[str, Set[str]] = None):
-            self.disabled_commands = disabled_commands or {}
+    The purpose of this class is to keep track on registered commands and raise an
+    error if a command with the same name is registered twice.
 
-        def load(self) -> Dict[str, click.Command]:
-            _commands: Dict[str, click.Command] = {}
-            for plugin in self._load_plugins():
-                for name, command in self._load_commands_for_plugin(plugin):
-                    if self._is_disabled_command(plugin.name, name):
-                        continue
-                    if _commands.get(name, False):
-                        raise RuntimeError(
-                            f"Command '{name}' is already registered with {plugin.name}-{plugin.version}."
-                        )
-                    _commands[name] = command
-            return _commands
+    The error will be raised only when a command is from plugins. Local commands can
+    always override existing commands.
+    """
 
-        def _is_disabled_command(self, plugin_name, command_name):
-            return command_name in self.disabled_commands.get(plugin_name, set())
+    @dataclass
+    class Command:
+        command: click.Command
+        plugin_name: str
 
-        @property
-        def _plugin_group_name(self):
-            return self.PLUGIN_GROUP_NAME
+    def __init__(self, disabled_command: Dict[str, Set[str]]):
+        self._disabled_command = defaultdict(set, disabled_command)
+        self._commands: Dict[str, _CommandRegistry.Command] = {}
 
-        def _load_plugins(self) -> Iterator[Distribution]:
-            for distribution in distributions():
-                for entry_point in distribution.entry_points.select(group=self._plugin_group_name):
-                    if not entry_point:
-                        continue
-                    yield distribution
+    def register_command_package(self, command_package: CommandPackage):
+        for name, command in find_commands(
+            command_package.package, required=command_package.required, new_name=command_package.new_name
+        ).items():
+            self.register(name, command, plugin_name=command_package.plugin_name)
 
-        @staticmethod
-        def _load_commands_for_plugin(plugin: Distribution) -> Iterator[Tuple[str, click.Command]]:
-            for entry_point in plugin.entry_points:
-                package = entry_point.load()
-                for name, command in find_commands(package, required=True).items():
-                    yield name, command
+    def register(self, name: str, command: click.Command, plugin_name=""):
+        if name in self._disabled_command[plugin_name]:
+            return
+        # When a command is from a plugin check if a command with the same name is already registered
+        # Otherwise (= local commands) overwrite existing command
+        if plugin_name:
+            existing_command = self._commands.get(name)
+            if existing_command:
+                raise RuntimeError(f"Command '{name}' is already registered with {existing_command.plugin_name}.")
+        self._commands[name] = self.Command(command, plugin_name)
+
+    def as_dict(self):
+        return {name: cmd.command for name, cmd in self._commands.items()}
 
 
 @click.group(cls=Commands)
