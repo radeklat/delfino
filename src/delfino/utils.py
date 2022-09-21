@@ -20,3 +20,17 @@ def get_package_manager(project_root: Path, pyproject_toml: PyprojectToml) -> Pa
 def ensure_reports_dir(delfino: Delfino) -> None:
     """Ensures that the reports directory exists."""
     delfino.reports_directory.mkdir(parents=True, exist_ok=True)
+
+
+def build_args_from_dict(**params: Union[str, int, bool, Path]) -> ArgsList:
+    args: ArgsList = []
+    for key, val in params.items():
+        if val is None:
+            continue
+        if val is isinstance(val, bool) and not val:
+            continue
+        option_key = f"--{key}" if len(key) > 1 else f"-{key}"
+        option_sep = "=" if len(key) > 1 else " "
+        option_val = "" if isinstance(val, bool) else str(val)
+        args.append(f"{option_key}{option_sep}{option_val}")
+    return args

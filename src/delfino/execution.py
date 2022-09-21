@@ -23,6 +23,8 @@ class OnError(Enum):
 
 
 def _normalize_args(args: ArgsType, shell: bool) -> ArgsType:
+    if isinstance(args, list):
+        args = [str(arg) for arg in args]
     if shell:  # when `shell`, `args` must be a string
         if isinstance(args, list):
             return " ".join(map(str, args))

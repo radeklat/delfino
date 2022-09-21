@@ -8,18 +8,18 @@ from subprocess import PIPE
 
 import click
 
+from delfino.click_utils.wrapper_command import wrapper_command
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, run_command_example
-from delfino.utils import ensure_reports_dir
+from delfino.utils import ArgsList, build_args_from_dict, ensure_reports_dir
 from delfino.validation import assert_pip_package_installed
 
 
-def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) -> None:
+def _run_tests(app_context: AppContext, click_context: click.Context, name: str, debug) -> None:
     """Execute the tests for a given test type."""
-    assert_pip_package_installed("pytest")
-    assert_pip_package_installed("pytest-cov")
-    assert_pip_package_installed("coverage")
+    for pkg in ("pytest", "pytest-cov", "coverage"):
+        assert_pip_package_installed(pkg)
 
     delfino = app_context.pyproject_toml.tool.delfino
 
@@ -28,45 +28,52 @@ def _run_tests(app_context: AppContext, name: str, maxfail: int, debug: bool) ->
 
     print_header(f"️Running {name} tests️", icon="🔎🐛")
     ensure_reports_dir(delfino)
+
+    options: ArgsList = build_args_from_dict(capture="no") if debug else []
+    args: ArgsList = [
+        "pytest",
+        "--cov",
+        delfino.sources_directory,
+        "--cov-report",
+        f"xml:{delfino.reports_directory / f'coverage-{name}.xml'}",
+        "--cov-branch",
+        "-vv",
+        *options,
+        *click_context.args,
+        delfino.tests_directory / name,
+    ]
     run(
-        list(
-            filter(
-                None,
-                [
-                    "pytest",
-                    "--cov",
-                    delfino.sources_directory,
-                    "--cov-report",
-                    f"xml:{delfino.reports_directory / f'coverage-{name}.xml'}",
-                    "--cov-branch",
-                    "-vv",
-                    "--maxfail",
-                    str(maxfail),
-                    "-s" if debug else "",
-                    delfino.tests_directory / name,
-                ],
-            )
-        ),
+        args,
         env_update={"COVERAGE_FILE": delfino.reports_directory / f"coverage-{name}.dat"},
         on_error=OnError.ABORT,
     )
 
 
-@click.command(help="Run unit tests.")
-@click.option("--maxfail", type=int, default=0)
-@click.option("--debug", is_flag=True, help="Disables capture, allowing debuggers like `pdb` to be used.")
-@pass_app_context
-def test_unit(app_context: AppContext, maxfail: int, debug: bool):
-    _run_tests(app_context, "unit", maxfail=maxfail, debug=debug)
+def test_options(func):
+    click.option(
+        "--debug",
+        is_flag=True,
+        help=(
+            "Deprecated. Use --capture=no or -s instead."
+            " | Disables capture, allowing debuggers like `pdb` to be used."
+        ),
+    )(func)
+    return func
 
 
-@click.command(help="Run integration tests.")
-@click.option("--maxfail", type=int, default=0)
-@click.option("--debug", is_flag=True, help="Disables capture, allowing debuggers like `pdb` to be used.")
+@wrapper_command("mypy", help="Run unit tests.")
+@test_options
 @pass_app_context
-def test_integration(app_context: AppContext, maxfail: int, debug: bool):
+def test_unit(app_context: AppContext, click_context: click.Context, debug: bool):
+    _run_tests(app_context, click_context, "unit", debug)
+
+
+@wrapper_command("mypy", help="Run integration tests.")
+@test_options
+@pass_app_context
+def test_integration(app_context: AppContext, click_context: click.Context, debug):
     # TODO(Radek): Replace with alias?
-    _run_tests(app_context, "integration", maxfail=maxfail, debug=debug)
+    _run_tests(app_context, click_context, "integration", debug)
 
 
 def _get_total_coverage(coverage_dat: Path) -> str:
