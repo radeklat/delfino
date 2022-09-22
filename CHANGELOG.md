@@ -14,7 +14,13 @@ Types of changes are:
 
 ## [Unreleased]
 
-- Implement plugin system for commands
+### Added
+
+- Plugin support. Now commands can also be loaded from installed packages.
+
+### Changed
+
+- Deprecated tool.delfino.disable_commands configuration 
 
 ## [0.18.0] - 2022-09-13
 
