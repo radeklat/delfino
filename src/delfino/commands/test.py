@@ -4,13 +4,15 @@ import re
 import shutil
 import warnings
 import webbrowser
+from functools import reduce
 from pathlib import Path
 from subprocess import PIPE
+from typing import List
 
 import click
 from deprecation import DeprecatedWarning
 
-from delfino.click_utils._wrapper_command import wrapper_command
+from delfino.click_utils.pass_through_option import pass_through_option
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, run_command_example
@@ -18,7 +20,7 @@ from delfino.utils import ArgsList, ensure_reports_dir
 from delfino.validation import assert_pip_package_installed
 
 
-def _run_tests(app_context: AppContext, click_context: click.Context, name: str, debug) -> None:
+def _run_tests(app_context: AppContext, name: str, debug, extra_options: List[str] = None) -> None:
     """Execute the tests for a given test type."""
     for pkg in ("pytest", "pytest-cov", "coverage"):
         assert_pip_package_installed(pkg)
@@ -52,7 +54,7 @@ def _run_tests(app_context: AppContext, click_context: click.Context, name: str,
         "--cov-branch",
         "-vv",
         *options,
-        *click_context.args,
+        *(extra_options if extra_options else []),
         delfino.tests_directory / name,
     ]
     run(
@@ -64,30 +66,33 @@ def _run_tests(app_context: AppContext, click_context: click.Context, name: str,
 
 def test_options(func):
     """Common option for test commands."""
-    click.option(
-        "--debug",
-        is_flag=True,
-        help=(
-            "Deprecated. Use --capture=no or -s instead."
-            " | Disables capture, allowing debuggers like `pdb` to be used."
+    options = [
+        click.option(
+            "--debug",
+            is_flag=True,
+            help=(
+                "Deprecated. Use --capture=no or -s instead."
+                " | Disables capture, allowing debuggers like `pdb` to be used."
+            ),
         ),
-    )(func)
-    return func
+        pass_through_option("pytest"),
+    ]
+    return reduce(lambda f, option: option(f), options, func)
 
 
-@wrapper_command("pylint", help="Run unit tests.")
+@click.command(help="Run unit tests.")
 @test_options
 @pass_app_context
-def test_unit(app_context: AppContext, click_context: click.Context, debug: bool):
-    _run_tests(app_context, click_context, "unit", debug)
+def test_unit(app_context: AppContext, debug: bool, pytest_option: List[str]):
+    _run_tests(app_context, "unit", debug, pytest_option)
 
 
-@wrapper_command("pylint", help="Run integration tests.")
+@click.command(help="Run integration tests.")
 @test_options
 @pass_app_context
-def test_integration(app_context: AppContext, click_context: click.Context, debug):
+def test_integration(app_context: AppContext, debug: bool, pytest_option: List[str]):
     # TODO(Radek): Replace with alias?
-    _run_tests(app_context, click_context, "integration", debug)
+    _run_tests(app_context, "integration", debug, pytest_option)
 
 
 def _get_total_coverage(coverage_dat: Path) -> str:
