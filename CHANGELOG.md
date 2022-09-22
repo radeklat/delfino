@@ -14,7 +14,10 @@ Types of changes are:
 
 ## [Unreleased]
 
-- Pass through undefined options/arguments to mypy
+
+### Changed
+
+- Pass through undefined options/arguments to pytest from test-unit and test-integration. These commands can be used without change although help message is updated.
 
 ## [0.18.0] - 2022-09-13
 
