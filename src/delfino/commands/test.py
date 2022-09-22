@@ -12,7 +12,7 @@ from delfino.click_utils._wrapper_command import wrapper_command
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, run_command_example
-from delfino.utils import ArgsList, build_args_from_dict, ensure_reports_dir
+from delfino.utils import ArgsList, ensure_reports_dir
 from delfino.validation import assert_pip_package_installed
 
 
@@ -29,7 +29,7 @@ def _run_tests(app_context: AppContext, click_context: click.Context, name: str,
     print_header(f"️Running {name} tests️", icon="🔎🐛")
     ensure_reports_dir(delfino)
 
-    options: ArgsList = build_args_from_dict(capture="no") if debug else []
+    options: ArgsList = ["--capture=no"] if debug else []
     args: ArgsList = [
         "pytest",
         "--cov",
