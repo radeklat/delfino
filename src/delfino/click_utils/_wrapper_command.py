@@ -47,7 +47,9 @@ def wrapper_command(command_name, **attrs) -> Callable:
 
     def _wrapper_command(func) -> click.Command:
         additional_help = (
-            f"This command is a wrapper for `{command_name}`. Options not on this help will be directly passed through to `{command_name}`. Some options may not be applied when the command has fix default value."
+            f"This command is a wrapper for `{command_name}`. "
+            f"Options not on this help will be directly passed through to `{command_name}`. "
+            f"Some options may not be applied when the command has fixed default value. "
             f"Check `{command_name} --help` for available options."
         )
         attrs["help"] = attrs.get("help", "") + " " + additional_help
