@@ -2,11 +2,13 @@
 
 import re
 import shutil
+import warnings
 import webbrowser
 from pathlib import Path
 from subprocess import PIPE
 
 import click
+from deprecation import DeprecatedWarning
 
 from delfino.click_utils._wrapper_command import wrapper_command
 from delfino.contexts import AppContext, pass_app_context
@@ -29,7 +31,18 @@ def _run_tests(app_context: AppContext, click_context: click.Context, name: str,
     print_header(f"️Running {name} tests️", icon="🔎🐛")
     ensure_reports_dir(delfino)
 
-    options: ArgsList = ["--capture=no"] if debug else []
+    options: ArgsList = []
+    if debug:
+        options.append("--capture=no")
+        warnings.warn(
+            DeprecatedWarning(
+                "--debug for test-unit and test-integration command",
+                "0.19.0",
+                "1.0.0",
+                "Use --capture=no or -s instead.",
+            )
+        )
+
     args: ArgsList = [
         "pytest",
         "--cov",
