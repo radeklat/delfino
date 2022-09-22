@@ -8,7 +8,7 @@ from subprocess import PIPE
 
 import click
 
-from delfino.click_utils.wrapper_command import wrapper_command
+from delfino.click_utils._wrapper_command import wrapper_command
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, run_command_example
