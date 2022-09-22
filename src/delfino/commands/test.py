@@ -63,6 +63,7 @@ def _run_tests(app_context: AppContext, click_context: click.Context, name: str,
 
 
 def test_options(func):
+    """Common option for test commands."""
     click.option(
         "--debug",
         is_flag=True,
