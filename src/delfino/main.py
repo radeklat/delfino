@@ -40,13 +40,14 @@ class Commands(click.MultiCommand):
         # When evaluating available commands, the program should not fail. We save the exception
         # to show it only when a command is executed.
         self._pyproject_toml: Union[PyprojectToml, Exception]
-        self._hidden_commands: Set[str] = set()
         self._hidden_plugin_commands: Dict[str, Set[str]] = {}
 
         try:
             self._pyproject_toml = PyprojectToml(file_path=pyproject_toml_path, **toml.load(pyproject_toml_path))
-            self._hidden_commands = self._pyproject_toml.tool.delfino.disable_commands
             self._hidden_plugin_commands = self._pyproject_toml.tool.delfino.disable_plugin_commands
+            # Temporal code to deprecate tool.delfino.disable_commands
+            if self._pyproject_toml.tool.delfino.disable_commands:
+                self._hidden_plugin_commands["delfino"] = self._pyproject_toml.tool.delfino.disable_commands
         except ValidationError as exc:
             self._pyproject_toml = exc
         except FileNotFoundError:
@@ -55,9 +56,9 @@ class Commands(click.MultiCommand):
         self._commands: Dict[str, click.Command] = {}
 
     def list_commands(self, ctx: click.Context) -> List[str]:
-        """Override to hide commands marked as hidden in the ``pyproject.toml`` file."""
+        """Override as MultiCommand always returns []."""
         del ctx
-        return sorted(set(self._get_commands().keys()).difference(self._hidden_commands))
+        return sorted(set(self._get_commands().keys()))
 
     def get_command(self, ctx: click.Context, cmd_name: str) -> Optional[click.Command]:
         """Override to give all commands a common ``AppContext`` or fail if ``pyproject.toml`` is broken/missing."""
@@ -89,12 +90,12 @@ class Commands(click.MultiCommand):
     def get_help(self, *args, **kwargs) -> str:
         help_str = super().get_help(*args, **kwargs)
 
-        if self._hidden_commands:
+        if self._hidden_plugin_commands:
             if logging.root.level == logging.DEBUG:
                 help_str += click.style(
-                    f"\n\nDisabled command{'s' if len(self._hidden_commands) > 1 else ''}: "
-                    + ", ".join(sorted(self._hidden_commands))
-                    + f" (see 'tool.{ENTRY_POINT}.disable_commands' in '{PYPROJECT_TOML_FILENAME}')",
+                    f"\n\nDisabled command{'s' if len(self._hidden_plugin_commands) > 1 else ''}: "
+                    + ", ".join(sorted([f"{plugin}.{cmd}" for plugin, cmd in self._hidden_plugin_commands.items()]))
+                    + f" (see 'tool.{ENTRY_POINT}.disable_plugin_commands' in '{PYPROJECT_TOML_FILENAME}')",
                     fg="white",
                 )
 

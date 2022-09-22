@@ -1,7 +1,9 @@
+import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from pydantic import BaseModel, Extra, Field
+from deprecation import DeprecatedWarning
+from pydantic import BaseModel, Extra, Field, validator
 
 
 class Dockerhub(BaseModel):
@@ -29,6 +31,20 @@ class Delfino(BaseModel):
 
     class Config:
         extra = Extra.allow
+
+    @validator("disable_commands")
+    @classmethod
+    def deprecate_disable_commands(cls, val):
+        if val:
+            warnings.warn(
+                DeprecatedWarning(
+                    "tool.delfino.disable_commands configuration",
+                    "0.19.0",
+                    "1.0.0",
+                    "Use tool.delfino.disable_plugin_commands instead.",
+                )
+            )
+        return val
 
 
 class Poetry(BaseModel):
