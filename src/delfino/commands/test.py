@@ -75,14 +75,14 @@ def test_options(func):
     return func
 
 
-@wrapper_command("mypy", help="Run unit tests.")
+@wrapper_command("pylint", help="Run unit tests.")
 @test_options
 @pass_app_context
 def test_unit(app_context: AppContext, click_context: click.Context, debug: bool):
     _run_tests(app_context, click_context, "unit", debug)
 
 
-@wrapper_command("mypy", help="Run integration tests.")
+@wrapper_command("pylint", help="Run integration tests.")
 @test_options
 @pass_app_context
 def test_integration(app_context: AppContext, click_context: click.Context, debug):
