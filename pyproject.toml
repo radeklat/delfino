@@ -16,7 +16,6 @@ python = "^3.7"
 toml = "^0.10"
 click = "^8.0"
 pydantic = "^1.8"
-deprecation = "^2.1"
 importlib-metadata = {version = "*", python = "<3.8"}
 black = {version = "*", optional = true}
 isort = {version = "*", optional = true}
@@ -126,7 +125,6 @@ module = [
     "invoke.*",
     "pipenv.*",
     "shellingham.*",
-    "deprecation.*",
 ]
 ignore_missing_imports = true
 

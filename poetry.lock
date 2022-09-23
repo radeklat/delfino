@@ -176,17 +176,6 @@ ssh = ["bcrypt (>=3.1.5)"]
 test = ["pytest (>=6.2.0)", "pytest-benchmark", "pytest-cov", "pytest-subtests", "pytest-xdist", "pretend", "iso8601", "pytz", "hypothesis (>=1.11.4,!=3.79.2)"]
 
 [[package]]
-name = "deprecation"
-version = "2.1.0"
-description = "A library to handle automated deprecations"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-packaging = "*"
-
-[[package]]
 name = "dill"
 version = "0.3.5.1"
 description = "serialize all of python"
@@ -889,7 +878,7 @@ verify_all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "9e9b89be0f01ca7cd821d8d4f9ff658627dd88ea1d8fecb183949a0399cee053"
+content-hash = "faacadb0ac84b0298fbf17158d993849acf12f7e6cdcbdab31e4950850c44a9b"
 
 [metadata.files]
 astroid = []
@@ -906,7 +895,6 @@ colorama = []
 commonmark = []
 coverage = []
 cryptography = []
-deprecation = []
 dill = []
 distlib = []
 docutils = []

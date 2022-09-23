@@ -2,7 +2,6 @@
 
 import re
 import shutil
-import warnings
 import webbrowser
 from functools import reduce
 from pathlib import Path
@@ -10,7 +9,6 @@ from subprocess import PIPE
 from typing import List
 
 import click
-from deprecation import DeprecatedWarning
 
 from delfino.click_utils.pass_through_command import pass_through_command
 from delfino.contexts import AppContext, pass_app_context
@@ -34,16 +32,9 @@ def _run_tests(app_context: AppContext, name: str, debug, extra_options: List[st
     ensure_reports_dir(delfino)
 
     options: ArgsList = []
+
     if debug:
         options.append("--capture=no")
-        warnings.warn(
-            DeprecatedWarning(
-                "--debug for test-unit and test-integration command",
-                "0.19.0",
-                "1.0.0",
-                "Use --capture=no or -s instead.",
-            )
-        )
 
     args: ArgsList = [
         "pytest",
@@ -70,10 +61,7 @@ def test_options(func):
         click.option(
             "--debug",
             is_flag=True,
-            help=(
-                "Deprecated. Use --capture=no or -s instead."
-                " | Disables capture, allowing debuggers like `pdb` to be used."
-            ),
+            help="Disables capture, allowing debuggers like `pdb` to be used.",
         ),
         pass_app_context,
     ]
