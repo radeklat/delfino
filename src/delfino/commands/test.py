@@ -75,20 +75,19 @@ def test_options(func):
                 " | Disables capture, allowing debuggers like `pdb` to be used."
             ),
         ),
+        pass_app_context,
     ]
     return reduce(lambda f, option: option(f), options, func)
 
 
 @pass_through_command("pytest", help="Run unit tests.")
 @test_options
-@pass_app_context
 def test_unit(app_context: AppContext, pass_through_args: List[str], debug: bool):
     _run_tests(app_context, "unit", debug, pass_through_args)
 
 
 @pass_through_command("pytest", help="Run integration tests.")
 @test_options
-@pass_app_context
 def test_integration(app_context: AppContext, pass_through_args: List[str], debug: bool):
     # TODO(Radek): Replace with alias?
     _run_tests(app_context, "integration", debug, pass_through_args)
