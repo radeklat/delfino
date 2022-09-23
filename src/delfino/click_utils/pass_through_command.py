@@ -62,6 +62,8 @@ def pass_through_command(wrapped_command: str = None, **attrs: Any) -> Callable[
 
     """
 
+    _argument_name = "pass_through_args"
+
     def _set_pass_through_args_from_config(ctx, param, value) -> List[str]:
         del param
 
@@ -73,7 +75,7 @@ def pass_through_command(wrapped_command: str = None, **attrs: Any) -> Callable[
         app_context: AppContext = ctx.find_object(AppContext)
         command_name: str = ctx.command.name
         pass_through_args_conf: str = app_context.pyproject_toml.tool.delfino.plugins.get(command_name, {}).get(
-            "pass_through_args", None
+            _argument_name, None
         )
         if pass_through_args_conf:
             return shlex.split(pass_through_args_conf)
@@ -81,9 +83,7 @@ def pass_through_command(wrapped_command: str = None, **attrs: Any) -> Callable[
         return value
 
     def _pass_through_command(func) -> click.Command:
-        argument_name = "pass_through_args"
-
-        arg_name_in_help = argument_name.upper()
+        arg_name_in_help = _argument_name.upper()
         _wrapped_command = "wrapped command"
 
         # Exposing the wrapped command name in the help message
@@ -93,7 +93,7 @@ def pass_through_command(wrapped_command: str = None, **attrs: Any) -> Callable[
             _wrapped_command = wrapped_command
 
         click.argument(
-            argument_name,
+            _argument_name,
             metavar=f"[{arg_name_in_help}...]",
             nargs=-1,
             callback=_set_pass_through_args_from_config,
