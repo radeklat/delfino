@@ -86,6 +86,8 @@ def pass_through_command(wrapped_command: str = None, **attrs: Any) -> Callable[
         arg_name_in_help = argument_name.upper()
         _wrapped_command = "wrapped command"
 
+        # Exposing the wrapped command name in the help message
+        # otherwise user cannot tell what options are supported.
         if wrapped_command:
             arg_name_in_help = f"{wrapped_command.upper()}_ARGS"
             _wrapped_command = wrapped_command
