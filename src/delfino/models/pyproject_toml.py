@@ -24,6 +24,7 @@ class Delfino(BaseModel):
     dockerhub: Optional[Dockerhub] = None
     plugins: Dict[str, Any] = Field(default_factory=dict, description="Any additional config given by plugins.")
 
+    # TODO: Move to under delfino.plugins
     typecheck: Typecheck = Field(default_factory=Typecheck)
 
     class Config:

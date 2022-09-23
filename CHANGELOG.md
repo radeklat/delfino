@@ -15,9 +15,10 @@ Types of changes are:
 ## [Unreleased]
 
 
-### Add
+### Added
 
-- Add `--pytest-option` option to test-unit and test-integration. The value for this option is passed through to pytest, the tooling we are using for test-unit and test-integration command.
+- The `test-unit` and `test-integration` commands now support passing options/arguments to the wrapped command, `pytest`. Pass-through options/arguments can be configured in two ways; config file and command line argument.
+- Decorator to create pass-through commands, `delfino.click_utils.pass_through_command.pass_through_command`. See docstring of the function for usage.
 
 ## [0.18.0] - 2022-09-13
 

@@ -74,6 +74,10 @@ disable_pre_commit = false
 [tool.delfino.typecheck]
 strict_directories = ['src']
 
+[tool.delfino.plugins.test-unit]
+# See https://github.com/radeklat/delfino/blob/main/src/delfino/commands/pass_through_command.py for usage.
+pass_through_args = '--capture=no'
+
 [tool.delfino.dockerhub]
 username = ""
 build_for_platforms = [
