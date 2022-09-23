@@ -18,7 +18,7 @@ from delfino.utils import ArgsList, ensure_reports_dir
 from delfino.validation import assert_pip_package_installed
 
 
-def _run_tests(app_context: AppContext, name: str, debug, extra_options: List[str] = None) -> None:
+def _run_tests(app_context: AppContext, name: str, maxfail, debug, extra_options: List[str] = None) -> None:
     """Execute the tests for a given test type."""
     for pkg in ("pytest", "pytest-cov", "coverage"):
         assert_pip_package_installed(pkg)
@@ -35,6 +35,7 @@ def _run_tests(app_context: AppContext, name: str, debug, extra_options: List[st
 
     if debug:
         options.append("--capture=no")
+    options.extend(["--maxfail", str(maxfail)])
 
     args: ArgsList = [
         "pytest",
@@ -58,6 +59,7 @@ def _run_tests(app_context: AppContext, name: str, debug, extra_options: List[st
 def test_options(func):
     """Common option for test commands."""
     options = [
+        click.option("--maxfail", type=int, default=0),
         click.option(
             "--debug",
             is_flag=True,
@@ -70,15 +72,15 @@ def test_options(func):
 
 @pass_through_command("pytest", help="Run unit tests.")
 @test_options
-def test_unit(app_context: AppContext, pass_through_args: List[str], debug: bool):
-    _run_tests(app_context, "unit", debug, pass_through_args)
+def test_unit(app_context: AppContext, pass_through_args: List[str], maxfail: int, debug: bool):
+    _run_tests(app_context, "unit", maxfail, debug, pass_through_args)
 
 
 @pass_through_command("pytest", help="Run integration tests.")
 @test_options
-def test_integration(app_context: AppContext, pass_through_args: List[str], debug: bool):
+def test_integration(app_context: AppContext, pass_through_args: List[str], maxfail: int, debug: bool):
     # TODO(Radek): Replace with alias?
-    _run_tests(app_context, "integration", debug, pass_through_args)
+    _run_tests(app_context, "integration", maxfail, debug, pass_through_args)
 
 
 def _get_total_coverage(coverage_dat: Path) -> str:
