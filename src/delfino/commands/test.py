@@ -12,7 +12,7 @@ from typing import List
 import click
 from deprecation import DeprecatedWarning
 
-from delfino.click_utils.pass_through_option import pass_through_option
+from delfino.click_utils.pass_through_command import pass_through_command
 from delfino.contexts import AppContext, pass_app_context
 from delfino.execution import OnError, run
 from delfino.terminal_output import print_header, run_command_example
@@ -75,24 +75,23 @@ def test_options(func):
                 " | Disables capture, allowing debuggers like `pdb` to be used."
             ),
         ),
-        pass_through_option("pytest"),
     ]
     return reduce(lambda f, option: option(f), options, func)
 
 
-@click.command(help="Run unit tests.")
+@pass_through_command("pytest", help="Run unit tests.")
 @test_options
 @pass_app_context
-def test_unit(app_context: AppContext, debug: bool, pytest_option: List[str]):
-    _run_tests(app_context, "unit", debug, pytest_option)
+def test_unit(app_context: AppContext, pass_through_args: List[str], debug: bool):
+    _run_tests(app_context, "unit", debug, pass_through_args)
 
 
-@click.command(help="Run integration tests.")
+@pass_through_command("pytest", help="Run integration tests.")
 @test_options
 @pass_app_context
-def test_integration(app_context: AppContext, debug: bool, pytest_option: List[str]):
+def test_integration(app_context: AppContext, pass_through_args: List[str], debug: bool):
     # TODO(Radek): Replace with alias?
-    _run_tests(app_context, "integration", debug, pytest_option)
+    _run_tests(app_context, "integration", debug, pass_through_args)
 
 
 def _get_total_coverage(coverage_dat: Path) -> str:
