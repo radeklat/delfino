@@ -15,9 +15,9 @@ Types of changes are:
 ## [Unreleased]
 
 
-### Changed
+### Add
 
-- Pass through undefined options/arguments to pytest from test-unit and test-integration. These commands can be used without change although help message is updated.
+- Add `--pytest-option` option to test-unit and test-integration. The value for this option is passed through to pytest, the tooling we are using for test-unit and test-integration command.
 
 ## [0.18.0] - 2022-09-13
 
