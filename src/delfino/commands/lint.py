@@ -96,7 +96,7 @@ def cpu_count():
     if pip_package_installed("psutil"):
         import psutil  # pylint: disable=import-outside-toplevel
 
-        count = psutil.cpu_count(logical=True)
+        count = psutil.cpu_count(logical=False)
         if not count:
             log.warning(fallback_msg)
             return 1
