@@ -14,6 +14,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.18.2] - 2022-10-25
+
+### Fixed
+
+- Correct number of job used by pylint in CI.
+
 ## [0.18.1] - 2022-10-11
 
 ### Fixed
@@ -248,7 +254,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.18.1...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.18.2...HEAD
+[0.18.2]: https://github.com/radeklat/settings-doc/compare/0.18.1...0.18.2
 [0.18.1]: https://github.com/radeklat/settings-doc/compare/0.18.0...0.18.1
 [0.18.0]: https://github.com/radeklat/settings-doc/compare/0.17.1...0.18.0
 [0.17.1]: https://github.com/radeklat/settings-doc/compare/0.17.0...0.17.1
