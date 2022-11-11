@@ -1,6 +1,7 @@
 """Linting checks on source code."""
 import logging
 from functools import lru_cache
+from os import getenv
 from pathlib import Path
 from subprocess import PIPE
 from typing import List
@@ -90,13 +91,18 @@ def run_pylint(source_dirs: List[Path], pylintrc_folder: Path):
 
 @lru_cache(maxsize=1)
 def cpu_count():
+    if getenv("CI", ""):
+        cpu_shares = Path("/sys/fs/cgroup/cpu/cpu.shares")
+        if cpu_shares.is_file():
+            return int(cpu_shares.read_text(encoding="utf-8").strip()) // 1024
+
     log = logging.getLogger("cpu_count")
     fallback_msg = "Number of CPUs could not be determined. Falling back to 1."
 
     if pip_package_installed("psutil"):
         import psutil  # pylint: disable=import-outside-toplevel
 
-        count = psutil.cpu_count(logical=True)
+        count = psutil.cpu_count(logical=False)
         if not count:
             log.warning(fallback_msg)
             return 1

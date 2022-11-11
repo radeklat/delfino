@@ -2,7 +2,7 @@ import os
 import shlex
 import subprocess
 from enum import Enum
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import click
 
@@ -32,7 +32,9 @@ def _normalize_args(args: ArgsType, shell: bool) -> ArgsType:
     return args
 
 
-def _patch_env(env_update_path: Dict[str, Any] = None, env_update: Dict[str, Any] = None) -> Dict[str, str]:
+def _patch_env(
+    env_update_path: Optional[Dict[str, Any]] = None, env_update: Optional[Dict[str, Any]] = None
+) -> Dict[str, str]:
     modified_env = os.environ.copy()
 
     if env_update_path or env_update:
@@ -75,8 +77,8 @@ def run(
     args: ArgsType,
     *popenargs,
     on_error: OnError,
-    env_update_path: Dict[str, Any] = None,
-    env_update: Dict[str, Any] = None,
+    env_update_path: Optional[Dict[str, Any]] = None,
+    env_update: Optional[Dict[str, Any]] = None,
     **kwargs,
 ) -> subprocess.CompletedProcess:
     """Modified version of ``subprocess.run``.
