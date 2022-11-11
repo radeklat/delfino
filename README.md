@@ -16,7 +16,7 @@
         <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/radeklat/delfino">
     </a>
     <a href="https://www.python.org/doc/versions/">
-        <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/settings-doc">
+        <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/delfino">
     </a>
 </p>
 

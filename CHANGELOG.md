@@ -12,6 +12,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.19.1] - 2022-11-11
+
+### Fixes
+
+- Add trove classifiers for Pypi.
+
 ## [0.19.0] - 2022-11-11
 
 ### Breaking changes
@@ -266,7 +272,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.19.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.19.1...HEAD
+[0.19.1]: https://github.com/radeklat/settings-doc/compare/0.19.0...0.19.1
 [0.19.0]: https://github.com/radeklat/settings-doc/compare/0.18.2...0.19.0
 [0.18.2]: https://github.com/radeklat/settings-doc/compare/0.18.1...0.18.2
 [0.18.1]: https://github.com/radeklat/settings-doc/compare/0.18.0...0.18.1
