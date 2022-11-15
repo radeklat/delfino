@@ -76,8 +76,15 @@ disable_pre_commit = false
 [tool.delfino.typecheck]
 strict_directories = ['src']
 
-# [tool.delfino.disable_plugin_commands]
-# <PLUGIN> = [<COMMAND>]
+# By default, all commands will be enabled. Use `enable_commands` or `disable_commands` 
+# to show only a subset of commands. If both used, disabled commands a subtracted from the
+# set of enabled commands. 
+# [tool.delfino.plugins.<PLUGIN_NAME_A>]
+# enable_commands = [<COMMAND_NAME>]
+# disable_commands = [<COMMAND_NAME>]
+# [tool.delfino.plugins.<PLUGIN_NAME_B>]
+# enable_commands = [<COMMAND_NAME>]
+# disable_commands = [<COMMAND_NAME>]
 
 [tool.delfino.dockerhub]
 username = ""

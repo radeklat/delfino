@@ -15,6 +15,18 @@ class Typecheck(BaseModel):
     strict_directories: List[Path] = []
 
 
+class PluginConfig(BaseModel):
+    enable_commands: Set[str] = set()
+    disable_commands: Set[str] = set()
+
+    @classmethod
+    def empty(cls):
+        return cls()
+
+    class Config:
+        extra = Extra.allow
+
+
 class Delfino(BaseModel):
     sources_directory: Path = Path("src")
     tests_directory: Path = Path("tests")
@@ -26,6 +38,7 @@ class Delfino(BaseModel):
     dockerhub: Optional[Dockerhub] = None
     commands: Dict[str, Any] = Field(default_factory=dict, description="Any additional config given by plugins.")
     disable_plugin_commands: Dict[str, Set[str]] = Field(default_factory=dict)
+    plugins: Dict[str, PluginConfig] = Field(default_factory=dict)
 
     typecheck: Typecheck = Field(default_factory=Typecheck)
 

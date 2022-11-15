@@ -1,6 +1,5 @@
 import logging
 import sys
-from collections import defaultdict
 from collections.abc import Mapping
 from dataclasses import dataclass
 from importlib import import_module, resources
@@ -12,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from delfino import commands as delfino_commands
 from delfino.constants import COMMANDS_DIRECTORY_NAME
+from delfino.models.pyproject_toml import PluginConfig
 
 if sys.version_info < (3, 10):
     from importlib_metadata import distributions
@@ -26,7 +26,7 @@ def command_names(commands: List[click.Command]) -> str:
     return ", ".join(command.name for command in commands if command.name)
 
 
-@dataclass
+@dataclass(frozen=True)
 class _Command:
     name: str
     command: click.Command
@@ -44,6 +44,7 @@ class _CommandPackage(BaseModel):
     new_name: str = Field(
         "", description="Set when ``package`` is a legacy name and ``new_name`` should be used instead."
     )
+    plugin_config: PluginConfig
 
     class Config:
         arbitrary_types_allowed = True
@@ -107,31 +108,40 @@ class CommandRegistry(Mapping):
 
     LEGACY_LOCAL_COMMAND_FOLDER = "tasks"
     CORE_PLUGIN_NAME = "core"
+    PLUGIN_DISTRIBUTION_ENTRY_POINT = "delfino.commands"
 
     def __init__(
-        self, disabled_commands: Dict[str, Set[str]], command_packages: Optional[List[_CommandPackage]] = None
+        self, plugins_configs: Dict[str, PluginConfig], command_packages: Optional[List[_CommandPackage]] = None
     ):
         self._command_packages = command_packages or [
             # Low priority - core packages distributed with delfino.
             # Will become standalone package in the future.
-            _CommandPackage(plugin_name=self.CORE_PLUGIN_NAME, package=delfino_commands.__package__),
+            _CommandPackage(
+                plugin_name=self.CORE_PLUGIN_NAME,
+                package=delfino_commands.__package__,
+                plugin_config=plugins_configs.get(self.CORE_PLUGIN_NAME, PluginConfig.empty()),
+            ),
             # Medium priority - discovered installed packages
-            *list(self._discover_command_packages()),
+            *list(self._discover_command_packages(plugins_configs)),
             # High priority - locally available packages
             _CommandPackage(
-                plugin_name=f"local ({COMMANDS_DIRECTORY_NAME})", package=COMMANDS_DIRECTORY_NAME, required=False
+                plugin_name=f"local-{COMMANDS_DIRECTORY_NAME}",
+                package=COMMANDS_DIRECTORY_NAME,
+                required=False,
+                plugin_config=plugins_configs.get(f"local-{COMMANDS_DIRECTORY_NAME}", PluginConfig.empty()),
             ),
             # legacy folder name for commands, will be removed in the future
             _CommandPackage(
-                plugin_name=f"local ({self.LEGACY_LOCAL_COMMAND_FOLDER})",
+                plugin_name=f"local-{self.LEGACY_LOCAL_COMMAND_FOLDER}",
                 package=self.LEGACY_LOCAL_COMMAND_FOLDER,
                 required=False,
                 new_name=COMMANDS_DIRECTORY_NAME,
+                plugin_config=plugins_configs.get(f"local-{self.LEGACY_LOCAL_COMMAND_FOLDER}", PluginConfig.empty()),
             ),
         ]
         self._commands: Dict[str, _Command] = {}
         self._hidden_commands: Set[_Command] = set()
-        self._register_packages(defaultdict(set, disabled_commands))
+        self._register_packages()
 
     def __len__(self) -> int:
         return len(self._commands)
@@ -150,32 +160,45 @@ class CommandRegistry(Mapping):
     def hidden_commands(self) -> List[_Command]:
         return list(self._hidden_commands)
 
-    @staticmethod
-    def _discover_command_packages(plugin_group_name: str = "delfino.commands") -> Iterator[_CommandPackage]:
+    @classmethod
+    def _discover_command_packages(cls, plugins_configs: Dict[str, PluginConfig]) -> Iterator[_CommandPackage]:
         """Discover packages from plugin. It is using package metadata as plugin discovering solution.
 
         Check the following URL about the plugin discovering solutions including the one uses package metadata.
         https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/
 
-        Args:
-            plugin_group_name (str): Used for a key to filter plugin for Delfino. Defaults to "delfino.commands".
-
         Yields:
             Iterator[_CommandPackage]: Iterator of models._CommandPackage.
         """
+        expected_plugin_names = set(plugins_configs.keys())
         for distribution in distributions():
-            for entry_point in distribution.entry_points.select(group=plugin_group_name):
+            for entry_point in distribution.entry_points.select(group=cls.PLUGIN_DISTRIBUTION_ENTRY_POINT):
                 if not entry_point:
                     continue
-                yield _CommandPackage(plugin_name=distribution.metadata["Name"], package=entry_point.load())
+                plugin_name = distribution.metadata["Name"]
+                if plugin_name not in expected_plugin_names:
+                    continue
+                yield _CommandPackage(
+                    plugin_name=plugin_name,
+                    package=entry_point.load(),
+                    plugin_config=plugins_configs.get(plugin_name, PluginConfig.empty()),
+                )
 
-    def _register_packages(self, disabled_commands):
+    def _register_packages(self):
         for command_package in self._command_packages:
-            for command in find_commands(command_package):
-                if command.name in disabled_commands:
-                    self._hidden_commands.add(command)
-                else:
+            commands = {command.name: command for command in find_commands(command_package)}
+            enabled_commands = command_package.plugin_config.enable_commands or set(commands.keys())
+            enabled_commands.difference_update(command_package.plugin_config.disable_commands)
+
+            for command_name, command in commands.items():
+                if command_name in enabled_commands:
                     self._register(command)
+                else:
+                    self._hidden_commands.add(command)
+                    _LOG.debug(
+                        f"Command '{command_name}' from the '{command_package.plugin_name}' "
+                        f"plugin has been disabled in config."
+                    )
 
     def _register(self, command: _Command):
         existing_command = self._commands.get(command.name)

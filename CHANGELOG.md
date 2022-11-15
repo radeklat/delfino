@@ -24,9 +24,10 @@ Types of changes are:
   ```
   configuration option in favour of
   ```
-  [tool.delfino.disable_plugin_commands]
-  <PLUGIN> = [<COMMAND>]
+  [tool.delfino.plugins.core]
+  disable_commands = [<COMMAND>]
   ```
+  Note that the name `core` of the plugin may change in the future.
 
 ## [0.19.1] - 2022-11-11
 

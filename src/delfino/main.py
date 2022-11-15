@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, List, Optional, Union
 from warnings import warn
 
 import click
@@ -15,7 +15,7 @@ from delfino.click_utils.help import extended_help_option
 from delfino.click_utils.verbosity import log_level_option
 from delfino.constants import ENTRY_POINT, PYPROJECT_TOML_FILENAME
 from delfino.contexts import AppContext
-from delfino.models.pyproject_toml import PyprojectToml
+from delfino.models.pyproject_toml import PluginConfig, PyprojectToml
 from delfino.utils import get_package_manager
 
 
@@ -31,20 +31,21 @@ class Commands(click.MultiCommand):
         # When evaluating available commands, the program should not fail. We save the exception
         # to show it only when a command is executed.
         self._pyproject_toml: Union[PyprojectToml, Exception]
-        self._hidden_plugin_commands: Dict[str, Set[str]] = {}
 
         try:
             self._pyproject_toml = PyprojectToml(file_path=pyproject_toml_path, **toml.load(pyproject_toml_path))
-            self._hidden_plugin_commands = self._pyproject_toml.tool.delfino.disable_plugin_commands
+
+            plugins = self._pyproject_toml.tool.delfino.plugins
+
             # Temporary code to deprecate tool.delfino.disable_commands
             if self._pyproject_toml.tool.delfino.disable_commands:
-                self._hidden_plugin_commands[
-                    CommandRegistry.CORE_PLUGIN_NAME
-                ] = self._pyproject_toml.tool.delfino.disable_commands
+                plugins[CommandRegistry.CORE_PLUGIN_NAME] = PluginConfig(
+                    disable_commands=self._pyproject_toml.tool.delfino.disable_commands
+                )
                 warn(
-                    f"```\n[tool.delfino]\ndisable_commands = ...\n``` configuration option "
-                    f"in `pyproject.toml` is deprecated and will be removed in the future. Please use "
-                    f"```\n[tool.delfino.disable_plugin_commands]\n{CommandRegistry.CORE_PLUGIN_NAME} = ...\n``` "
+                    f"```\n[tool.delfino]\ndisable_commands = ...\n```\nconfiguration option "
+                    f"in `pyproject.toml` is deprecated and will be removed in the future. Please use\n"
+                    f"```\n[tool.delfino.plugins.{CommandRegistry.CORE_PLUGIN_NAME}]\ndisable_commands = ...\n```\n"
                     f"instead.",
                     DeprecationWarning,
                 )
@@ -53,7 +54,7 @@ class Commands(click.MultiCommand):
         except FileNotFoundError:
             self._pyproject_toml = PyprojectToml()
 
-        self._command_registry = CommandRegistry(self._hidden_plugin_commands)
+        self._command_registry = CommandRegistry(plugins)
 
     def list_commands(self, ctx: click.Context) -> List[str]:
         """Override as MultiCommand always returns []."""

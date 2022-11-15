@@ -3,13 +3,14 @@ from types import ModuleType
 import pytest
 
 from delfino.click_utils.command import CommandRegistry
+from tests.integration.fixtures import ALL_PLUGINS_ALL_COMMANDS
 
 
 @pytest.mark.usefixtures("install_fake_plugins")
 class TestPlugin:
     @staticmethod
     def should_discover_packages():
-        command_packages = list(CommandRegistry._discover_command_packages())
+        command_packages = list(CommandRegistry._discover_command_packages(ALL_PLUGINS_ALL_COMMANDS))
         assert len(command_packages) == 2
         plugin_names = {command_package.plugin_name for command_package in command_packages}
         assert "fake-plugin-a" in plugin_names
