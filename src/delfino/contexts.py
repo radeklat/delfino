@@ -11,7 +11,7 @@ class AppContext(BaseModel):
     project_root: Path
     pyproject_toml: PyprojectToml
     package_manager: PackageManager
-    commands_directory: Path = Path(COMMANDS_DIRECTORY_NAME)
+    commands_directory: Path = Path(COMMANDS_DIRECTORY_NAME)  # deprecated, remove once core package is created
 
     class Config:
         arbitrary_types_allowed = True

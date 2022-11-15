@@ -18,7 +18,15 @@ Types of changes are:
 
 ### Deprecated
 
-- `tool.delfino.disable_commands` configuration 
+- ```
+  [tool.delfino]
+  disable_commands = [<COMMAND>]
+  ```
+  configuration option in favour of
+  ```
+  [tool.delfino.disable_plugin_commands]
+  <PLUGIN> = [<COMMAND>]
+  ```
 
 ## [0.19.1] - 2022-11-11
 

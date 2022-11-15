@@ -70,15 +70,14 @@ reports_directory = "reports"
 sources_directory = "src"
 tests_directory = "tests"
 test_types = ["unit", "integration"]
-disable_commands = []
 verify_commands = ["format", "lint", "typecheck", "test-all"]
 disable_pre_commit = false
 
 [tool.delfino.typecheck]
 strict_directories = ['src']
 
-[tool.delfino.disable_plugin_commands]
-"fake-plugin-b" =  ["typecheck"]
+# [tool.delfino.disable_plugin_commands]
+# <PLUGIN> = [<COMMAND>]
 
 [tool.delfino.dockerhub]
 username = ""
