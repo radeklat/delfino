@@ -135,7 +135,7 @@ optional = true
 python-versions = "*"
 
 [package.extras]
-test = ["hypothesis (==3.55.3)", "flake8 (==3.7.8)"]
+test = ["flake8 (==3.7.8)", "hypothesis (==3.55.3)"]
 
 [[package]]
 name = "coverage"
@@ -210,7 +210,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "exceptiongroup"
-version = "1.0.1"
+version = "1.0.4"
 description = "Backport of PEP 654 (exception groups)"
 category = "main"
 optional = false
@@ -411,7 +411,7 @@ pyparsing = ">=2.0.2,<3.0.5 || >3.0.5"
 
 [[package]]
 name = "pathspec"
-version = "0.10.1"
+version = "0.10.2"
 description = "Utility library for gitignore style pattern matching of file paths."
 category = "main"
 optional = false
@@ -430,7 +430,7 @@ testing = ["coverage", "nose"]
 
 [[package]]
 name = "platformdirs"
-version = "2.5.3"
+version = "2.5.4"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 category = "main"
 optional = false
@@ -452,8 +452,8 @@ python-versions = ">=3.6"
 importlib-metadata = {version = ">=0.12", markers = "python_version < \"3.8\""}
 
 [package.extras]
-testing = ["pytest-benchmark", "pytest"]
-dev = ["tox", "pre-commit"]
+dev = ["pre-commit", "tox"]
+testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pre-commit"
@@ -836,7 +836,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "types-psutil"
-version = "5.9.5.4"
+version = "5.9.5.5"
 description = "Typing stubs for psutil"
 category = "dev"
 optional = false
@@ -852,7 +852,7 @@ python-versions = "*"
 
 [[package]]
 name = "types-toml"
-version = "0.10.8"
+version = "0.10.8.1"
 description = "Typing stubs for toml"
 category = "dev"
 optional = false
@@ -881,7 +881,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "virtualenv"
-version = "20.16.6"
+version = "20.16.7"
 description = "Virtual Python Environment builder"
 category = "main"
 optional = false
@@ -939,7 +939,7 @@ verify-all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.2"
-content-hash = "7f6a1276bb89b57f1632ffbde59c8c0d0b8b98af0d7704278c4c0764686e8b01"
+content-hash = "782523e8180ab15bc3e9c1f3a3dd0ffbe608b093fef10776806c4dc603697882"
 
 [metadata.files]
 astroid = [
@@ -1147,6 +1147,10 @@ cryptography = [
     {file = "cryptography-38.0.3-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:785e4056b5a8b28f05a533fab69febf5004458e20dad7e2e13a3120d8ecec75a"},
     {file = "cryptography-38.0.3.tar.gz", hash = "sha256:bfbe6ee19615b07a98b1d2287d6a6073f734735b49ee45b11324d85efc4d5cbd"},
 ]
+deprecation = [
+    {file = "deprecation-2.1.0-py2.py3-none-any.whl", hash = "sha256:a10811591210e1fb0e768a8c25517cabeabcba6f0bf96564f8ff45189f90b14a"},
+    {file = "deprecation-2.1.0.tar.gz", hash = "sha256:72b3bde64e5d778694b0cf68178aed03d15e15477116add3fb773e581f9518ff"},
+]
 dill = [
     {file = "dill-0.3.6-py3-none-any.whl", hash = "sha256:a07ffd2351b8c678dfc4a856a3005f8067aea51d6ba6c700796a4d9e280f39f0"},
     {file = "dill-0.3.6.tar.gz", hash = "sha256:e5db55f3687856d8fbdab002ed78544e1c4559a130302693d839dfe8f93f2373"},
@@ -1160,8 +1164,8 @@ docutils = [
     {file = "docutils-0.19.tar.gz", hash = "sha256:33995a6753c30b7f577febfc2c50411fec6aac7f7ffeb7c4cfe5991072dcf9e6"},
 ]
 exceptiongroup = [
-    {file = "exceptiongroup-1.0.1-py3-none-any.whl", hash = "sha256:4d6c0aa6dd825810941c792f53d7b8d71da26f5e5f84f20f9508e8f2d33b140a"},
-    {file = "exceptiongroup-1.0.1.tar.gz", hash = "sha256:73866f7f842ede6cb1daa42c4af078e2035e5f7607f0e2c762cc51bb31bbe7b2"},
+    {file = "exceptiongroup-1.0.4-py3-none-any.whl", hash = "sha256:542adf9dea4055530d6e1279602fa5cb11dab2395fa650b8674eaec35fc4a828"},
+    {file = "exceptiongroup-1.0.4.tar.gz", hash = "sha256:bd14967b79cd9bdb54d97323216f8fdf533e278df937aa2a90089e7d6e06e5ec"},
 ]
 filelock = [
     {file = "filelock-3.8.0-py3-none-any.whl", hash = "sha256:617eb4e5eedc82fc5f47b6d61e4d11cb837c56cb4544e39081099fa17ad109d4"},
@@ -1273,16 +1277,16 @@ packaging = [
     {file = "packaging-21.3.tar.gz", hash = "sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb"},
 ]
 pathspec = [
-    {file = "pathspec-0.10.1-py3-none-any.whl", hash = "sha256:46846318467efc4556ccfd27816e004270a9eeeeb4d062ce5e6fc7a87c573f93"},
-    {file = "pathspec-0.10.1.tar.gz", hash = "sha256:7ace6161b621d31e7902eb6b5ae148d12cfd23f4a249b9ffb6b9fee12084323d"},
+    {file = "pathspec-0.10.2-py3-none-any.whl", hash = "sha256:88c2606f2c1e818b978540f73ecc908e13999c6c3a383daf3705652ae79807a5"},
+    {file = "pathspec-0.10.2.tar.gz", hash = "sha256:8f6bf73e5758fd365ef5d58ce09ac7c27d2833a8d7da51712eac6e27e35141b0"},
 ]
 pkginfo = [
     {file = "pkginfo-1.8.3-py2.py3-none-any.whl", hash = "sha256:848865108ec99d4901b2f7e84058b6e7660aae8ae10164e015a6dcf5b242a594"},
     {file = "pkginfo-1.8.3.tar.gz", hash = "sha256:a84da4318dd86f870a9447a8c98340aa06216bfc6f2b7bdc4b8766984ae1867c"},
 ]
 platformdirs = [
-    {file = "platformdirs-2.5.3-py3-none-any.whl", hash = "sha256:0cb405749187a194f444c25c82ef7225232f11564721eabffc6ec70df83b11cb"},
-    {file = "platformdirs-2.5.3.tar.gz", hash = "sha256:6e52c21afff35cb659c6e52d8b4d61b9bd544557180440538f255d9382c8cbe0"},
+    {file = "platformdirs-2.5.4-py3-none-any.whl", hash = "sha256:af0276409f9a02373d540bf8480021a048711d572745aef4b7842dad245eba10"},
+    {file = "platformdirs-2.5.4.tar.gz", hash = "sha256:1006647646d80f16130f052404c6b901e80ee4ed6bef6792e1f238a8969106f7"},
 ]
 pluggy = [
     {file = "pluggy-1.0.0-py2.py3-none-any.whl", hash = "sha256:74134bbf457f031a36d68416e1509f34bd5ccc019f0bcc952c7b909d06b37bd3"},
@@ -1519,16 +1523,16 @@ typed-ast = [
     {file = "typed_ast-1.5.4.tar.gz", hash = "sha256:39e21ceb7388e4bb37f4c679d72707ed46c2fbf2a5609b8b8ebc4b067d977df2"},
 ]
 types-psutil = [
-    {file = "types-psutil-5.9.5.4.tar.gz", hash = "sha256:aa09102b80c65a3b4573216614372398dab78972d650488eaff1ff05482cc18f"},
-    {file = "types_psutil-5.9.5.4-py3-none-any.whl", hash = "sha256:28e59764630187e462d43788efa16d59d5e77b510115f9e25901b2d4007fca62"},
+    {file = "types-psutil-5.9.5.5.tar.gz", hash = "sha256:4f26fdb2cb064b274cbc6359fba4abf3b3a2993d7d4abc336ad0947568212c62"},
+    {file = "types_psutil-5.9.5.5-py3-none-any.whl", hash = "sha256:e576bb81c74f7443b067e94f92435894d5dd561161bec3d6401727b63df009f0"},
 ]
 types-termcolor = [
     {file = "types-termcolor-1.1.6.tar.gz", hash = "sha256:7e303da3c5c3464379193e62d6ae61d8680e21ec92ecbdfd4b0a85704e78d5d4"},
     {file = "types_termcolor-1.1.6-py3-none-any.whl", hash = "sha256:359eb9e01de2f60332a560abda84517758e1c7dcd8907be529b82cd45f83211f"},
 ]
 types-toml = [
-    {file = "types-toml-0.10.8.tar.gz", hash = "sha256:b7e7ea572308b1030dc86c3ba825c5210814c2825612ec679eb7814f8dd9295a"},
-    {file = "types_toml-0.10.8-py3-none-any.whl", hash = "sha256:8300fd093e5829eb9c1fba69cee38130347d4b74ddf32d0a7df650ae55c2b599"},
+    {file = "types-toml-0.10.8.1.tar.gz", hash = "sha256:171bdb3163d79a520560f24ba916a9fc9bff81659c5448a9fea89240923722be"},
+    {file = "types_toml-0.10.8.1-py3-none-any.whl", hash = "sha256:b7b5c4977f96ab7b5ac06d8a6590d17c0bf252a96efc03b109c2711fb3e0eafd"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.4.0-py3-none-any.whl", hash = "sha256:16fa4864408f655d35ec496218b85f79b3437c829e93320c7c9215ccfd92489e"},
@@ -1539,8 +1543,8 @@ urllib3 = [
     {file = "urllib3-1.26.12.tar.gz", hash = "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e"},
 ]
 virtualenv = [
-    {file = "virtualenv-20.16.6-py3-none-any.whl", hash = "sha256:186ca84254abcbde98180fd17092f9628c5fe742273c02724972a1d8a2035108"},
-    {file = "virtualenv-20.16.6.tar.gz", hash = "sha256:530b850b523c6449406dfba859d6345e48ef19b8439606c5d74d7d3c9e14d76e"},
+    {file = "virtualenv-20.16.7-py3-none-any.whl", hash = "sha256:efd66b00386fdb7dbe4822d172303f40cd05e50e01740b19ea42425cbe653e29"},
+    {file = "virtualenv-20.16.7.tar.gz", hash = "sha256:8691e3ff9387f743e00f6bb20f70121f5e4f596cae754531f2b3b3a1b1ac696e"},
 ]
 webencodings = [
     {file = "webencodings-0.5.1-py2.py3-none-any.whl", hash = "sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78"},
