@@ -1,7 +1,9 @@
+import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from pydantic import BaseModel, Extra, Field
+from deprecation import DeprecatedWarning
+from pydantic import BaseModel, Extra, Field, validator
 
 
 class Dockerhub(BaseModel):
@@ -13,6 +15,18 @@ class Typecheck(BaseModel):
     strict_directories: List[Path] = []
 
 
+class PluginConfig(BaseModel):
+    enable_commands: Set[str] = set()
+    disable_commands: Set[str] = set()
+
+    @classmethod
+    def empty(cls):
+        return cls()
+
+    class Config:
+        extra = Extra.allow
+
+
 class Delfino(BaseModel):
     sources_directory: Path = Path("src")
     tests_directory: Path = Path("tests")
@@ -22,12 +36,28 @@ class Delfino(BaseModel):
     verify_commands: Tuple[str, ...] = ("format", "lint", "typecheck", "test-all")
     disable_pre_commit: bool = False
     dockerhub: Optional[Dockerhub] = None
-    plugins: Dict[str, Any] = Field(default_factory=dict, description="Any additional config given by plugins.")
+    commands: Dict[str, Any] = Field(default_factory=dict, description="Any additional config given by plugins.")
+    disable_plugin_commands: Dict[str, Set[str]] = Field(default_factory=dict)
+    plugins: Dict[str, PluginConfig] = Field(default_factory=dict)
 
     typecheck: Typecheck = Field(default_factory=Typecheck)
 
     class Config:
         extra = Extra.allow
+
+    @validator("disable_commands")
+    @classmethod
+    def deprecate_disable_commands(cls, val):
+        if val:
+            warnings.warn(
+                DeprecatedWarning(
+                    "tool.delfino.disable_commands configuration",
+                    "0.19.0",
+                    "1.0.0",
+                    "Use tool.delfino.disable_plugin_commands instead.",
+                )
+            )
+        return val
 
 
 class Poetry(BaseModel):

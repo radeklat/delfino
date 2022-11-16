@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "delfino"
-version = "0.19.1"
+version = "0.20.0"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"
@@ -32,6 +32,7 @@ python = "^3.7.2"
 toml = "^0.10"
 click = "^8.0"
 pydantic = "^1.8"
+deprecation ="^2.1"
 importlib-metadata = {version = "*", python = "<3.8"}
 black = {version = "*", optional = true}
 isort = {version = "*", optional = true}
@@ -142,6 +143,8 @@ module = [
     "invoke.*",
     "pipenv.*",
     "shellingham.*",
+    "setuptools.*",
+    "deprecation.*",
 ]
 ignore_missing_imports = true
 

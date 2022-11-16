@@ -72,7 +72,6 @@ disable=arguments-differ,
         useless-suppression,
         wildcard-import,
         logging-fstring-interpolation,
-        logging-string-interpolation,
 
 
 [REPORTS]
