@@ -13,10 +13,6 @@ def command_packages():
     return CommandRegistry._discover_command_packages(ALL_PLUGINS_ALL_COMMANDS)  # don't load project packages
 
 
-# TODO(Radek): Test fallback of disable_commands
-# TODO(Radek): Test disabling/enabling local commands
-
-
 @pytest.mark.usefixtures("install_fake_plugins")
 class TestCommandRegistry:
     @staticmethod
