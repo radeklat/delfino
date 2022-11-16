@@ -4,7 +4,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from importlib import import_module, resources
 from importlib.resources import Package
-from typing import Dict, Iterator, List, Optional, Set, cast
+from typing import Dict, Iterator, List, Optional, cast
 
 import click
 from pydantic import BaseModel, Field
@@ -73,9 +73,11 @@ def find_commands(command_package: _CommandPackage) -> List[_Command]:
         )
         command = import_module(f"{package_name}.{filename[:-3]}")
 
-        for obj in vars(command).values():
-            if isinstance(obj, click.Command) and obj.name is not None:
-                commands.append(_Command(name=obj.name, command=obj, plugin_name=command_package.plugin_name))
+        commands.extend(
+            _Command(name=obj.name, command=obj, plugin_name=command_package.plugin_name)
+            for obj in vars(command).values()
+            if isinstance(obj, click.Command) and obj.name is not None
+        )
 
     if commands and command_package.new_name and package_name:
         click.secho(
@@ -108,12 +110,39 @@ class CommandRegistry(Mapping):
 
     LEGACY_LOCAL_COMMAND_FOLDER = "tasks"
     CORE_PLUGIN_NAME = "core"
-    PLUGIN_DISTRIBUTION_ENTRY_POINT = "delfino.commands"
+    TYPE_OF_PLUGIN = "delfino.plugin"
 
     def __init__(
         self, plugins_configs: Dict[str, PluginConfig], command_packages: Optional[List[_CommandPackage]] = None
     ):
-        self._command_packages = command_packages or [
+        if command_packages is None:
+            self._command_packages = self._default_command_packages(plugins_configs)
+        else:
+            self._command_packages = command_packages
+        self._visible_commands: Dict[str, _Command] = {}
+        self._hidden_commands: Dict[str, _Command] = {}
+        self._register_packages()
+
+    def __len__(self) -> int:
+        return len(self._visible_commands)
+
+    def __getitem__(self, key: str) -> click.Command:
+        return self._visible_commands[key].command
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._visible_commands)
+
+    @property
+    def visible_commands(self) -> List[_Command]:
+        return list(self._visible_commands.values())
+
+    @property
+    def hidden_commands(self) -> List[_Command]:
+        return list(self._hidden_commands.values())
+
+    def _default_command_packages(self, plugins_configs: Dict[str, PluginConfig]) -> List[_CommandPackage]:
+        # This is a function to lazy load packages in tests. They may not exist on import of the code.
+        return [
             # Low priority - core packages distributed with delfino.
             # Will become standalone package in the future.
             _CommandPackage(
@@ -122,7 +151,7 @@ class CommandRegistry(Mapping):
                 plugin_config=plugins_configs.get(self.CORE_PLUGIN_NAME, PluginConfig.empty()),
             ),
             # Medium priority - discovered installed packages
-            *list(self._discover_command_packages(plugins_configs)),
+            *self._discover_command_packages(plugins_configs),
             # High priority - locally available packages
             _CommandPackage(
                 plugin_name=f"local-{COMMANDS_DIRECTORY_NAME}",
@@ -139,50 +168,38 @@ class CommandRegistry(Mapping):
                 plugin_config=plugins_configs.get(f"local-{self.LEGACY_LOCAL_COMMAND_FOLDER}", PluginConfig.empty()),
             ),
         ]
-        self._commands: Dict[str, _Command] = {}
-        self._hidden_commands: Set[_Command] = set()
-        self._register_packages()
-
-    def __len__(self) -> int:
-        return len(self._commands)
-
-    def __getitem__(self, key: str) -> click.Command:
-        return self._commands[key].command
-
-    def __iter__(self) -> Iterator[str]:
-        return iter(self._commands)
-
-    @property
-    def visible_commands(self) -> List[str]:
-        return sorted(self._commands.keys())
-
-    @property
-    def hidden_commands(self) -> List[_Command]:
-        return list(self._hidden_commands)
 
     @classmethod
-    def _discover_command_packages(cls, plugins_configs: Dict[str, PluginConfig]) -> Iterator[_CommandPackage]:
+    def _discover_command_packages(cls, plugins_configs: Dict[str, PluginConfig]) -> List[_CommandPackage]:
         """Discover packages from plugin. It is using package metadata as plugin discovering solution.
 
         Check the following URL about the plugin discovering solutions including the one uses package metadata.
         https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/
-
-        Yields:
-            Iterator[_CommandPackage]: Iterator of models._CommandPackage.
         """
-        expected_plugin_names = set(plugins_configs.keys())
+        # We want to keep loaded _CommandPackage instance in the same order as defined in the config
+        command_packages: Dict[str, Optional[_CommandPackage]] = {plugin_name: None for plugin_name in plugins_configs}
         for distribution in distributions():
-            for entry_point in distribution.entry_points.select(group=cls.PLUGIN_DISTRIBUTION_ENTRY_POINT):
+            for entry_point in distribution.entry_points.select(group=cls.TYPE_OF_PLUGIN):
                 if not entry_point:
                     continue
                 plugin_name = distribution.metadata["Name"]
-                if plugin_name not in expected_plugin_names:
+                if plugin_name not in command_packages:
                     continue
-                yield _CommandPackage(
+                command_packages[plugin_name] = _CommandPackage(
                     plugin_name=plugin_name,
                     package=entry_point.load(),
                     plugin_config=plugins_configs.get(plugin_name, PluginConfig.empty()),
                 )
+
+        found_command_packages = []
+        for plugin_name, command_package in list(command_packages.items()):
+            if command_package is not None:
+                found_command_packages.append(command_package)
+            elif plugin_name != cls.CORE_PLUGIN_NAME:
+                _LOG.warning(f"Plugin '{plugin_name}' specified in config but no such plugin is installed.")
+                command_packages.pop(plugin_name)
+
+        return found_command_packages
 
     def _register_packages(self):
         for command_package in self._command_packages:
@@ -191,20 +208,20 @@ class CommandRegistry(Mapping):
             enabled_commands.difference_update(command_package.plugin_config.disable_commands)
 
             for command_name, command in commands.items():
-                if command_name in enabled_commands:
-                    self._register(command)
-                else:
-                    self._hidden_commands.add(command)
-                    _LOG.debug(
-                        f"Command '{command_name}' from the '{command_package.plugin_name}' "
-                        f"plugin has been disabled in config."
-                    )
+                self._register(command, command_name in enabled_commands)
 
-    def _register(self, command: _Command):
-        existing_command = self._commands.get(command.name)
+    def _register(self, command: _Command, enabled: bool):
+        existing_command = self._visible_commands.pop(command.name, None) or self._hidden_commands.pop(
+            command.name, None
+        )
         if existing_command:
             _LOG.debug(
                 f"Using command '{command.name}' from plugin '{command.plugin_name}'. Previously registered "
                 f"by '{existing_command.plugin_name}' plugin, which has lower priority."
             )
-        self._commands[command.name] = command
+
+        if enabled:
+            self._visible_commands[command.name] = command
+        else:
+            self._hidden_commands[command.name] = command
+            _LOG.debug(f"Command '{command.name}' from the '{command.plugin_name}' plugin has been disabled in config.")

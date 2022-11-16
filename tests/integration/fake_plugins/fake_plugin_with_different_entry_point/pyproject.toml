@@ -1,0 +1,11 @@
+[tool.poetry]
+name="fake_plugin_with_different_entry_point"
+version="0.0.1"
+authors=["Test <test@example.com>"]
+description="Plugin with a different entry point should not load"
+
+# https://python-poetry.org/docs/pyproject/#plugins
+[tool.poetry.plugins]
+
+[tool.poetry.plugins."delfino.different"]
+"fake_plugin_with_different_entry_point" = "fake_plugin_with_different_entry_point.commands"

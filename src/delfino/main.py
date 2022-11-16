@@ -59,7 +59,7 @@ class Commands(click.MultiCommand):
     def list_commands(self, ctx: click.Context) -> List[str]:
         """Override as MultiCommand always returns []."""
         del ctx
-        return self._command_registry.visible_commands
+        return sorted(command.name for command in self._command_registry.visible_commands)
 
     def get_command(self, ctx: click.Context, cmd_name: str) -> Optional[click.Command]:
         """Override to give all commands a common ``AppContext`` or fail if ``pyproject.toml`` is broken/missing."""

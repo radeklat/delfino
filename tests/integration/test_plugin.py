@@ -10,7 +10,7 @@ from tests.integration.fixtures import ALL_PLUGINS_ALL_COMMANDS
 class TestPlugin:
     @staticmethod
     def should_discover_packages():
-        command_packages = list(CommandRegistry._discover_command_packages(ALL_PLUGINS_ALL_COMMANDS))
+        command_packages = CommandRegistry._discover_command_packages(ALL_PLUGINS_ALL_COMMANDS)
         assert len(command_packages) == 2
         plugin_names = {command_package.plugin_name for command_package in command_packages}
         assert "fake-plugin-a" in plugin_names
