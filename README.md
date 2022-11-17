@@ -80,8 +80,8 @@ disable_pre_commit = false
 strict_directories = ['src']
 
 # By default, all commands will be enabled. Use `enable_commands` or `disable_commands` 
-# to show only a subset of commands. If both used, disabled commands a subtracted from the
-# set of enabled commands. 
+# to show only a subset of commands. If both used, disabled commands are subtracted 
+# from the set of enabled commands. 
 # [tool.delfino.plugins.<PLUGIN_NAME_A>]
 # enable_commands = [<COMMAND_NAME>]
 # disable_commands = [<COMMAND_NAME>]
