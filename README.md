@@ -18,6 +18,9 @@
     <a href="https://www.python.org/doc/versions/">
         <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/delfino">
     </a>
+    <a href="https://pypistats.org/packages/delfino">
+        <img alt="CircleCI" src="https://img.shields.io/pypi/dm/delfino">
+    </a>
 </p>
 
 <!--
