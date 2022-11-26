@@ -66,7 +66,7 @@ def find_commands(command_package: _CommandPackage) -> List[_Command]:
     package_name: Optional[str] = ""
 
     for filename in files:
-        if filename.startswith("_") or not filename.endswith(".py"):
+        if not filename.endswith(".py") or (filename.startswith("_") and filename != "__init__.py"):
             continue
         package_name = (
             command_package.package if isinstance(command_package.package, str) else command_package.package.__package__
