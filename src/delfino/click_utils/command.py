@@ -14,6 +14,7 @@ from delfino.constants import COMMANDS_DIRECTORY_NAME
 from delfino.models.pyproject_toml import PluginConfig
 
 if sys.version_info < (3, 10):
+    # `importlib.metadata` available since 3.8 but `distribution.entry_points.select` only since 3.10
     from importlib_metadata import distributions
 else:
     from importlib.metadata import distributions
