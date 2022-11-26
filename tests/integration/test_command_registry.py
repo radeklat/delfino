@@ -18,7 +18,13 @@ class TestCommandRegistry:
     @staticmethod
     def should_deduplicate_plugin_commands(command_packages):
         registry = CommandRegistry(plugins_configs=ALL_PLUGINS_ALL_COMMANDS, command_packages=command_packages)
-        assert {command.name for command in registry.visible_commands} == {"build", "format", "lint", "typecheck"}
+        assert {command.name for command in registry.visible_commands} == {
+            "build",
+            "format",
+            "lint",
+            "typecheck",
+            "init-only",
+        }
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -113,6 +119,12 @@ class TestCommandRegistryPluginAndCommandSelection:
                 {"typecheck", "build"},
                 {"lint"},
                 id="all enabled without disabled commands",
+            ),
+            pytest.param(
+                {"fake-plugin-init-only": PluginConfig.empty()},
+                {"init-only"},
+                set(),
+                id="all plugin commands from __init__ file when no enable nor disable specified",
             ),
         ],
     )

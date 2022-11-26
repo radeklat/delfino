@@ -34,6 +34,7 @@ def install_fake_plugins():
             _build_and_install_setuptools_plugin(tmpdir, "fake_plugin_a")
             for plugin_name in [
                 "fake_plugin_b",
+                "fake_plugin_init_only",
                 "fake_plugin_without_entry_point",
                 "fake_plugin_with_different_entry_point",
             ]:
