@@ -56,7 +56,12 @@ def find_commands(command_package: _CommandPackage) -> List[_Command]:
     Does not traverse modules recursively.
     """
     try:
-        files = resources.contents(command_package.package)
+        if sys.version_info >= (3, 9):
+            files = [
+                path.name for path in resources.files(command_package.package).iterdir()  # pylint: disable=no-member
+            ]
+        else:
+            files = resources.contents(command_package.package)
     except ModuleNotFoundError as exc:
         if command_package.required or f"'{command_package.package}'" not in str(exc):
             raise
