@@ -12,6 +12,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.20.3] - 2022-11-26
+
+### Fixes
+
+- Fix `importlib.metadata` import.
+
 ## [0.20.2] - 2022-11-26
 
 ### Fixes
@@ -303,8 +309,9 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.20.2...HEAD
-[0.20.1]: https://github.com/radeklat/settings-doc/compare/0.20.1...0.20.2
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.20.3...HEAD
+[0.20.3]: https://github.com/radeklat/settings-doc/compare/0.20.2...0.20.3
+[0.20.2]: https://github.com/radeklat/settings-doc/compare/0.20.1...0.20.2
 [0.20.1]: https://github.com/radeklat/settings-doc/compare/0.20.0...0.20.1
 [0.20.0]: https://github.com/radeklat/settings-doc/compare/0.19.1...0.20.0
 [0.19.1]: https://github.com/radeklat/settings-doc/compare/0.19.0...0.19.1

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "delfino"
-version = "0.20.2"
+version = "0.20.3"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"
@@ -33,7 +33,7 @@ toml = "^0.10"
 click = "^8.0"
 pydantic = "^1.8"
 deprecation ="^2.1"
-importlib-metadata = {version = "*", python = "<3.8"}
+importlib-metadata = {version = "*", python = "<3.10"}
 black = {version = "*", optional = true}
 isort = {version = "*", optional = true}
 pre-commit = {version = "*", optional = true}
