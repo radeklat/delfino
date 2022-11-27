@@ -15,8 +15,3 @@ def get_package_manager(project_root: Path, pyproject_toml: PyprojectToml) -> Pa
         return PackageManager.PIPENV
 
     return PackageManager.UNKNOWN
-
-
-def ensure_reports_dir(delfino: Delfino) -> None:
-    """Ensures that the reports directory exists."""
-    delfino.reports_directory.mkdir(parents=True, exist_ok=True)

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "delfino"
-version = "0.20.3"
+version = "0.21.0"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"
@@ -165,7 +165,10 @@ reports_directory = "reports"
 sources_directory = "src"
 tests_directory = "tests"
 test_types = ["unit", "integration"]
-disable_commands = ["build-docker"]
+
+[tool.delfino.plugins.delfino-core]
+disable_commands = ['build-docker']
+
 
 #[tool.delfino.dockerhub]
 #username = "radeklat"

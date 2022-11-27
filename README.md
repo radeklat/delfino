@@ -72,6 +72,7 @@ Delfino will assume certain project structure. However, you can customize it to 
 reports_directory = "reports"
 sources_directory = "src"
 tests_directory = "tests"
+local_commands_directory = "commands"
 test_types = ["unit", "integration"]
 verify_commands = ["format", "lint", "typecheck", "test-all"]
 disable_pre_commit = false
