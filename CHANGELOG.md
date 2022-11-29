@@ -12,6 +12,13 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.22.0] - 2022-11-30
+
+### Breaking changes
+
+- All optional dependencies (a.k.a. extras) except for `completion` have been moved to the plugin `delfino-core`. To migrate, move the `extras` of `delfino` to `delfino-core`.
+- Revert to loading commands in plugins only from given entry point.
+
 ## [0.21.0] - 2022-11-29
 
 ### Breaking changes
@@ -331,7 +338,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.21.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.22.0...HEAD
+[0.22.0]: https://github.com/radeklat/settings-doc/compare/0.21.0...0.22.0
 [0.21.0]: https://github.com/radeklat/settings-doc/compare/0.20.3...0.21.0
 [0.20.3]: https://github.com/radeklat/settings-doc/compare/0.20.2...0.20.3
 [0.20.2]: https://github.com/radeklat/settings-doc/compare/0.20.1...0.20.2

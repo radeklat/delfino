@@ -145,6 +145,10 @@ attr-rgx=[A-Za-z_][A-Za-z0-9_]{2,45}$
 # Regular expression matching correct class names
 class-rgx=[A-Z_][a-zA-Z0-9]+$
 
+# Regular expression matching correct type variable names. If left empty, type
+# variable names will be checked with the set naming style.
+typevar-rgx=[A-Z_][a-zA-Z0-9]+$
+
 # Regular expression which should only match function or class names that do
 # not require a docstring.
 no-docstring-rgx=^(test_|__init__)

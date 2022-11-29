@@ -1,16 +1,15 @@
 import logging
-import os
 import sys
 from dataclasses import dataclass
-from importlib import import_module
+from importlib import import_module, resources
 from importlib.resources import Package
 from pathlib import Path
 from typing import Dict, Iterator, List, Mapping, Optional, cast
 
 import click
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 
-from delfino.constants import COMMANDS_DIRECTORY_NAME
+from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY
 from delfino.models.pyproject_toml import PluginConfig
 
 if sys.version_info < (3, 10):
@@ -34,16 +33,30 @@ class _CommandPackage(BaseModel):
     package: Package = Field(..., description="A package that include commands.")
     plugin_config: PluginConfig
 
+    @validator("package")
+    def package_is_valid(cls, value: Package):  # pylint: disable=no-self-argument
+        if isinstance(value, str):
+            return value
+        if isinstance(value.__package__, str) and isinstance(value.__file__, str):
+            return value
+
+        raise ValueError(
+            f"`package` must be either an instance of `str` or have the `__module__` and "
+            f"`__file__` attributes set to a `str` but '{value}' used."
+        )
+
     @property
-    def package_name(self) -> str:
+    def module_name(self) -> str:
         if isinstance(self.package, str):
             return self.package
+        assert isinstance(self.package.__package__, str)
         return self.package.__package__
 
     @property
-    def package_root_dir(self) -> Path:
+    def module_root_dir(self) -> Path:
         if isinstance(self.package, str):
             return Path(self.package)
+        assert isinstance(self.package.__file__, str)
         return Path(self.package.__file__).parent
 
     class Config:
@@ -58,19 +71,32 @@ class _Command:
 
 
 def find_commands(command_package: _CommandPackage) -> List[_Command]:
-    """Recursively finds all instances of ``click.Command`` in given module."""
+    """Finds all instances of ``click.Command`` in given module.
+
+    Does not traverse modules recursively. Plugins must point to the correct module via the entry point.
+    """
+    try:
+        if sys.version_info >= (3, 9):
+            files = [
+                path.name for path in resources.files(command_package.package).iterdir()  # pylint: disable=no-member
+            ]
+        else:
+            files = resources.contents(command_package.package)
+    except ModuleNotFoundError:
+        return []
+
     commands: List[_Command] = []
 
-    module_root = command_package.package_root_dir.parent
-    for root, _dirs, files in os.walk(command_package.package_root_dir):
-        if "__init__.py" in files:  # it is a package
-            for file in files:
-                module_path = Path(root).relative_to(module_root)
-                module_import_path = ".".join(module_path.parts + (file[:-3],))
-                module = import_module(module_import_path)
-                for obj in vars(module).values():
-                    if isinstance(obj, click.Command) and obj.name is not None:
-                        commands.append(_Command(name=obj.name, command=obj, package=command_package))
+    for filename in files:
+        if not filename.endswith(".py") or (filename.startswith("_") and filename != "__init__.py"):
+            continue
+        module = import_module(f"{command_package.module_name}.{filename[:-3]}")
+
+        commands.extend(
+            _Command(name=obj.name, command=obj, package=command_package)
+            for obj in vars(module).values()
+            if isinstance(obj, click.Command) and obj.name is not None
+        )
 
     return commands
 
@@ -96,12 +122,13 @@ class CommandRegistry(Mapping):
     """
 
     TYPE_OF_PLUGIN = "delfino.plugin"
+    LOCAL_PLUGIN_NAME = "local_commands_directory"
 
     def __init__(
         self,
         plugins_configs: Dict[str, PluginConfig],
-        local_commands_directory: Path,
         command_packages: Optional[List[_CommandPackage]] = None,
+        local_commands_directory: Path = DEFAULT_LOCAL_COMMANDS_DIRECTORY,
     ):
         if command_packages is None:
             self._command_packages = self._default_command_packages(plugins_configs, local_commands_directory)
@@ -128,16 +155,19 @@ class CommandRegistry(Mapping):
     def hidden_commands(self) -> List[_Command]:
         return list(self._hidden_commands.values())
 
-    def _default_command_packages(self, plugins_configs: Dict[str, PluginConfig], local_commands_directory: Path) -> List[_CommandPackage]:
+    @classmethod
+    def _default_command_packages(
+        cls, plugins_configs: Dict[str, PluginConfig], local_commands_directory: Path
+    ) -> List[_CommandPackage]:
         # This is a function to lazy load packages in tests. They may not exist on import of the code.
         return [
             # Lower priority - discovered installed packages
-            *self._discover_command_packages(plugins_configs),
+            *cls._discover_command_packages(plugins_configs),
             # Higher priority - locally available packages
             _CommandPackage(
-                plugin_name=f"local_commands_directory",
+                plugin_name=cls.LOCAL_PLUGIN_NAME,
                 package=str(local_commands_directory),
-                plugin_config=plugins_configs.get(f"local_commands_directory", PluginConfig.empty()),
+                plugin_config=plugins_configs.get(cls.LOCAL_PLUGIN_NAME, PluginConfig.empty()),
             ),
         ]
 

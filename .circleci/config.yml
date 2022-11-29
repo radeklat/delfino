@@ -46,39 +46,39 @@ jobs: # A basic unit of work in a run
           key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< parameters.python_version >>-{{ checksum "poetry.lock" }}
           paths:
             - ".venv"
-#      - run:
-#          name: Format check
-#          command: << pipeline.parameters.command_prefix >> format --check
-#      - run:
-#          name: Type check
-#          command: << pipeline.parameters.command_prefix >> typecheck
-#      - run:
-#          name: Linters
-#          command: << pipeline.parameters.command_prefix >> lint
-#      - run:
-#          name: Unit tests
-#          command: << pipeline.parameters.command_prefix >> test-unit
-#      - run:
-#          name: Integration tests
-#          command: << pipeline.parameters.command_prefix >> test-integration
-#      - run:
-#          name: Build coverage report
-#          command: << pipeline.parameters.command_prefix >> coverage-report
-#      - run:
-#          name: Upload coverage reports to Codecov
-#          command: |
-#            [[ "${CIRCLE_BRANCH}" == "<< pipeline.parameters.git_trunk_branch >>" ]] && BASE_COMMIT_SHA=$(git rev-parse HEAD~1) || BASE_COMMIT_SHA=$(git merge-base ${CIRCLE_BRANCH} origin/<< pipeline.parameters.git_trunk_branch >>)
-#            bash <(curl -s https://codecov.io/bash) -N ${BASE_COMMIT_SHA} -f reports/coverage-unit.xml -F total,unit_tests &&
-#            bash <(curl -s https://codecov.io/bash) -N ${BASE_COMMIT_SHA} -f reports/coverage-integration.xml -F total,integration_tests
-#      - store_artifacts:
-#          path: reports/coverage-report
-#      - store_test_results:
-#          path: reports
+      - run:
+          name: Format check
+          command: << pipeline.parameters.command_prefix >> format --check
+      - run:
+          name: Type check
+          command: << pipeline.parameters.command_prefix >> typecheck
+      - run:
+          name: Linters
+          command: << pipeline.parameters.command_prefix >> lint
+      - run:
+          name: Unit tests
+          command: << pipeline.parameters.command_prefix >> test-unit
+      - run:
+          name: Integration tests
+          command: << pipeline.parameters.command_prefix >> test-integration
+      - run:
+          name: Build coverage report
+          command: << pipeline.parameters.command_prefix >> coverage-report
+      - run:
+          name: Upload coverage reports to Codecov
+          command: |
+            [[ "${CIRCLE_BRANCH}" == "<< pipeline.parameters.git_trunk_branch >>" ]] && BASE_COMMIT_SHA=$(git rev-parse HEAD~1) || BASE_COMMIT_SHA=$(git merge-base ${CIRCLE_BRANCH} origin/<< pipeline.parameters.git_trunk_branch >>)
+            bash <(curl -s https://codecov.io/bash) -N ${BASE_COMMIT_SHA} -f reports/coverage-unit.xml -F total,unit_tests &&
+            bash <(curl -s https://codecov.io/bash) -N ${BASE_COMMIT_SHA} -f reports/coverage-integration.xml -F total,integration_tests
+      - store_artifacts:
+          path: reports/coverage-report
+      - store_test_results:
+          path: reports
 
   build:
     working_directory: << pipeline.parameters.working_directory >>
     docker: # run the steps with Docker
-      - image: circleci/python:<< pipeline.parameters.python_version >>
+      - image: cimg/python:<< pipeline.parameters.python_version >>
         environment:
           PIPENV_VENV_IN_PROJECT: "true"
     steps:
@@ -97,7 +97,7 @@ jobs: # A basic unit of work in a run
   publish:
     working_directory: << pipeline.parameters.working_directory >>
     docker: # run the steps with Docker
-      - image: circleci/python:<< pipeline.parameters.python_version >>
+      - image: cimg/python:<< pipeline.parameters.python_version >>
     steps:
       - attach_workspace:
           at: << pipeline.parameters.working_directory >>
@@ -119,11 +119,9 @@ jobs: # A basic unit of work in a run
   release:
     working_directory: << pipeline.parameters.working_directory >>
     docker:
-      - image: circleci/python:<< pipeline.parameters.python_version >>
+      - image: cimg/python:<< pipeline.parameters.python_version >>
     steps:
       - checkout
-      - run: sudo chown -R circleci:circleci /usr/local/bin
-      - run: sudo chown -R circleci:circleci /usr/local/lib/python<< pipeline.parameters.python_version >>/site-packages
       - restore_cache:
           key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< pipeline.parameters.python_version >>-{{ checksum "poetry.lock" }}
       - gh/setup

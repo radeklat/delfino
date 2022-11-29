@@ -6,14 +6,14 @@ from click import get_current_context
 from pydantic import BaseModel
 
 from delfino.constants import PackageManager
-from delfino.models.pyproject_toml import PluginConfig, PluginConfigType, PyprojectToml
+from delfino.models.pyproject_toml import PluginConfig, PyprojectToml
 
 
 class AppContext(BaseModel):
     project_root: Path
     pyproject_toml: PyprojectToml
     package_manager: PackageManager
-    plugin_config: PluginConfigType
+    plugin_config: PluginConfig
 
     class Config:
         arbitrary_types_allowed = True
@@ -22,7 +22,7 @@ class AppContext(BaseModel):
 _Func = TypeVar("_Func", bound=Callable[..., Any])
 
 
-def pass_app_context(plugin_config_type: Type[PluginConfigType] = PluginConfig) -> Callable[[_Func], _Func]:
+def pass_app_context(plugin_config_type: Type[PluginConfig] = PluginConfig) -> Callable[[_Func], _Func]:
     """Similar to ``click.make_pass_decorator``, with optional parsing of plugin specific config.
 
     This decorator passes into the command an app context ``AppContext``. In this context,
@@ -35,6 +35,7 @@ def pass_app_context(plugin_config_type: Type[PluginConfigType] = PluginConfig) 
     Args:
         plugin_config_type: A subclass of ``PluginConfig``.
     """
+
     def decorator(func: _Func) -> _Func:
         def new_func(*args, **kwargs):
             ctx = get_current_context()

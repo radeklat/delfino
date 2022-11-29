@@ -12,7 +12,7 @@ class TestPlugin:
     def should_discover_packages():
         command_packages = CommandRegistry._discover_command_packages(ALL_PLUGINS_ALL_COMMANDS)
         plugin_names = {command_package.plugin_name for command_package in command_packages}
-        assert plugin_names == {"fake-plugin-a", "fake-plugin-b", "fake-plugin-init-only"}
+        assert plugin_names == {"fake-plugin-a", "fake-plugin-b"}
 
         fake_plugin_a_package = next(
             filter(lambda command_package: command_package.plugin_name == "fake-plugin-a", command_packages), None
