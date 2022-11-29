@@ -49,7 +49,7 @@ class TestCommandRegistry:
         assert registry.visible_commands
         command = next(iter(registry.visible_commands))
         assert command.name == "typecheck"
-        assert command.plugin_name == second_plugin_name
+        assert command.package.plugin_name == second_plugin_name
 
     @staticmethod
     def should_log_when_duplicated_plugin_commands_are_ignored(caplog, command_packages):

@@ -12,6 +12,28 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.21.0] - 2022-11-29
+
+### Breaking changes
+
+- Removed `tasks` folder as a fallback for `commands`, containing local Click commands.
+- Removed built-in commands. Please install [delfino-core](https://github.com/radeklat/delfino-core) instead.
+- The following configuration options changed their location from `tool.delfino.<OPTION>` to `tool.delfino.plugins.delfino-core.<OPTION>`:
+  - `disable_commands`
+  - `sources_directory`
+  - `tests_directory`
+  - `reports_directory`
+  - `test_types`
+  - `verify_commands`
+  - `disable_pre_commit`
+  - `dockerhub`
+  - `typecheck`
+
+### Features
+
+- Instances of `click.Command` are discovered recursively rather than just in the top level files.
+- Local folder with commands can be overriden from the default `commands` with a `tool.delfino.local_commands_directory` configuration option in the `pyproject.toml` file.
+
 ## [0.20.3] - 2022-11-26
 
 ### Fixes
@@ -309,7 +331,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.20.3...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.21.0...HEAD
+[0.21.0]: https://github.com/radeklat/settings-doc/compare/0.20.3...0.21.0
 [0.20.3]: https://github.com/radeklat/settings-doc/compare/0.20.2...0.20.3
 [0.20.2]: https://github.com/radeklat/settings-doc/compare/0.20.1...0.20.2
 [0.20.1]: https://github.com/radeklat/settings-doc/compare/0.20.0...0.20.1

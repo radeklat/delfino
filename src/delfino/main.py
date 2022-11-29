@@ -3,7 +3,6 @@ import os
 import sys
 from pathlib import Path
 from typing import Any, List, Optional, Union
-from warnings import warn
 
 import click
 import toml
@@ -15,7 +14,7 @@ from delfino.click_utils.help import extended_help_option
 from delfino.click_utils.verbosity import log_level_option
 from delfino.constants import ENTRY_POINT, PYPROJECT_TOML_FILENAME
 from delfino.contexts import AppContext
-from delfino.models.pyproject_toml import PluginConfig, PyprojectToml
+from delfino.models.pyproject_toml import PyprojectToml
 from delfino.utils import get_package_manager
 
 
@@ -34,27 +33,14 @@ class Commands(click.MultiCommand):
 
         try:
             self._pyproject_toml = PyprojectToml(file_path=pyproject_toml_path, **toml.load(pyproject_toml_path))
-
-            plugins = self._pyproject_toml.tool.delfino.plugins
-
-            # Temporary code to deprecate tool.delfino.disable_commands
-            if self._pyproject_toml.tool.delfino.disable_commands:
-                plugins[CommandRegistry.CORE_PLUGIN_NAME] = PluginConfig(
-                    disable_commands=self._pyproject_toml.tool.delfino.disable_commands
-                )
-                warn(
-                    f"```\n[tool.delfino]\ndisable_commands = ...\n```\nconfiguration option "
-                    f"in `pyproject.toml` is deprecated and will be removed in the future. Please use\n"
-                    f"```\n[tool.delfino.plugins.{CommandRegistry.CORE_PLUGIN_NAME}]\ndisable_commands = ...\n```\n"
-                    f"instead.",
-                    DeprecationWarning,
-                )
         except ValidationError as exc:
             self._pyproject_toml = exc
         except FileNotFoundError:
             self._pyproject_toml = PyprojectToml()
 
-        self._command_registry = CommandRegistry(plugins)
+        self._command_registry = CommandRegistry(
+            self._pyproject_toml.tool.delfino.plugins, self._pyproject_toml.tool.delfino.local_commands_directory
+        )
 
     def list_commands(self, ctx: click.Context) -> List[str]:
         """Override as MultiCommand always returns []."""
@@ -64,9 +50,11 @@ class Commands(click.MultiCommand):
     def get_command(self, ctx: click.Context, cmd_name: str) -> Optional[click.Command]:
         """Override to give all commands a common ``AppContext`` or fail if ``pyproject.toml`` is broken/missing."""
         cmd = self._command_registry.get(cmd_name, None)
+        if cmd is None:
+            return None  # command doesn't exist
 
         if ctx.resilient_parsing:  # do not fail on auto-completion
-            return cmd
+            return cmd.command
 
         if isinstance(self._pyproject_toml, Exception):
             click.secho(f"Delfino appears to be misconfigured: {self._pyproject_toml}", fg="red", err=True)
@@ -76,9 +64,10 @@ class Commands(click.MultiCommand):
             project_root=self._project_root,
             pyproject_toml=self._pyproject_toml,
             package_manager=get_package_manager(self._project_root, self._pyproject_toml),
+            plugin_config=cmd.package.plugin_config,
         )
 
-        return cmd
+        return cmd.command
 
     def invoke(self, ctx: click.Context) -> Any:
         """Override to turn ``AssertionError`` exception into ``click.exceptions.Exit``."""
@@ -98,7 +87,7 @@ class Commands(click.MultiCommand):
                     + ", ".join(
                         sorted(
                             [
-                                f"{command.plugin_name}/{command.command.name}"
+                                f"{command.package.plugin_name}/{command.command.name}"
                                 for command in self._command_registry.hidden_commands
                             ]
                         )
