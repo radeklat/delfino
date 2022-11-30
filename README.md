@@ -98,6 +98,11 @@ strict_directories = ['src']
 # enable_commands = [<COMMAND_NAME>]
 # disable_commands = [<COMMAND_NAME>]
 
+# You can pass additional arguments to commands per project
+# See https://github.com/radeklat/delfino/blob/main/src/delfino/commands/pass_args.py for usage.
+# [tool.delfino.plugins.<PLUGIN>.<COMMAND>]
+# pass_args = '--capture=no'
+
 [tool.delfino.dockerhub]
 username = ""
 build_for_platforms = [

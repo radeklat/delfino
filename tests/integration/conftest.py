@@ -4,10 +4,13 @@ import sys
 import tempfile
 
 import pytest
+from _pytest.assertion import register_assert_rewrite
 
 from tests.constants import PROJECT_ROOT
 
 FAKE_PLUGINS_DIR = PROJECT_ROOT / "tests/integration/fake_plugins"
+
+register_assert_rewrite(".assertions")
 
 
 def _build_and_install_setuptools_plugin(tmpdir, plugin_name: str):

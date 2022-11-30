@@ -1,37 +1,18 @@
 import logging
-import sys
-import tempfile
-from contextlib import contextmanager
 from pathlib import Path
-from typing import Dict, Iterator, Set
+from typing import Dict, Set
 
 import pytest
 
 from delfino.click_utils.command import CommandRegistry
 from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY
 from delfino.models.pyproject_toml import PluginConfig
-from tests.integration.fixtures import ALL_PLUGINS_ALL_COMMANDS
+from tests.integration.fixtures import ALL_PLUGINS_ALL_COMMANDS, demo_command
 
 
 @pytest.fixture(scope="module")
 def command_packages():
     return CommandRegistry._discover_command_packages(ALL_PLUGINS_ALL_COMMANDS)  # don't load project packages
-
-
-@contextmanager
-def demo_command(folder_name: Path = DEFAULT_LOCAL_COMMANDS_DIRECTORY, file_name: str = "demo.py") -> Iterator[str]:
-    command_name = "demo"
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        root_dir = tmpdir / folder_name
-        root_dir.mkdir(exist_ok=True)
-        (root_dir / "__init__.py").touch()
-        (root_dir / file_name).write_text(f"import click\n@click.command()\ndef {command_name}():\n    pass\n")
-        sys.path.append(tmpdir)
-        try:
-            yield command_name
-        finally:
-            sys.path.pop()
 
 
 @pytest.mark.usefixtures("install_fake_plugins")

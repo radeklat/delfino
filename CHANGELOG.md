@@ -12,6 +12,22 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.23.0] - 2022-11-30
+
+### Deprecated
+
+- Moved (change import statement):
+  - `contexts.AppContext`. Use `models.AppContext`.
+  - `contexts.pass_app_context`. Use `decorators.pass_app_context`
+
+- Changed functionality:
+  - `click_utils.filepaths_argument`. Use `decorators.files_folders` instead.
+
+### Added
+
+- `decorators.pass_args` decorator to allow pass-through arguments in commands. Command receives them as a `passed_args` argument.
+- `decorators.files_folders_option` decorator, which implements a `-f`/`--file`/`--folder` option to supply command with files and/or folders. It can be used multiple times. The command receives this as a `files_folders` argument. Introduced to resolve a conflict with `decorators.pass_args`.
+
 ## [0.22.0] - 2022-11-30
 
 ### Breaking changes
@@ -338,7 +354,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.22.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.23.0...HEAD
+[0.23.0]: https://github.com/radeklat/settings-doc/compare/0.22.0...0.23.0
 [0.22.0]: https://github.com/radeklat/settings-doc/compare/0.21.0...0.22.0
 [0.21.0]: https://github.com/radeklat/settings-doc/compare/0.20.3...0.21.0
 [0.20.3]: https://github.com/radeklat/settings-doc/compare/0.20.2...0.20.3
