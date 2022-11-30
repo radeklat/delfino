@@ -13,7 +13,7 @@ from delfino.click_utils.completion import install_completion_option, show_compl
 from delfino.click_utils.help import extended_help_option
 from delfino.click_utils.verbosity import log_level_option
 from delfino.constants import ENTRY_POINT, PYPROJECT_TOML_FILENAME
-from delfino.contexts import AppContext
+from delfino.models.app_context import AppContext
 from delfino.models.pyproject_toml import PyprojectToml
 from delfino.utils import get_package_manager
 

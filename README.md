@@ -99,7 +99,7 @@ strict_directories = ['src']
 # disable_commands = [<COMMAND_NAME>]
 
 # You can pass additional arguments to commands per project
-# See https://github.com/radeklat/delfino/blob/main/src/delfino/commands/pass_through_command.py for usage.
+# See https://github.com/radeklat/delfino/blob/main/src/delfino/commands/pass_args.py for usage.
 # [tool.delfino.plugins.<PLUGIN>.<COMMAND>]
 # pass_args = '--capture=no'
 

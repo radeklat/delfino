@@ -4,7 +4,7 @@ import shutil
 import click
 
 from delfino.constants import ENTRY_POINT, PackageManager
-from delfino.contexts import AppContext
+from delfino.models.app_context import AppContext
 
 
 def print_no_issues_found():
