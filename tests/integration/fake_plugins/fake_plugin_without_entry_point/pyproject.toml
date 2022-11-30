@@ -1,0 +1,7 @@
+[tool.poetry]
+name="fake_plugin_without_entry_point"
+version="0.0.1"
+authors=["Test <test@example.com>"]
+description="Plugin without an entry point should not load"
+
+[tool.poetry.plugins."delfino.plugin"]

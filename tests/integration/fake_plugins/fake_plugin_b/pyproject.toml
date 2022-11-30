@@ -1,0 +1,11 @@
+[tool.poetry]
+name="fake_plugin_b"
+version="0.0.1"
+authors=["Test <test@example.com>"]
+description="Dummy plugin"
+
+# https://python-poetry.org/docs/pyproject/#plugins
+[tool.poetry.plugins] 
+
+[tool.poetry.plugins."delfino.plugin"]
+"fake_plugin_b" = "fake_plugin_b.commands"

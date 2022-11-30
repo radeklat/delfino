@@ -1,31 +1,27 @@
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, Optional, Set
 
 from pydantic import BaseModel, Extra, Field
 
-
-class Dockerhub(BaseModel):
-    build_for_platforms: List[str] = Field(["linux/amd64", "linux/arm64", "linux/arm/v7"], min_items=1)
-    username: str
+from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY
 
 
-class Typecheck(BaseModel):
-    strict_directories: List[Path] = []
+class PluginConfig(BaseModel):
+    enable_commands: Set[str] = set()
+    disable_commands: Set[str] = set()
+
+    @classmethod
+    def empty(cls):
+        return cls()
+
+    class Config:
+        extra = Extra.allow  # Allows arbitrary plugin-specific keys
+        orm_mode = True  # Allows `PluginConfigSubclass.from_orm(PluginConfig())`
 
 
 class Delfino(BaseModel):
-    sources_directory: Path = Path("src")
-    tests_directory: Path = Path("tests")
-    reports_directory: Path = Path("reports")
-    test_types: List[str] = ["unit", "integration"]
-    disable_commands: Set[str] = Field(default_factory=set)
-    verify_commands: Tuple[str, ...] = ("format", "lint", "typecheck", "test-all")
-    disable_pre_commit: bool = False
-    dockerhub: Optional[Dockerhub] = None
-    plugins: Dict[str, Any] = Field(default_factory=dict, description="Any additional config given by plugins.")
-
-    # TODO: Move to under delfino.plugins
-    typecheck: Typecheck = Field(default_factory=Typecheck)
+    local_commands_directory: Path = DEFAULT_LOCAL_COMMANDS_DIRECTORY
+    plugins: Dict[str, PluginConfig] = Field(default_factory=dict)
 
     class Config:
         extra = Extra.allow

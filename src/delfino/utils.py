@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List, Union
 
 from delfino.constants import PackageManager
-from delfino.models.pyproject_toml import Delfino, PyprojectToml
+from delfino.models.pyproject_toml import PyprojectToml
 
 ArgsList = List[Union[str, bytes, Path]]
 ArgsType = Union[str, bytes, List]
@@ -15,8 +15,3 @@ def get_package_manager(project_root: Path, pyproject_toml: PyprojectToml) -> Pa
         return PackageManager.PIPENV
 
     return PackageManager.UNKNOWN
-
-
-def ensure_reports_dir(delfino: Delfino) -> None:
-    """Ensures that the reports directory exists."""
-    delfino.reports_directory.mkdir(parents=True, exist_ok=True)

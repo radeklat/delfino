@@ -1,65 +1,47 @@
 [tool.poetry]
 name = "delfino"
-version = "0.18.0"
+version = "0.22.0"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"
 readme = "README.md"
 homepage = "https://github.com/radeklat/delfino"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development",
+    "Topic :: Utilities",
+]
 
 [tool.poetry.scripts]
 delfino = "delfino.main:main"
 mike = "delfino.main:main"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.7.2"
 toml = "^0.10"
 click = "^8.0"
 pydantic = "^1.8"
-importlib-metadata = {version = "*", python = "<3.8"}
-black = {version = "*", optional = true}
-isort = {version = "*", optional = true}
-pre-commit = {version = "*", optional = true}
-pytest = {version = "*", optional = true}
-coverage = {version = "*", optional = true}
-pytest-cov = {version = "*", optional = true}
-mypy = {version = "*", optional = true}
-pylint = {version = "*", optional = true}
-pycodestyle = {version = "*", optional = true}
-pydocstyle = {version = "*", optional = true}
-twine = {version = "*", optional = true}
-shellingham = {version = "*", optional = true}
-
-
-[tool.poetry.dev-dependencies]
-black = "^22.6"
-isort = "^5.9.3"
-coverage = "^6.0"
-pylint = "^2.11"
-mypy = "^0.961"
-pytest = "^7.1"
-pytest-cov = "^3.0"
-pytest-dotenv = "^0.5"
-pytest-mock = "^3.6"
-pre-commit = "^2.15"
-pycodestyle = "^2.8"
-pydocstyle = "^6.1"
-shellingham = "^1.4"
-psutil = "*"
-types-termcolor = "*"
-types-toml = "*"
-types-psutil = "*"
+deprecation ="^2.1"
+importlib-metadata = {version = "*", python = "<3.10"}
 
 [tool.poetry.extras]
-all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "mypy", "pylint", "pycodestyle", "pydocstyle", "twine", "packaging", "shellingham", "psutil"]
-verify_all = ["black", "isort", "pre-commit", "pytest", "coverage", "pytest-cov", "mypy", "pylint", "pycodestyle", "pydocstyle", "psutil"]
-format = ["black", "isort", "pre-commit"]
-test = ["pytest", "coverage", "pytest-cov"]
-typecheck = ["mypy"]
-lint = ["pylint", "pycodestyle", "pydocstyle", "psutil"]
-upload_to_pypi = ["twine"]
-build_docker = ["packaging"]
 completion = ["shellingham"]
+
+[tool.poetry.group.dev.dependencies]
+shellingham = "^1.4"
+types-toml = "*"
+delfino-core = {extras = ["verify-all"], version = "^1.2.2"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -96,9 +78,6 @@ exclude = '''
 testpaths = "tests/unit tests/integration"
 python_functions = "should_*"
 junit_family = "xunit2"
-# pytest-dotenv settings
-env_override_existing_values = 1
-env_files = ".env.test"
 
 # Structure: https://docs.pytest.org/en/stable/warnings.html
 # Values:    https://docs.python.org/3/library/warnings.html#describing-warning-filters
@@ -117,6 +96,7 @@ show_error_codes = true
 color_output = true
 warn_unused_configs = true
 warn_unused_ignores = true
+check_untyped_defs = true
 follow_imports = "silent"
 
 [[tool.mypy.overrides]]
@@ -125,6 +105,8 @@ module = [
     "invoke.*",
     "pipenv.*",
     "shellingham.*",
+    "setuptools.*",
+    "deprecation.*",
 ]
 ignore_missing_imports = true
 
@@ -145,7 +127,10 @@ reports_directory = "reports"
 sources_directory = "src"
 tests_directory = "tests"
 test_types = ["unit", "integration"]
-disable_commands = ["build-docker"]
+
+[tool.delfino.plugins.delfino-core]
+disable_commands = ['build-docker']
+
 
 #[tool.delfino.dockerhub]
 #username = "radeklat"
