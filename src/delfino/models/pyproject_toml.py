@@ -1,7 +1,9 @@
 from pathlib import Path
-from typing import Any, Dict, Optional, Set, TypeVar
+from typing import Any, Dict, Optional, Set
 
 from pydantic import BaseModel, Extra, Field
+
+from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY
 
 
 class PluginConfig(BaseModel):
@@ -17,11 +19,8 @@ class PluginConfig(BaseModel):
         orm_mode = True  # Allows `PluginConfigSubclass.from_orm(PluginConfig())`
 
 
-PluginConfigType = TypeVar("PluginConfigType", bound=PluginConfig)
-
-
 class Delfino(BaseModel):
-    local_commands_directory: Path = Path("commands")
+    local_commands_directory: Path = DEFAULT_LOCAL_COMMANDS_DIRECTORY
     plugins: Dict[str, PluginConfig] = Field(default_factory=dict)
 
     class Config:

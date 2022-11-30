@@ -312,6 +312,10 @@ class-naming-style=PascalCase
 # Regular expression matching correct class names. Overrides class-naming-style
 #class-rgx=[A-Z_][a-zA-Z0-9]+$
 
+# Regular expression matching correct type variable names. If left empty, type
+# variable names will be checked with the set naming style.
+typevar-rgx=[A-Z_][a-zA-Z0-9]+$
+
 # Naming style matching correct constant names
 const-naming-style=UPPER_CASE
 

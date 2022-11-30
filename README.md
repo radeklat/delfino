@@ -39,9 +39,17 @@
 
 # Installation
 
-- pip: `pip install delfino[all]`
-- Poetry: `poetry add -D delfino[all]`
-- Pipenv: `pipenv install -d delfino[all]`
+- pip: `pip install delfino`
+- Poetry: `poetry add -D delfino`
+- Pipenv: `pipenv install -d delfino`
+
+or 
+
+- pip: `pip install delfino[completion]`
+- Poetry: `poetry add -D delfino[completion]`
+- Pipenv: `pipenv install -d delfino[completion]`
+
+to enable [auto-completion](#auto-completion).
 
 ## Optional dependencies
 

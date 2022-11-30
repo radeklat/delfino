@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List, Union
 
 from delfino.constants import PackageManager
-from delfino.models.pyproject_toml import Delfino, PyprojectToml
+from delfino.models.pyproject_toml import PyprojectToml
 
 ArgsList = List[Union[str, bytes, Path]]
 ArgsType = Union[str, bytes, List]

@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional
 
 import click
 import toml
@@ -29,17 +29,19 @@ class Commands(click.MultiCommand):
 
         # When evaluating available commands, the program should not fail. We save the exception
         # to show it only when a command is executed.
-        self._pyproject_toml: Union[PyprojectToml, Exception]
+        self._pyproject_toml_validation_error: Optional[ValidationError] = None
 
         try:
             self._pyproject_toml = PyprojectToml(file_path=pyproject_toml_path, **toml.load(pyproject_toml_path))
         except ValidationError as exc:
-            self._pyproject_toml = exc
+            self._pyproject_toml = PyprojectToml()
+            self._pyproject_toml_validation_error = exc
         except FileNotFoundError:
             self._pyproject_toml = PyprojectToml()
 
         self._command_registry = CommandRegistry(
-            self._pyproject_toml.tool.delfino.plugins, self._pyproject_toml.tool.delfino.local_commands_directory
+            plugins_configs=self._pyproject_toml.tool.delfino.plugins,
+            local_commands_directory=self._pyproject_toml.tool.delfino.local_commands_directory,
         )
 
     def list_commands(self, ctx: click.Context) -> List[str]:
@@ -56,9 +58,11 @@ class Commands(click.MultiCommand):
         if ctx.resilient_parsing:  # do not fail on auto-completion
             return cmd.command
 
-        if isinstance(self._pyproject_toml, Exception):
-            click.secho(f"Delfino appears to be misconfigured: {self._pyproject_toml}", fg="red", err=True)
-            raise click.Abort() from self._pyproject_toml
+        if self._pyproject_toml_validation_error:
+            click.secho(
+                f"Delfino appears to be misconfigured: {self._pyproject_toml_validation_error}", fg="red", err=True
+            )
+            raise click.Abort() from self._pyproject_toml_validation_error
 
         ctx.obj = AppContext(
             project_root=self._project_root,
