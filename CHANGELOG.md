@@ -12,6 +12,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.23.1] - 2022-11-30
+
+### Fixes
+
+- Make `models.AppContext` generic to allow specifying `models.PluginConfig` subclasses in plugins.
+
 ## [0.23.0] - 2022-11-30
 
 ### Deprecated
@@ -354,7 +360,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.23.0...HEAD
+[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.23.1...HEAD
+[0.23.1]: https://github.com/radeklat/settings-doc/compare/0.23.0...0.23.1
 [0.23.0]: https://github.com/radeklat/settings-doc/compare/0.22.0...0.23.0
 [0.22.0]: https://github.com/radeklat/settings-doc/compare/0.21.0...0.22.0
 [0.21.0]: https://github.com/radeklat/settings-doc/compare/0.20.3...0.21.0
