@@ -354,7 +354,7 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 ### Features
 
 - Rename project to `rads-toolbox` to be able to publish to Pypi.
-- Package publishing from Github releases to Pypi.
+- Package publishing from GitHub releases to Pypi.
 
 ## [0.1.0] - 2021-11-20
 
