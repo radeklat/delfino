@@ -1,7 +1,7 @@
 import functools
 from typing import Any, Callable, Type, TypeVar, cast
 
-from click import get_current_context, secho
+from click import get_current_context
 
 from delfino.models.app_context import AppContext
 from delfino.models.pyproject_toml import PluginConfig
@@ -35,17 +35,7 @@ def pass_app_context(
                     f"Managed to invoke callback without a context object of type {AppContext.__name__!r} existing."
                 )
             obj.plugin_config = plugin_config_type.from_orm(obj.plugin_config)
-            try:
-                return ctx.invoke(func, *args, **kwargs, **{kwargs_name: obj})
-            except TypeError as exc:
-                if kwargs_name in str(exc):
-                    secho(
-                        f"Using `pass_app_context` as a positional argument is deprecated "
-                        f"and will be removed in the next version. It will raise: '{exc}'",
-                        fg="yellow",
-                    )
-                    return ctx.invoke(func, obj, *args, **kwargs)
-                raise
+            return ctx.invoke(func, *args, **kwargs, **{kwargs_name: obj})
 
         return functools.update_wrapper(cast(_Func, new_func), func)
 
