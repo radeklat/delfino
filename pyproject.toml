@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "delfino"
-version = "0.24.0"
+version = "0.25.0"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
 authors = ["Radek Lát <radek.lat@gmail.com>"]
 license = "MIT License"
@@ -41,7 +41,7 @@ completion = ["shellingham"]
 [tool.poetry.group.dev.dependencies]
 shellingham = "^1.4"
 types-toml = "*"
-delfino-core = {extras = ["verify-all"], version = "^1.2.2"}
+delfino-core = {extras = ["verify-all"], version = "^2.3.0"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
