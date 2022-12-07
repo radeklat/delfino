@@ -12,6 +12,18 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.24.0] - 2022-12-07
+
+### Fixes
+
+- Reference to disabled commands.
+
+### Deprecated
+
+- `decorators.pass_app_context` will pass a named argument defaulting to `app_context` instead of a positional argument to the decorated function. This allows the decorator position to be independent on the function argument. The argument name is changeable.
+
+  If you get a warning `TypeError: <FUNCTION> got multiple values for argument 'app_context'`, this is likely caused by the `@click.pass_context` decorator, which is positional, and it's argument must match the position.
+
 ## [0.23.1] - 2022-11-30
 
 ### Fixes
@@ -29,7 +41,7 @@ Types of changes are:
 - Changed functionality:
   - `click_utils.filepaths_argument`. Use `decorators.files_folders` instead.
 
-### Added
+### Features
 
 - `decorators.pass_args` decorator to allow pass-through arguments in commands. Command receives them as a `passed_args` argument.
 - `decorators.files_folders_option` decorator, which implements a `-f`/`--file`/`--folder` option to supply command with files and/or folders. It can be used multiple times. The command receives this as a `files_folders` argument. Introduced to resolve a conflict with `decorators.pass_args`.
@@ -122,7 +134,7 @@ Types of changes are:
 
 ## [0.18.2] - 2022-10-25
 
-### Fixed
+### Fixes
 
 - Correct number of job used by pylint in CI.
 
@@ -244,20 +256,14 @@ Types of changes are:
 
 - Checks if optional Python packages in commands are installed.
 - `-h` option as an alias for `--help` everywhere.
-
-### Features
-
 - Styling of disabled commands in help text.
 - Rename `contexts.AppContext.py_project_toml` to `pyproject_toml`.
-
-### Removed
-
-- Dependency on `pytest-dotenv` and `pytest-mock` as they are not required by any of the commands.
 
 ### Fixes
 
 - Unhandled exception when unknown command used in command line.
 - Auto-complete failing when `pyproject.toml` is not in the current working directory or is missing required fields.
+- Removed dependency on `pytest-dotenv` and `pytest-mock` as they are not required by any of the commands.
 
 ## [0.8.1] - 2021-11-29
 
@@ -311,7 +317,7 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 ## [0.5.0] - 2021-11-25
 
-### Removed
+### Breaking changes
 
 - Drop support for Python 3.6.
 
@@ -360,42 +366,43 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/settings-doc/compare/0.23.1...HEAD
-[0.23.1]: https://github.com/radeklat/settings-doc/compare/0.23.0...0.23.1
-[0.23.0]: https://github.com/radeklat/settings-doc/compare/0.22.0...0.23.0
-[0.22.0]: https://github.com/radeklat/settings-doc/compare/0.21.0...0.22.0
-[0.21.0]: https://github.com/radeklat/settings-doc/compare/0.20.3...0.21.0
-[0.20.3]: https://github.com/radeklat/settings-doc/compare/0.20.2...0.20.3
-[0.20.2]: https://github.com/radeklat/settings-doc/compare/0.20.1...0.20.2
-[0.20.1]: https://github.com/radeklat/settings-doc/compare/0.20.0...0.20.1
-[0.20.0]: https://github.com/radeklat/settings-doc/compare/0.19.1...0.20.0
-[0.19.1]: https://github.com/radeklat/settings-doc/compare/0.19.0...0.19.1
-[0.19.0]: https://github.com/radeklat/settings-doc/compare/0.18.2...0.19.0
-[0.18.2]: https://github.com/radeklat/settings-doc/compare/0.18.1...0.18.2
-[0.18.1]: https://github.com/radeklat/settings-doc/compare/0.18.0...0.18.1
-[0.18.0]: https://github.com/radeklat/settings-doc/compare/0.17.1...0.18.0
-[0.17.1]: https://github.com/radeklat/settings-doc/compare/0.17.0...0.17.1
-[0.17.0]: https://github.com/radeklat/settings-doc/compare/0.16.1...0.17.0
-[0.16.1]: https://github.com/radeklat/settings-doc/compare/0.16.0...0.16.1
-[0.16.0]: https://github.com/radeklat/settings-doc/compare/0.15.0...0.16.0
-[0.15.0]: https://github.com/radeklat/settings-doc/compare/0.14.0...0.15.0
-[0.14.0]: https://github.com/radeklat/settings-doc/compare/0.13.1...0.14.0
-[0.13.1]: https://github.com/radeklat/settings-doc/compare/0.13.0...0.13.1
-[0.13.0]: https://github.com/radeklat/settings-doc/compare/0.12.2...0.13.0
-[0.12.2]: https://github.com/radeklat/settings-doc/compare/0.12.1...0.12.2
-[0.12.1]: https://github.com/radeklat/settings-doc/compare/0.12.0...0.12.1
-[0.12.0]: https://github.com/radeklat/settings-doc/compare/0.11.0...0.12.0
-[0.11.0]: https://github.com/radeklat/settings-doc/compare/0.10.0...0.11.0
-[0.10.0]: https://github.com/radeklat/settings-doc/compare/0.9.0...0.10.0
-[0.9.0]: https://github.com/radeklat/settings-doc/compare/0.8.1...0.9.0
-[0.8.1]: https://github.com/radeklat/settings-doc/compare/0.8.0...0.8.1
-[0.8.0]: https://github.com/radeklat/settings-doc/compare/0.7.1...0.8.0
-[0.7.1]: https://github.com/radeklat/settings-doc/compare/0.7.0...0.7.1
-[0.7.0]: https://github.com/radeklat/settings-doc/compare/0.6.0...0.7.0
-[0.6.0]: https://github.com/radeklat/settings-doc/compare/0.5.0...0.6.0
-[0.5.0]: https://github.com/radeklat/settings-doc/compare/0.4.0...0.5.0
-[0.4.0]: https://github.com/radeklat/settings-doc/compare/0.3.1...0.4.0
-[0.3.1]: https://github.com/radeklat/settings-doc/compare/0.3.0...0.3.1
-[0.3.0]: https://github.com/radeklat/settings-doc/compare/0.2.0...0.3.0
-[0.2.0]: https://github.com/radeklat/settings-doc/compare/0.1.0...0.2.0
-[0.1.0]: https://github.com/radeklat/settings-doc/compare/initial...0.1.0
+[Unreleased]: https://github.com/radeklat/delfino/compare/0.24.0...HEAD
+[0.24.0]: https://github.com/radeklat/delfino/compare/0.23.1...0.24.0
+[0.23.1]: https://github.com/radeklat/delfino/compare/0.23.0...0.23.1
+[0.23.0]: https://github.com/radeklat/delfino/compare/0.22.0...0.23.0
+[0.22.0]: https://github.com/radeklat/delfino/compare/0.21.0...0.22.0
+[0.21.0]: https://github.com/radeklat/delfino/compare/0.20.3...0.21.0
+[0.20.3]: https://github.com/radeklat/delfino/compare/0.20.2...0.20.3
+[0.20.2]: https://github.com/radeklat/delfino/compare/0.20.1...0.20.2
+[0.20.1]: https://github.com/radeklat/delfino/compare/0.20.0...0.20.1
+[0.20.0]: https://github.com/radeklat/delfino/compare/0.19.1...0.20.0
+[0.19.1]: https://github.com/radeklat/delfino/compare/0.19.0...0.19.1
+[0.19.0]: https://github.com/radeklat/delfino/compare/0.18.2...0.19.0
+[0.18.2]: https://github.com/radeklat/delfino/compare/0.18.1...0.18.2
+[0.18.1]: https://github.com/radeklat/delfino/compare/0.18.0...0.18.1
+[0.18.0]: https://github.com/radeklat/delfino/compare/0.17.1...0.18.0
+[0.17.1]: https://github.com/radeklat/delfino/compare/0.17.0...0.17.1
+[0.17.0]: https://github.com/radeklat/delfino/compare/0.16.1...0.17.0
+[0.16.1]: https://github.com/radeklat/delfino/compare/0.16.0...0.16.1
+[0.16.0]: https://github.com/radeklat/delfino/compare/0.15.0...0.16.0
+[0.15.0]: https://github.com/radeklat/delfino/compare/0.14.0...0.15.0
+[0.14.0]: https://github.com/radeklat/delfino/compare/0.13.1...0.14.0
+[0.13.1]: https://github.com/radeklat/delfino/compare/0.13.0...0.13.1
+[0.13.0]: https://github.com/radeklat/delfino/compare/0.12.2...0.13.0
+[0.12.2]: https://github.com/radeklat/delfino/compare/0.12.1...0.12.2
+[0.12.1]: https://github.com/radeklat/delfino/compare/0.12.0...0.12.1
+[0.12.0]: https://github.com/radeklat/delfino/compare/0.11.0...0.12.0
+[0.11.0]: https://github.com/radeklat/delfino/compare/0.10.0...0.11.0
+[0.10.0]: https://github.com/radeklat/delfino/compare/0.9.0...0.10.0
+[0.9.0]: https://github.com/radeklat/delfino/compare/0.8.1...0.9.0
+[0.8.1]: https://github.com/radeklat/delfino/compare/0.8.0...0.8.1
+[0.8.0]: https://github.com/radeklat/delfino/compare/0.7.1...0.8.0
+[0.7.1]: https://github.com/radeklat/delfino/compare/0.7.0...0.7.1
+[0.7.0]: https://github.com/radeklat/delfino/compare/0.6.0...0.7.0
+[0.6.0]: https://github.com/radeklat/delfino/compare/0.5.0...0.6.0
+[0.5.0]: https://github.com/radeklat/delfino/compare/0.4.0...0.5.0
+[0.4.0]: https://github.com/radeklat/delfino/compare/0.3.1...0.4.0
+[0.3.1]: https://github.com/radeklat/delfino/compare/0.3.0...0.3.1
+[0.3.0]: https://github.com/radeklat/delfino/compare/0.2.0...0.3.0
+[0.2.0]: https://github.com/radeklat/delfino/compare/0.1.0...0.2.0
+[0.1.0]: https://github.com/radeklat/delfino/compare/initial...0.1.0

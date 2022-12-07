@@ -1,7 +1,7 @@
 import functools
 from typing import Any, Callable, Type, TypeVar, cast
 
-from click import get_current_context
+from click import get_current_context, secho
 
 from delfino.models.app_context import AppContext
 from delfino.models.pyproject_toml import PluginConfig
@@ -9,7 +9,9 @@ from delfino.models.pyproject_toml import PluginConfig
 _Func = TypeVar("_Func", bound=Callable[..., Any])
 
 
-def pass_app_context(plugin_config_type: Type[PluginConfig] = PluginConfig) -> Callable[[_Func], _Func]:
+def pass_app_context(
+    plugin_config_type: Type[PluginConfig] = PluginConfig, kwargs_name: str = "app_context"
+) -> Callable[[_Func], _Func]:
     """Similar to ``click.make_pass_decorator``, with optional parsing of plugin specific config.
 
     This decorator passes into the command an app context ``AppContext``. In this context,
@@ -21,6 +23,7 @@ def pass_app_context(plugin_config_type: Type[PluginConfig] = PluginConfig) -> C
 
     Args:
         plugin_config_type: A subclass of ``PluginConfig``.
+        kwargs_name: Name of the argument passed to the decorated command.
     """
 
     def decorator(func: _Func) -> _Func:
@@ -32,7 +35,17 @@ def pass_app_context(plugin_config_type: Type[PluginConfig] = PluginConfig) -> C
                     f"Managed to invoke callback without a context object of type {AppContext.__name__!r} existing."
                 )
             obj.plugin_config = plugin_config_type.from_orm(obj.plugin_config)
-            return ctx.invoke(func, obj, *args, **kwargs)
+            try:
+                return ctx.invoke(func, *args, **kwargs, **{kwargs_name: obj})
+            except TypeError as exc:
+                if kwargs_name in str(exc):
+                    secho(
+                        f"Using `pass_app_context` as a positional argument is deprecated "
+                        f"and will be removed in the next version. It will raise: '{exc}'",
+                        fg="yellow",
+                    )
+                    return ctx.invoke(func, obj, *args, **kwargs)
+                raise
 
         return functools.update_wrapper(cast(_Func, new_func), func)
 

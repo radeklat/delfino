@@ -96,7 +96,7 @@ class Commands(click.MultiCommand):
                             ]
                         )
                     )
-                    + f" (see 'tool.{ENTRY_POINT}.disable_plugin_commands' in '{PYPROJECT_TOML_FILENAME}')",
+                    + f" (see 'tool.{ENTRY_POINT}.<PLUGIN NAME>.disable_commands' in '{PYPROJECT_TOML_FILENAME}')",
                     fg="white",
                 )
 
