@@ -94,8 +94,8 @@ def find_commands(command_package: _CommandPackage) -> List[_Command]:
 
         commands.extend(
             _Command(name=obj.name, command=obj, package=command_package)
-            for obj in vars(module).values()
-            if isinstance(obj, click.Command) and obj.name is not None
+            for obj_name, obj in vars(module).items()
+            if not obj_name.startswith("_") and isinstance(obj, click.Command) and obj.name is not None
         )
 
     return commands

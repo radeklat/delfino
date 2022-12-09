@@ -7,7 +7,7 @@ import pytest
 from delfino.click_utils.command import CommandRegistry
 from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY
 from delfino.models.pyproject_toml import PluginConfig
-from tests.integration.fixtures import ALL_PLUGINS_ALL_COMMANDS, demo_command
+from tests.integration.fixtures import ALL_PLUGINS_ALL_COMMANDS, FakeCommandFile, demo_commands
 
 
 @pytest.fixture(scope="module")
@@ -15,14 +15,15 @@ def command_packages():
     return CommandRegistry._discover_command_packages(ALL_PLUGINS_ALL_COMMANDS)  # don't load project packages
 
 
-@pytest.mark.usefixtures("install_fake_plugins")
 class TestCommandRegistry:
     @staticmethod
+    @pytest.mark.usefixtures("install_fake_plugins")
     def should_deduplicate_plugin_commands(command_packages):
         registry = CommandRegistry(ALL_PLUGINS_ALL_COMMANDS, command_packages)
         assert {command.name for command in registry.visible_commands} == {"build", "format", "lint", "typecheck"}
 
     @staticmethod
+    @pytest.mark.usefixtures("install_fake_plugins")
     @pytest.mark.parametrize(
         "first_plugin_name, second_plugin_name",
         [
@@ -48,6 +49,7 @@ class TestCommandRegistry:
         assert command.package.plugin_name == second_plugin_name
 
     @staticmethod
+    @pytest.mark.usefixtures("install_fake_plugins")
     def should_log_when_duplicated_plugin_commands_are_ignored(caplog, command_packages):
         caplog.set_level(logging.DEBUG)
         CommandRegistry(ALL_PLUGINS_ALL_COMMANDS, command_packages)
@@ -58,6 +60,7 @@ class TestCommandRegistry:
         assert log_msg in caplog.text
 
     @staticmethod
+    @pytest.mark.usefixtures("install_fake_plugins")
     def should_warn_about_config_for_missing_plugin(caplog):
         # GIVEN
         caplog.set_level(logging.WARNING)
@@ -75,7 +78,23 @@ class TestCommandRegistry:
     @staticmethod
     def should_ignore_files_starting_with_an_underscore():
         model_path = Path("underscore_only")
-        with demo_command(model_path, "_demo.py"):
+        with demo_commands(model_path, [FakeCommandFile(filename="_demo.py")]):
+            registry = CommandRegistry({}, local_commands_directory=model_path)
+            assert not registry.visible_commands
+            assert not registry.hidden_commands
+
+    @staticmethod
+    def should_not_load_commands_that_come_from_import_statements_and_start_with_an_underscore():
+        model_path = Path("imported_command")
+        fake_command_files = [
+            FakeCommandFile(
+                command_name="_ignored",
+                filename="inspected.py",
+                content_template="from ._not_inspected import demo as _demo\n",
+            ),
+            FakeCommandFile(filename="_not_inspected.py"),
+        ]
+        with demo_commands(model_path, fake_command_files):
             registry = CommandRegistry({}, local_commands_directory=model_path)
             assert not registry.visible_commands
             assert not registry.hidden_commands
@@ -145,9 +164,9 @@ class TestCommandRegistryPluginAndCommandSelection:
     @staticmethod
     def should_load_from_init_file():
         model_path = Path("init_only")
-        with demo_command(model_path, "__init__.py") as command_name:
+        with demo_commands(model_path, [FakeCommandFile(filename="__init__.py")]) as command_names:
             registry = CommandRegistry({}, local_commands_directory=model_path)
-            assert {command.name for command in registry.visible_commands} == {command_name}
+            assert {command.name for command in registry.visible_commands} == {command_names[0]}
             assert not registry.hidden_commands
 
 
@@ -161,6 +180,6 @@ class TestCommandRegistryLocalCommands:
         ],
     )
     def should_be_discovered_from(module_path, kwargs):
-        with demo_command(module_path) as command_name:
+        with demo_commands(module_path) as command_names:
             registry = CommandRegistry({}, **kwargs)
-            assert command_name in {command.name for command in registry.visible_commands}
+            assert set(command_names) <= {command.name for command in registry.visible_commands}
