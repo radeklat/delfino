@@ -12,6 +12,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.26.1] - 2022-12-12
+
+### Fixes
+
+- Suppress warning about missing plugin for local commands.
+
 ## [0.26.0] - 2022-12-07
 
 ### Features
@@ -378,7 +384,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/0.26.0...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/0.26.1...HEAD
+[0.26.1]: https://github.com/radeklat/delfino/compare/0.26.0...0.26.1
 [0.26.0]: https://github.com/radeklat/delfino/compare/0.25.0...0.26.0
 [0.25.0]: https://github.com/radeklat/delfino/compare/0.24.0...0.25.0
 [0.24.0]: https://github.com/radeklat/delfino/compare/0.23.1...0.24.0
