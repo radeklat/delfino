@@ -198,7 +198,8 @@ class CommandRegistry(Mapping):
             if command_package is not None:
                 found_command_packages.append(command_package)
             else:
-                _LOG.warning(f"Plugin '{plugin_name}' specified in config but no such plugin is installed.")
+                if plugin_name != cls.LOCAL_PLUGIN_NAME:
+                    _LOG.warning(f"Plugin '{plugin_name}' specified in config but no such plugin is installed.")
                 command_packages.pop(plugin_name)
 
         return found_command_packages
