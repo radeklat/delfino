@@ -41,7 +41,7 @@ completion = ["shellingham"]
 [tool.poetry.group.dev.dependencies]
 shellingham = "^1.4"
 types-toml = "*"
-delfino-core = {extras = ["verify-all"], version = "^2.3.0"}
+delfino-core = {extras = ["verify-all", "dependencies-update"], version = "^3.7.1"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
