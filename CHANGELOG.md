@@ -12,6 +12,16 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.27.0] - 2022-12-15
+
+### Features
+
+- Add `decorators.pass_args.set_passed_args_from_config_in_group` to allow passing the `pass_args` value from config to command executed indirectly. 
+
+### Fixes
+
+- Dropping keys on plugin config re-parsing into more specific model. 
+
 ## [0.26.1] - 2022-12-12
 
 ### Fixes
@@ -384,7 +394,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/0.26.1...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/0.27.0...HEAD
+[0.27.0]: https://github.com/radeklat/delfino/compare/0.26.1...0.27.0
 [0.26.1]: https://github.com/radeklat/delfino/compare/0.26.0...0.26.1
 [0.26.0]: https://github.com/radeklat/delfino/compare/0.25.0...0.26.0
 [0.25.0]: https://github.com/radeklat/delfino/compare/0.24.0...0.25.0

@@ -16,7 +16,6 @@ class PluginConfig(BaseModel):
 
     class Config:
         extra = Extra.allow  # Allows arbitrary plugin-specific keys
-        orm_mode = True  # Allows `PluginConfigSubclass.from_orm(PluginConfig())`
 
 
 class Delfino(BaseModel):
