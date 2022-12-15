@@ -34,7 +34,7 @@ def pass_app_context(
                 raise RuntimeError(
                     f"Managed to invoke callback without a context object of type {AppContext.__name__!r} existing."
                 )
-            obj.plugin_config = plugin_config_type.from_orm(obj.plugin_config)
+            obj.plugin_config = plugin_config_type(**obj.plugin_config.dict())
             return ctx.invoke(func, *args, **kwargs, **{kwargs_name: obj})
 
         return functools.update_wrapper(cast(_Func, new_func), func)
