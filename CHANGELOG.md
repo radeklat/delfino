@@ -12,6 +12,16 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [0.29.0] - 2022-12-16
+
+### Features
+
+- `run` logs executed commands in `DEBUG` log level.
+
+### Deprecated
+
+- `delfino.click_utils.SetOptionFromConfigCallback.set_parameter_from_config_in_group` in favours of `delfino.click_utils.SetOptionFromConfigCallback.parameter_from_config_in_group`.
+
 ## [0.28.1] - 2022-12-16
 
 ### Fixes
@@ -407,7 +417,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/0.28.1...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/0.29.0...HEAD
+[0.29.0]: https://github.com/radeklat/delfino/compare/0.28.1...0.29.0
 [0.28.1]: https://github.com/radeklat/delfino/compare/0.28.0...0.28.1
 [0.28.0]: https://github.com/radeklat/delfino/compare/0.27.0...0.28.0
 [0.27.0]: https://github.com/radeklat/delfino/compare/0.26.1...0.27.0
