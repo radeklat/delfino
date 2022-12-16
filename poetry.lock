@@ -96,7 +96,7 @@ toml = ["tomli"]
 
 [[package]]
 name = "delfino-core"
-version = "3.8.0"
+version = "3.9.0"
 description = "Delfino core plugin"
 category = "dev"
 optional = false
@@ -105,7 +105,7 @@ python-versions = ">=3.7.2,<4.0.0"
 [package.dependencies]
 black = {version = "*", optional = true, markers = "extra == \"all\" or extra == \"verify-all\" or extra == \"format\""}
 coverage = {version = "*", optional = true, markers = "extra == \"all\" or extra == \"verify-all\" or extra == \"test\""}
-delfino = ">=0.28.0"
+delfino = ">=0.29.0"
 gitpython = {version = "*", optional = true, markers = "extra == \"all\" or extra == \"dependencies-update\""}
 isort = {version = "*", optional = true, markers = "extra == \"all\" or extra == \"verify-all\" or extra == \"format\""}
 mypy = {version = "*", optional = true, markers = "extra == \"all\" or extra == \"verify-all\" or extra == \"typecheck\""}
@@ -614,7 +614,7 @@ completion = []
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7.2"
-content-hash = "beed188757983b699eb2578ab049a17232858e6b667d0ab0ea898e280bbebfb6"
+content-hash = "ecbc559cecf5ac657b327eeb321a8d4b4a3514058cd93bafaa010ea4f616480e"
 
 [metadata.files]
 astroid = [
@@ -704,8 +704,8 @@ coverage = [
     {file = "coverage-6.5.0.tar.gz", hash = "sha256:f642e90754ee3e06b0e7e51bce3379590e76b7f76b708e1a71ff043f87025c84"},
 ]
 delfino-core = [
-    {file = "delfino_core-3.8.0-py3-none-any.whl", hash = "sha256:ba823066aee53722098e321b485eafa9f375515f66aa41e465cc5ba4e8785f93"},
-    {file = "delfino_core-3.8.0.tar.gz", hash = "sha256:ceb53db7a94a10ddff658249baf7a903dfcd9c2c1afe179c419e971a0121f44d"},
+    {file = "delfino_core-3.9.0-py3-none-any.whl", hash = "sha256:198b6b60e1b88a52244161e6b429f5240179f8b4c8e056f6e96ff4b85999a526"},
+    {file = "delfino_core-3.9.0.tar.gz", hash = "sha256:47cfcb562ad50fefb986be88481ec4be63bdd43a46f320205705a4225a4b81df"},
 ]
 deprecation = [
     {file = "deprecation-2.1.0-py2.py3-none-any.whl", hash = "sha256:a10811591210e1fb0e768a8c25517cabeabcba6f0bf96564f8ff45189f90b14a"},
