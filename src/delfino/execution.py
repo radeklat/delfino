@@ -2,11 +2,15 @@ import os
 import shlex
 import subprocess
 from enum import Enum
-from typing import Any, Dict, Optional
+from logging import getLogger
+from typing import Any, Dict, Optional, Tuple
 
 import click
 
+from delfino.backports import shlex_join
 from delfino.utils import ArgsType
+
+_LOG = getLogger(__name__)
 
 
 class OnError(Enum):
@@ -22,16 +26,28 @@ class OnError(Enum):
     Use when running commands where non-zero return code indicates a failed check, not an error."""
 
 
-def _normalize_args(args: ArgsType, shell: bool) -> ArgsType:
-    if isinstance(args, list):
-        args = [str(arg) for arg in args]
+def _normalize_args(args: ArgsType, shell: bool) -> Tuple[ArgsType, str]:
     if shell:  # when `shell`, `args` must be a string
-        if isinstance(args, list):
-            return " ".join(map(str, args))
-    elif isinstance(args, str):  # when not `shell`, `args` must be a `Sequence`
-        return shlex.split(args)
+        if isinstance(args, str):
+            return args, args
 
-    return args
+        if isinstance(args, bytes):
+            args_decoded = args.decode()
+            return args_decoded, args_decoded
+
+        args_str = shlex_join(map(str, args))
+        return args_str, args_str
+
+    # when not `shell`, `args` must be a `Sequence`
+    if isinstance(args, str):
+        return shlex.split(args), args
+
+    if isinstance(args, bytes):
+        args_decoded = args.decode()
+        return shlex.split(args_decoded), args_decoded
+
+    args_list = [str(arg) for arg in args]
+    return args_list, shlex_join(args_list)
 
 
 def _patch_env(
@@ -97,8 +113,10 @@ def run(
         env_update: Similar to ``env_update_path`` but any existing variables are replaced.
         **kwargs: Additional keyword arguments passed directly to ``subprocess.run``.
     """
-    args = _normalize_args(args, kwargs.get("shell", False))
+    args, printable_args = _normalize_args(args, kwargs.get("shell", False))
     kwargs["env"] = _patch_env(env_update_path, env_update)
+
+    _LOG.debug(printable_args)
 
     try:
         return subprocess.run(args, *popenargs, check=on_error != OnError.PASS, **kwargs)
