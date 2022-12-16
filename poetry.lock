@@ -96,7 +96,7 @@ toml = ["tomli"]
 
 [[package]]
 name = "delfino-core"
-version = "3.7.1"
+version = "3.8.0"
 description = "Delfino core plugin"
 category = "dev"
 optional = false
@@ -105,7 +105,7 @@ python-versions = ">=3.7.2,<4.0.0"
 [package.dependencies]
 black = {version = "*", optional = true, markers = "extra == \"all\" or extra == \"verify-all\" or extra == \"format\""}
 coverage = {version = "*", optional = true, markers = "extra == \"all\" or extra == \"verify-all\" or extra == \"test\""}
-delfino = ">=0.27.0"
+delfino = ">=0.28.0"
 gitpython = {version = "*", optional = true, markers = "extra == \"all\" or extra == \"dependencies-update\""}
 isort = {version = "*", optional = true, markers = "extra == \"all\" or extra == \"verify-all\" or extra == \"format\""}
 mypy = {version = "*", optional = true, markers = "extra == \"all\" or extra == \"verify-all\" or extra == \"typecheck\""}
@@ -207,7 +207,7 @@ typing-extensions = {version = ">=3.7.4.3", markers = "python_version < \"3.8\""
 
 [[package]]
 name = "identify"
-version = "2.5.9"
+version = "2.5.10"
 description = "File identification library for Python"
 category = "dev"
 optional = false
@@ -704,8 +704,8 @@ coverage = [
     {file = "coverage-6.5.0.tar.gz", hash = "sha256:f642e90754ee3e06b0e7e51bce3379590e76b7f76b708e1a71ff043f87025c84"},
 ]
 delfino-core = [
-    {file = "delfino_core-3.7.1-py3-none-any.whl", hash = "sha256:8e8cfe8b3a41e0e8e21e08f22e4b897f1244cf92d80ab1fb53cb6014d5b93779"},
-    {file = "delfino_core-3.7.1.tar.gz", hash = "sha256:416965ae6852996b2b200d5e8bc403f7349a4ea0be57a6b0a2b96179315da7ae"},
+    {file = "delfino_core-3.8.0-py3-none-any.whl", hash = "sha256:ba823066aee53722098e321b485eafa9f375515f66aa41e465cc5ba4e8785f93"},
+    {file = "delfino_core-3.8.0.tar.gz", hash = "sha256:ceb53db7a94a10ddff658249baf7a903dfcd9c2c1afe179c419e971a0121f44d"},
 ]
 deprecation = [
     {file = "deprecation-2.1.0-py2.py3-none-any.whl", hash = "sha256:a10811591210e1fb0e768a8c25517cabeabcba6f0bf96564f8ff45189f90b14a"},
@@ -736,8 +736,8 @@ gitpython = [
     {file = "GitPython-3.1.29.tar.gz", hash = "sha256:cc36bfc4a3f913e66805a28e84703e419d9c264c1077e537b54f0e1af85dbefd"},
 ]
 identify = [
-    {file = "identify-2.5.9-py2.py3-none-any.whl", hash = "sha256:a390fb696e164dbddb047a0db26e57972ae52fbd037ae68797e5ae2f4492485d"},
-    {file = "identify-2.5.9.tar.gz", hash = "sha256:906036344ca769539610436e40a684e170c3648b552194980bb7b617a8daeb9f"},
+    {file = "identify-2.5.10-py2.py3-none-any.whl", hash = "sha256:fb7c2feaeca6976a3ffa31ec3236a6911fbc51aec9acc111de2aed99f244ade2"},
+    {file = "identify-2.5.10.tar.gz", hash = "sha256:dce9e31fee7dbc45fea36a9e855c316b8fbf807e65a862f160840bb5a2bf5dfd"},
 ]
 importlib-metadata = [
     {file = "importlib_metadata-5.1.0-py3-none-any.whl", hash = "sha256:d84d17e21670ec07990e1044a99efe8d615d860fd176fc29ef5c306068fda313"},

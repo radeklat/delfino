@@ -18,10 +18,6 @@ _ARGUMENT_NAME = "passed_args"
 PASS_ARGS_CALLBACK = _SetPassArgsFromConfigCallback(_ARGUMENT_NAME, "pass_args")
 
 
-def set_passed_args_from_config_in_group(ctx: click.Context, command: click.Command):
-    return PASS_ARGS_CALLBACK.set_parameter_from_config_in_group(ctx, command)
-
-
 pass_args = click.argument(
     _ARGUMENT_NAME,
     metavar=f"[-- {_ARGUMENT_NAME.upper()}]",
