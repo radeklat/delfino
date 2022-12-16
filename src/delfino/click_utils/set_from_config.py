@@ -45,7 +45,7 @@ class SetOptionFromConfigCallback:
 
         if value_from_config:
             for command_param in command.params:
-                if isinstance(command_param, click.Argument) and command_param.name == self.command_argument_name:
+                if isinstance(command_param, click.Parameter) and command_param.name == self.command_argument_name:
                     ctx.params[self.command_argument_name] = self._type_cast_value(
                         ctx, command_param, value_from_config
                     )
