@@ -122,7 +122,7 @@ class CommandRegistry(Mapping):
     """
 
     TYPE_OF_PLUGIN = "delfino.plugin"
-    LOCAL_PLUGIN_NAME = "local_commands_directory"
+    LOCAL_PLUGIN_NAME = "local"
 
     def __init__(
         self,
