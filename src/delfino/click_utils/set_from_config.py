@@ -1,6 +1,5 @@
 from logging import getLogger
 from typing import Any, Dict, Optional
-from warnings import warn
 
 import click
 from click import BadParameter
@@ -27,42 +26,10 @@ class SetOptionFromConfigCallback:
             exc.param_hint = f"the '{ctx.info_name}.{self.config_option_name}' config option in pyproject.toml file"
             raise
 
-    def set_parameter_from_config_in_group(self, ctx: click.Context, command: click.Command):
-        """Same as ``__call__`` but called on a given command.
-
-        This is useful for invoking commands indirectly, for example in a group command.
-        """
-        warn(
-            "This method is deprecated. Use `parameter_from_config_in_group` instead.", DeprecationWarning, stacklevel=1
-        )
-        app_context = ctx.find_object(AppContext)
-
-        if app_context is None:
-            raise RuntimeError("AppContext was expected to be set but none found.")
-
-        command_config = getattr(app_context.plugin_config, command.name or "", {})
-
-        if isinstance(command_config, dict):
-            value_from_config = command_config.get(self.config_option_name, None)
-        else:
-            value_from_config = getattr(command_config, self.config_option_name, None)
-
-        if value_from_config:
-            for command_param in command.params:
-                if isinstance(command_param, click.Parameter) and command_param.name == self.command_argument_name:
-                    ctx.params[self.command_argument_name] = self._type_cast_value(
-                        ctx, command_param, value_from_config
-                    )
-                    return
-            _LOG.warning(
-                f"Command '{command.name}' has no parameter '{self.command_argument_name}'. Please update the "
-                f"pyproject.toml file, option '{command.name}.{self.config_option_name}'."
-            )
-
     def parameter_from_config_in_group(self, ctx: click.Context, command: click.Command) -> Dict[str, Any]:
         """Returns key-value pair to set in invoking another command.
 
-        Similiarly to ``__call__``, it takes the value from config if it exists. It also checks
+        Similarly to ``__call__``, it takes the value from config if it exists. It also checks
         if the command has a ``click.Parameter`` of the matching name.
 
         This is useful for invoking commands indirectly, for example in a group command.
