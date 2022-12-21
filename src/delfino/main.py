@@ -9,10 +9,10 @@ import toml
 from pydantic import ValidationError
 
 from delfino.click_utils.command import CommandRegistry
-from delfino.click_utils.completion import install_completion_option, show_completion_option
-from delfino.click_utils.help import extended_help_option
-from delfino.click_utils.verbosity import log_level_option
 from delfino.constants import ENTRY_POINT, PYPROJECT_TOML_FILENAME
+from delfino.internal_parameters.completion import install_completion_option, show_completion_option
+from delfino.internal_parameters.help import extended_help_option
+from delfino.internal_parameters.verbosity import log_level_option
 from delfino.models.app_context import AppContext
 from delfino.models.pyproject_toml import PyprojectToml
 from delfino.utils import get_package_manager

@@ -12,6 +12,14 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [1.0.0] - 2022-12-21
+
+### Breaking changes
+
+The following deprecations were removed:
+- `contexts` module
+- `delfino.click_utils.filepaths.filepaths_argument` decorator
+
 ## [0.30.0] - 2022-12-16
 
 ### Breaking changes
@@ -423,7 +431,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/0.30.0...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/radeklat/delfino/compare/0.30.0...1.0.0
 [0.30.0]: https://github.com/radeklat/delfino/compare/0.29.0...0.30.0
 [0.29.0]: https://github.com/radeklat/delfino/compare/0.28.1...0.29.0
 [0.28.1]: https://github.com/radeklat/delfino/compare/0.28.0...0.28.1
