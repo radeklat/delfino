@@ -76,6 +76,40 @@ class TestCommandRegistry:
         assert not registry.hidden_commands
 
     @staticmethod
+    @pytest.mark.usefixtures("install_fake_plugins")
+    @pytest.mark.parametrize(
+        "group_name, registry_group_with_commands, empty_registry_group",
+        [
+            pytest.param("disable", "visible_commands", "hidden_commands", id="that are disabled"),
+            pytest.param("enable", "hidden_commands", "visible_commands", id="that are enabled"),
+        ],
+    )
+    def should_warn_about_missing_commands(caplog, group_name: str, registry_group_with_commands, empty_registry_group):
+        # GIVEN
+        plugin_name = "fake-plugin-a"
+        command_name = "missing-command"
+        caplog.set_level(logging.WARNING)
+
+        # WHEN
+        plugins_configs = {plugin_name: PluginConfig(**{f"{group_name}_commands": {command_name}})}
+        command_packages = CommandRegistry._discover_command_packages(plugins_configs)
+        registry = CommandRegistry(plugins_configs, command_packages)
+
+        # THEN
+        warning_message = (
+            f"{group_name.capitalize()}d command '{command_name}' from the '{plugin_name}' "
+            "plugin in config does not exist. This can be a typo in the command name or "
+            "the command has been removed/renamed. Please update the 'pyproject.toml' file."
+        )
+        assert warning_message in caplog.text
+        assert not getattr(registry, empty_registry_group)
+        assert {command.name for command in getattr(registry, registry_group_with_commands)} == {
+            "typecheck",
+            "build",
+            "lint",
+        }
+
+    @staticmethod
     def should_ignore_files_starting_with_an_underscore():
         model_path = Path("underscore_only")
         with demo_commands(model_path, [FakeCommandFile(filename="_demo.py")]):

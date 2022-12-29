@@ -1,15 +1,16 @@
 import logging
 import sys
 from dataclasses import dataclass
+from functools import partial
 from importlib import import_module, resources
 from importlib.resources import Package
 from pathlib import Path
-from typing import Dict, Iterator, List, Mapping, Optional, cast
+from typing import Dict, Iterator, List, Mapping, Optional, Set, cast
 
 import click
 from pydantic import BaseModel, Field, validator
 
-from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY
+from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY, PYPROJECT_TOML_FILENAME
 from delfino.models.pyproject_toml import PluginConfig
 
 if sys.version_info < (3, 10):
@@ -204,11 +205,37 @@ class CommandRegistry(Mapping):
 
         return found_command_packages
 
+    @staticmethod
+    def _filter_and_log_invalid_command_names(
+        plugin_name: str, available_command_names: Set[str], group_name: str, group_command_names: Set[str]
+    ) -> Set[str]:
+        missing_commands = group_command_names - available_command_names
+        for command_name in missing_commands:
+            _LOG.warning(
+                f"{group_name} command '{command_name}' from the '{plugin_name}' plugin "
+                "in config does not exist. This can be a typo in the command name or "
+                f"the command has been removed/renamed. Please update the '{PYPROJECT_TOML_FILENAME}' file."
+            )
+        return group_command_names - missing_commands if missing_commands else group_command_names
+
     def _register_packages(self):
         for command_package in self._command_packages:
             commands = {command.name: command for command in find_commands(command_package)}
-            enabled_commands = command_package.plugin_config.enable_commands or set(commands.keys())
-            enabled_commands.difference_update(command_package.plugin_config.disable_commands)
+            available_command_names = set(commands.keys())
+
+            filter_and_log_invalid_command_names = partial(
+                self._filter_and_log_invalid_command_names, command_package.plugin_name, available_command_names
+            )
+
+            disabled_commands = filter_and_log_invalid_command_names(
+                "Disabled", command_package.plugin_config.disable_commands
+            )
+
+            enabled_commands = filter_and_log_invalid_command_names(
+                "Enabled", command_package.plugin_config.enable_commands or available_command_names
+            )
+
+            enabled_commands.difference_update(disabled_commands)
 
             for command_name, command in commands.items():
                 self._register(command, command_name in enabled_commands)
