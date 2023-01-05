@@ -1,5 +1,5 @@
 <h1 align="center" style="border-bottom: none;">🧰&nbsp;&nbsp;Delfino&nbsp;&nbsp;🧰</h1>
-<h3 align="center">A collection of command line helper scripts wrapping tools used during Python development.</h3>
+<h3 align="center">Plugable Click command finder/loader/executor.</h3>
 
 <p align="center">
     <a href="https://app.circleci.com/pipelines/github/radeklat/delfino?branch=main">
@@ -30,127 +30,121 @@
 [TOC levels=1,2 markdown formatted bullet hierarchy]: # "Table of content"
 
 # Table of content
+- [What is Delfino](#what-is-delfino)
+  - [Plugins](#plugins)
 - [Installation](#installation)
-  - [Optional dependencies](#optional-dependencies)
+- [Configuration](#configuration)
+  - [Enabling a plugin](#enabling-a-plugin)
+  - [Enabling/disabling commands](#enablingdisabling-commands)
 - [Usage](#usage)
-  - [Auto-completion](#auto-completion)
 - [Development](#development)
+  - [Commands discovery](#commands-discovery)
   - [Minimal command](#minimal-command)
+  - [Minimal plugin](#minimal-plugin)
+- [Advanced usage](#advanced-usage)
+  - [Auto-completion](#auto-completion)
+  - [Running external programs](#running-external-programs)
+  - [Optional dependencies](#optional-dependencies)
+  - [Project settings](#project-settings)
+  - [Plugin settings](#plugin-settings)
+  - [Project specific overrides](#project-specific-overrides)
+  - [Grouping commands](#grouping-commands)
+
+# What is Delfino
+
+Delfino is a wrapper around [Click](https://click.palletsprojects.com) command line scripts. It automatically discovers instances of [Click commands](https://click.palletsprojects.com/quickstart/#basic-concepts-creating-a-command) and offers them for execution. However, the biggest power comes from the possibility of creating [plugins](#plugins), which can be distributed as standard Python packages. Which in turn can greatly reduce code duplication and/or promote your own standards in multiple places.
+
+For example, you can create a plugin wrapping common linting tools that you use on your projects, including their default configuration. Keeping the rules and creating new projects with the same style suddenly becomes a matter of installing one Python library.
+
+## Plugins
+
+Each plugin can contain one or more Click commands that are automatically discovered and exposed by Delfino. See [`delfino-demo`](https://github.com/radeklat/delfino-demo) for a minimal plugin, which provide a `demo` command printing out a message.
+
+Existing plugins:
+
+| Plugin name                                                  | Description                                                                                        |
+|:-------------------------------------------------------------|:---------------------------------------------------------------------------------------------------|
+| [delfino-demo](https://github.com/radeklat/delfino-demo)     | A minimal plugin example for Delfino. Contains one command printing a message.                     |
+| [delfino-core](https://github.com/radeklat/delfino-core)     | Commands wrapping tools used during every day development (linting, testing, dependencies update). |
+| [delfino-docker](https://github.com/radeklat/delfino-docker) | Docker build helper script.                                                                        |
 
 # Installation
 
 - pip: `pip install delfino`
-- Poetry: `poetry add -D delfino`
+- Poetry: `poetry add --group=dev delfino`
 - Pipenv: `pipenv install -d delfino`
 
 or 
 
 - pip: `pip install delfino[completion]`
-- Poetry: `poetry add -D delfino[completion]`
+- Poetry: `poetry add --group=dev delfino[completion]`
 - Pipenv: `pipenv install -d delfino[completion]`
 
 to enable [auto-completion](#auto-completion).
 
-## Optional dependencies
+# Configuration
 
-Each project may use different sub-set of commands. Therefore, dependencies of all commands are optional and checked only when the command is executed.
+All configuration is expected to live in the `pyproject.toml` file.
 
-Using `[all]` installs all the [optional dependencies](https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies) used by all the built-in commands. If you want only a sub-set of those dependencies, there are finer-grained groups available:
+## Enabling a plugin
 
-- For top-level parameters:
-  - `completion` - for `--show-completion` and `--install-completion`
-- For individual commands (matches the command names):
-  - `upload_to_pypi`
-  - `build_docker`
-  - `typecheck`
-  - `format`
-- For groups of commands:
-  - `test` - for testing and coverage commands
-  - `lint` - for all the linting commands
-- For groups of groups:
-  - `verify_all` - same as `[typecheck,format,test,lint]`
-  - `all` - all optional packages
-
-## Configuration
-
-Delfino will assume certain project structure. However, you can customize it to match your own by overriding the default values in the `pyproject.toml` file. Here are the defaults that you can modify:
+For security reasons, plugins are disabled by default. To enable a plugin, you have to include it in the `pyproject.toml` file:
 
 ```toml
-[tool.delfino]
-reports_directory = "reports"
-sources_directory = "src"
-tests_directory = "tests"
-local_commands_directory = "commands"
-test_types = ["unit", "integration"]
-verify_commands = ["format", "lint", "typecheck", "test-all"]
-disable_pre_commit = false
+[tool.delfino.plugins.<PLUGIN_NAME>]
+```
 
-[tool.delfino.typecheck]
-strict_directories = ['src']
+## Enabling/disabling commands
 
-# By default, all commands will be enabled. Use `enable_commands` or `disable_commands` 
-# to show only a subset of commands. If both used, disabled commands are subtracted 
-# from the set of enabled commands. 
+By default, all commands are enabled. Use `enable_commands` or `disable_commands`  to show only a subset of commands. If both used, disabled commands are subtracted from the set of enabled commands.
+
+```toml
 # [tool.delfino.plugins.<PLUGIN_NAME_A>]
 # enable_commands = [<COMMAND_NAME>]
 # disable_commands = [<COMMAND_NAME>]
+
 # [tool.delfino.plugins.<PLUGIN_NAME_B>]
 # enable_commands = [<COMMAND_NAME>]
 # disable_commands = [<COMMAND_NAME>]
-
-# You can pass additional arguments to commands per project
-# See https://github.com/radeklat/delfino/blob/main/src/delfino/commands/pass_args.py for usage.
-# [tool.delfino.plugins.<PLUGIN>.<COMMAND>]
-# pass_args = '--capture=no'
-
-[tool.delfino.dockerhub]
-username = ""
-build_for_platforms = [
-    "linux/amd64",
-    "linux/arm64",
-    "linux/arm/v7",
-]
 ```
 
 # Usage
 
 Run `delfino --help` to see all available commands and their usage.
 
-## Auto-completion
-
-You can either attempt to install completions automatically with:
-
-```shell script
-delfino --install-completion
-```
-
-or generate it with:
-
-```shell script
-delfino --show-completion
-```
-
-and manually put it in the relevant RC file.
-
-The auto-completion implementation is dynamic so that every time it is invoked, it uses the current project. Each project can have different commands or disable certain commands it doesn't use. And dynamic auto-completion makes sure only the currently available commands will be suggested.
-
-The downside of this approach is that evaluating what is available each time is slower than a static list of commands.
-
 # Development
 
-Delfino is a simple wrapper around [Click](https://click.palletsprojects.com). It allows you to add custom, project-specific [commands](https://click.palletsprojects.com/en/8.0.x/quickstart/#basic-concepts-creating-a-command). Let's call them Delfino commands or just commands. Commands are expected in the root of the project, in a Python package called `commands`. Any sub-class of [`click.Command`](https://click.palletsprojects.com/en/8.0.x/api/#click.Command) in any `.py` file in this folder will be automatically used by Delfino.
+Delfino is a simple wrapper around [Click commands](https://click.palletsprojects.com/quickstart/#basic-concepts-creating-a-command). Any Click command will be accepted by Delfino.
+
+## Commands discovery
+
+Delfino looks for any [`click.Command`](https://click.palletsprojects.com/en/8.0.x/api/#click.Command) sub-class in the following locations:
+
+- `commands` folder in the root of the project (next to the `pyproject.toml` file). This location is useful for commands that don't need to be replicated in multiple locations/projects.
+- python module import path (`<IMPORT_PATH>`) specified by `entry_point` of [a plugin](#minimal-plugin):
+  ```toml
+  [tool.poetry.plugins] # Optional super table
+
+  [tool.poetry.plugins."delfino.plugin"]
+  "delfino-<PLUGIN_NAME>" = "<IMPORT_PATH>"
+  ```
+
+Any files starting with an underscore, except for `__init__.py`, will be ignored.
+
+> **Warning**
+> Folders are NOT inspected recursively. If you place any commands into nested folders, they will not be loaded by Delfino.
+
 
 ## Minimal command
 
 <!-- TODO(Radek): Delfino expects `pyproject.toml` configured. -->
 <!-- TODO(Radek): Delfino expects Poetry or Pipenv to be available. -->
 
-1. Create the `commands` package:
+1. Create the `commands` folder:
    ```shell script
    mkdir commands
-   touch commands/__init__.py
    ```
-2. Create a file `commands/command_test.py`, with the following content:
+2. Create a `commands/__init__.py` file, with the following content:
    ```python
    import click
    
@@ -173,6 +167,16 @@ Delfino is a simple wrapper around [Click](https://click.palletsprojects.com). I
    ```
 4. Run the command with `delfino command-test`
 
+## Minimal plugin
+
+If you'd like to use one or more commands in multiple places, you can create a plugin. A plugin is just a regular Python package with specific entry point telling Delfino it should use it. It can also be distributed as any other Python packages, for example via Pypi.
+
+The quickest way to create one is to use a [Delfino plugin cookiecutter template](https://github.com/radeklat/delfino-plugin-cookiecutter-template), which asks you several questions and sets up the whole project.
+
+Alternatively, you can get inspired by [the demo plugin](https://github.com/radeklat/delfino-demo) or any of the other [existing plugins](#plugins).
+
+# Advanced usage
+
 <!--
 ## Advanced Command
 
@@ -190,14 +194,192 @@ from delfino.validation import assert_pip_package_installed, pyproject_toml_key_
 def command_test(app_context: AppContext):
    """Tests commands placed in the `commands` folder are loaded."""
    # Test optional dependencies. Any failing assertion will be printed as:
-   # Command '<NAME>' is misconfigured. <ASSERTION ERROR MESSAGE> 
+   # Command '<NAME>' is misconfigured. <ASSERTION ERROR MESSAGE>
    assert_pip_package_installed("delfino")
-   
+
    # AppContext contain a parsed `pyproject.toml` file.
    # Commands can add their config under `[tool.delfino.commands.<COMMAND_NAME>]`.
    assert "command_test" in app_context.pyproject_toml.tool.delfino.commands, \
        pyproject_toml_key_missing("tool.delfino.commands.command_test")
-   
+
    print(app_context.pyproject_toml.tool.delfino.commands["command-test"])
 ```
 -->
+
+## Auto-completion
+
+You can either attempt to install completions automatically with:
+
+```shell script
+delfino --install-completion
+```
+
+or generate it with:
+
+```shell script
+delfino --show-completion
+```
+
+and manually put it in the relevant RC file.
+
+The auto-completion implementation is dynamic so that every time it is invoked, it uses the current project. Each project can have different commands or disable certain commands it doesn't use. And dynamic auto-completion makes sure only the currently available commands will be suggested.
+
+The downside of this approach is that evaluating what is available each time is slower than a static list of commands.
+
+## Running external programs
+
+It is up to you how you want to execute external process as part of commands (if you need to at all). A common way in Python is to use `subprocess.run`. Delfino comes with its own `run` implementation, which wraps and simplifies `subprocess.run` for the most common use cases:
+
+- Normalizing `subprocess.run` arguments - you can pass in either a string or a list. Either way, `subprocess.run` will be executed correctly.
+- Handling errors from the execution via the `on_error` argument. Giving the option to either ignore the errors and continue (`PASS`), not continue and clean exit (`EXIT`) or not continue and abort with error code (`ABORT`).
+- Setting environment variables.
+- Logging what is being executed in the debug level.
+
+## Optional dependencies
+
+If you put several commands into one [plugin](#plugins), you can make some dependencies of some commands [optional](https://python-poetry.org/docs/pyproject#extras). This is useful when a command is not always used, and you don't want to install unnecessary dependencies. Instead, you can check if a dependency is installed only when the command is executed with `delfino.validation.assert_pip_package_installed`:
+
+```python
+import click
+from delfino.validation import assert_pip_package_installed
+
+try:
+    from git import Repo
+except ImportError:
+    pass
+
+@click.command()
+def git_active_branch():
+    assert_pip_package_installed("gitpython")
+    print(Repo(".").active_branch)
+```
+
+In the example above, if `gitpython` is not installed, delfino will show the command but will fail with suggestion to install `gitpython` only when the command is executed. You can also add `git_active_branch` into [`disable_commands` config](#enablingdisabling-commands) in places where you don't intend to use it.
+
+This way you can greatly reduce the number of dependencies a plugin brings into a project without a need to have many small plugins.
+
+## Project settings
+
+You can store an arbitrary object in the Click context as [`click.Context.obj`](https://click.palletsprojects.com/api/#click.Context.obj). Delfino utilizes this object to store an instance of [`AppContext`](https://github.com/radeklat/delfino/blob/main/src/delfino/models/app_context.py), which provides access to project related information. If you need to, you can still attach arbitrary attributes to this object later.
+
+You can pass this object to your commands by decorating them with [`click.pass_obj`](https://click.palletsprojects.com/api/#click.pass_obj):
+
+```python
+import click
+from delfino.models.app_context import AppContext
+
+@click.command()
+@click.pass_obj
+def print_app_version(obj: AppContext):
+    print(obj.pyproject_toml.tool.poetry.version)
+```
+
+## Plugin settings
+
+Plugin settings are expected to live in the `pyproject.toml` file. To prevent naming conflicts, each plugin must put its settings under `tool.delfino.plugins.<PLUGIN_NAME>`. It also allows Delfino to pass these settings directly to commands from these plugins.
+
+Delfino loads, parses, validates and stores plugin settings in [`AppContext.plugin_config`](https://github.com/radeklat/delfino/blob/main/src/delfino/models/app_context.py). If not specified otherwise (see below), it will be an instance of [`PluginConfig`](https://github.com/radeklat/delfino/blob/main/src/delfino/models/pyproject_toml.py), with any extra keys unvalidated and in JSON-like Python objects.
+
+You can add additional validation to your plugin settings by sub-classing the `PluginConfig` , defining expected keys, default values and/or validation. Delfino utilizes [`pydantic`](https://docs.pydantic.dev/) to create data classes.
+
+Delfino also needs to know, which class to use for the validation. To do that, switch to `delfino.decorators.pass_app_context` instead of [`click.pass_obj`](https://click.palletsprojects.com/api/#click.pass_obj):
+
+```toml
+[tool.delfino.plugins.delfino_login_plugin]
+username = "user"
+```
+
+```python
+import click
+from delfino.models.pyproject_toml import PluginConfig
+from delfino.models.app_context import AppContext
+from delfino.decorators import pass_app_context
+
+
+class LoginPluginConfig(PluginConfig):
+    login: str
+
+
+@click.command()
+@pass_app_context(LoginPluginConfig)
+def login(app_context: AppContext[LoginPluginConfig]):
+    print(app_context.plugin_config.login)
+```
+
+The `AppContext` class is generic. Defining the `PluginConfigType` (such as `AppContext[LoginPluginConfig]` in the example above) enables introspection and type checks.
+
+## Project specific overrides
+
+It is likely your projects will require slight divergence to the defaults you encode in your scripts. The following sections cover the most common use cases.
+
+### Pass-through arguments
+
+You can pass additional arguments to downstream tools by decorating commands with the [`decorators.pass_args`](https://github.com/radeklat/delfino/blob/main/src/delfino/decorators/pass_args.py) decorator:
+
+```python
+from typing import Tuple
+
+import click
+from delfino.decorators import pass_args
+from delfino.execution import run, OnError
+
+@click.command()
+@pass_args
+def test(passed_args: Tuple[str, ...]):
+    run(["pytest", "tests", *passed_args], on_error=OnError.ABORT)
+```
+
+Then additional arguments can be passed either via command line after `--`:
+
+```shell script
+delfino test -- --capture=no
+```
+
+Or via configuration in the `pyproject.toml` file:
+
+```toml
+# [tool.delfino.plugins.<PLUGIN>.test]
+# pass_args = ['--capture=no']
+```
+
+Either way, both will result in executing `pytest tests --capture=no`.
+
+### Files override
+
+You can override files passed to downstream tools by decorating commands with the [`decorators.files_folders_option`](https://github.com/radeklat/delfino/blob/main/src/delfino/decorators/files_folders.py) decorator:
+
+```python
+from typing import Tuple
+
+import click
+from delfino.decorators import files_folders_option
+from delfino.execution import run, OnError
+
+@click.command()
+@files_folders_option
+def test(files_folders: Tuple[str, ...]):
+    if not files_folders:
+        files_folders = ("tests/unit", "tests/integration")
+    run(["pytest", *files_folders], on_error=OnError.ABORT)
+```
+
+Then the default `"tests/unit", "tests/integration"` folders can be overridden either via command line options `-f`/`--file`/`--folder`:
+
+```shell script
+delfino test -f tests/other
+```
+
+Or via configuration in the `pyproject.toml` file:
+
+```toml
+# [tool.delfino.plugins.<PLUGIN>.test]
+# files_folders = ['tests/other']
+```
+
+Either way, both will result in executing `pytest tests/other`.
+
+## Grouping commands
+
+Often it is useful to run several commands as a group with a different command name. Click supports calling other commands with [`click.Context.forward`](https://click.palletsprojects.com/api/#click.Context.forward) or [`click.Context.invoke`](https://click.palletsprojects.com/api/#click.Context.invoke).
+
+<!-- TODO(Radek): Add description of `execute_commands_group` once migrated from `delfino-core`. -->
