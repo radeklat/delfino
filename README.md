@@ -228,7 +228,7 @@ The downside of this approach is that evaluating what is available each time is 
 
 ## Running external programs
 
-It is up to you how you want to execute external processes as part of commands (if you need to at all). A common way in Python is to use `subprocess.run`. Delfino comes with its own `run` implementation, which wraps and simplifies `subprocess.run` for the most common use cases:
+It is up to you how you want to execute external processes as part of commands (if you need to at all). A common way in Python is to use `subprocess.run`. Delfino comes with its own [`run` implementation](https://github.com/radeklat/delfino/blob/main/src/delfino/execution.py#L94), which wraps and simplifies `subprocess.run` for the most common use cases:
 
 - Normalizing `subprocess.run` arguments - you can pass in either a string or a list. Either way, `subprocess.run` will be executed correctly.
 - Handling errors from the execution via the `on_error` argument. Giving the option to either ignore the errors and continue (`PASS`), not continue and clean exit (`EXIT`) or not continue and abort with error code (`ABORT`).
