@@ -52,11 +52,11 @@
 
 # What is Delfino
 
-Delfino is a wrapper around [Click](https://click.palletsprojects.com) command line scripts. It automatically discovers instances of [Click commands](https://click.palletsprojects.com/quickstart/#basic-concepts-creating-a-command) and offers them for execution. However, the biggest power comes from the possibility of creating [plugins](#plugins), which can be distributed as standard Python packages. Which in turn can greatly reduce code duplication and/or promote your own standards in multiple places.
-
-For example, you can create a plugin wrapping common linting tools that you use on your projects, including their default configuration. Keeping the rules and creating new projects with the same style suddenly becomes a matter of installing one Python library.
+Delfino is a wrapper around [Click](https://click.palletsprojects.com) command line scripts. It automatically discovers instances of [Click commands](https://click.palletsprojects.com/quickstart/#basic-concepts-creating-a-command) and offers them for execution. However, the biggest power comes from the possibility of creating [plugins](#plugins), which can be distributed as standard Python packages.
 
 ## Plugins
+
+Plugins can greatly reduce code duplication and/or promote your own standards in multiple places. For example, you can create a plugin wrapping common linting tools that you use on your projects, including their default configuration. Keeping the rules and creating new projects with the same style suddenly becomes a matter of installing one Python library.
 
 Each plugin can contain one or more Click commands that are automatically discovered and exposed by Delfino. See [`delfino-demo`](https://github.com/radeklat/delfino-demo) for a minimal plugin, which provide a `demo` command printing out a message.
 
