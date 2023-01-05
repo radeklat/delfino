@@ -183,6 +183,8 @@ Alternatively, you can get inspired by [the demo plugin](https://github.com/rade
 Delfino adds optional bits of functionality on top of Click. The following example demonstrates some of those:
 
 ```python
+# commands/__init__.py
+
 import click
 
 from delfino.contexts import pass_app_context, AppContext
@@ -240,6 +242,8 @@ It is up to you how you want to execute external processes as part of commands (
 If you put several commands into one [plugin](#plugins), you can make some dependencies of some commands [optional](https://python-poetry.org/docs/pyproject#extras). This is useful when a command is not always used, and you don't want to install unnecessary dependencies. Instead, you can check if a dependency is installed only when the command is executed with `delfino.validation.assert_pip_package_installed`:
 
 ```python
+# commands/__init__.py
+
 import click
 from delfino.validation import assert_pip_package_installed
 
@@ -265,6 +269,8 @@ You can store an arbitrary object in the Click context as [`click.Context.obj`](
 You can pass this object to your commands by decorating them with [`click.pass_obj`](https://click.palletsprojects.com/api/#click.pass_obj):
 
 ```python
+# commands/__init__.py
+
 import click
 from delfino.models.app_context import AppContext
 
@@ -285,11 +291,15 @@ You can add additional validation to your plugin settings by sub-classing the `P
 Delfino also needs to know, which class to use for the validation. To do that, switch to `delfino.decorators.pass_app_context` instead of [`click.pass_obj`](https://click.palletsprojects.com/api/#click.pass_obj):
 
 ```toml
+# pyproject.toml
+
 [tool.delfino.plugins.delfino_login_plugin]
 username = "user"
 ```
 
 ```python
+# commands/__init__.py
+
 import click
 from delfino.models.pyproject_toml import PluginConfig
 from delfino.models.app_context import AppContext
@@ -317,6 +327,8 @@ It is likely your projects will require slight divergence to the defaults you en
 You can pass additional arguments to downstream tools by decorating commands with the [`decorators.pass_args`](https://github.com/radeklat/delfino/blob/main/src/delfino/decorators/pass_args.py) decorator:
 
 ```python
+# commands/__init__.py
+
 from typing import Tuple
 
 import click
@@ -349,6 +361,8 @@ Either way, both will result in executing `pytest tests --capture=no`.
 You can override files passed to downstream tools by decorating commands with the [`decorators.files_folders_option`](https://github.com/radeklat/delfino/blob/main/src/delfino/decorators/files_folders.py) decorator:
 
 ```python
+# commands/__init__.py
+
 from typing import Tuple
 
 import click
