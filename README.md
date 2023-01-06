@@ -237,6 +237,19 @@ It is up to you how you want to execute external processes as part of commands (
 - Setting environment variables.
 - Logging what is being executed in the debug level.
 
+Example:
+
+```python
+# commands/__init__.py
+
+import click
+from delfino.execution import run, OnError
+
+@click.command()
+def test():
+    run("pytest tests", on_error=OnError.ABORT)
+```
+
 ## Optional dependencies
 
 If you put several commands into one [plugin](#plugins), you can make some dependencies of some commands [optional](https://python-poetry.org/docs/pyproject#extras). This is useful when a command is not always used, and you don't want to install unnecessary dependencies. Instead, you can check if a dependency is installed only when the command is executed with `delfino.validation.assert_pip_package_installed`:
@@ -350,8 +363,8 @@ delfino test -- --capture=no
 Or via configuration in the `pyproject.toml` file:
 
 ```toml
-# [tool.delfino.plugins.<PLUGIN>.test]
-# pass_args = ['--capture=no']
+[tool.delfino.plugins.<PLUGIN>.test]
+pass_args = ['--capture=no']
 ```
 
 Either way, both will result in executing `pytest tests --capture=no`.
@@ -386,8 +399,8 @@ delfino test -f tests/other
 Or via configuration in the `pyproject.toml` file:
 
 ```toml
-# [tool.delfino.plugins.<PLUGIN>.test]
-# files_folders = ['tests/other']
+[tool.delfino.plugins.<PLUGIN>.test]
+files_folders = ['tests/other']
 ```
 
 Either way, both will result in executing `pytest tests/other`.
