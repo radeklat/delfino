@@ -1,6 +1,7 @@
 import sys
 import tempfile
 from pathlib import Path
+from typing import Any, Dict
 
 import click
 import pytest
@@ -8,6 +9,10 @@ import pytest
 from delfino.decorators import files_folders_option, pass_args
 from delfino.models.pyproject_toml import PluginConfig
 from tests.integration.assertions import assert_output_matches
+
+
+class CustomPluginConfig(PluginConfig):
+    cmd: Dict[str, Any]
 
 
 @click.command("cmd")
@@ -39,19 +44,19 @@ class TestPassArgsDecorator:
 
     @staticmethod
     def should_pass_arguments_from_config(runner, context_obj):
-        context_obj.plugin_config = PluginConfig(cmd={"pass_args": "--option 1 argument"})
+        context_obj.plugin_config = CustomPluginConfig(cmd={"pass_args": "--option 1 argument"})
         result = runner.invoke(_command, obj=context_obj)
         assert_output_matches(result, None, "--option", "1", "argument")
 
     @staticmethod
     def should_prefer_command_line_arguments_over_config(runner, context_obj):
-        context_obj.plugin_config = PluginConfig(cmd={"pass_args": "config"})
+        context_obj.plugin_config = CustomPluginConfig(cmd={"pass_args": "config"})
         result = runner.invoke(_command, "-- commandline", obj=context_obj)
         assert_output_matches(result, None, "commandline")
 
     @staticmethod
     def should_not_override_command_options_of_the_same_name_from_config(runner, context_obj):
-        context_obj.plugin_config = PluginConfig(cmd={"pass_args": "--option passed"})
+        context_obj.plugin_config = CustomPluginConfig(cmd={"pass_args": "--option passed"})
         result = runner.invoke(_command, "--option option", obj=context_obj)
         assert_output_matches(result, "option", "--option", "passed")
 
@@ -62,7 +67,7 @@ class TestPassArgsDecorator:
 
     @staticmethod
     def should_allow_empty_config(runner, context_obj):
-        context_obj.plugin_config = PluginConfig(cmd={"pass_args": ""})
+        context_obj.plugin_config = CustomPluginConfig(cmd={"pass_args": ""})
         result = runner.invoke(_command, obj=context_obj)
         assert_output_matches(result, None)
 

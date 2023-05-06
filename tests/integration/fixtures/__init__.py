@@ -31,7 +31,6 @@ def demo_commands(
     folder_name: Path = DEFAULT_LOCAL_COMMANDS_DIRECTORY,
     fake_command_files: Iterable[FakeCommandFile] = (FakeCommandFile(),),
 ) -> Iterator[List[str]]:
-
     with tempfile.TemporaryDirectory() as tmpdir:
         root_dir = tmpdir / folder_name
         root_dir.mkdir(exist_ok=True)

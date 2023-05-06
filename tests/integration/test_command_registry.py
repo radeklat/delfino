@@ -91,7 +91,9 @@ class TestCommandRegistry:
         caplog.set_level(logging.WARNING)
 
         # WHEN
-        plugins_configs = {plugin_name: PluginConfig(**{f"{group_name}_commands": {command_name}})}
+        plugin_config = PluginConfig.empty()
+        setattr(plugin_config, f"{group_name}_commands", {command_name})
+        plugins_configs = {plugin_name: plugin_config}
         command_packages = CommandRegistry._discover_command_packages(plugins_configs)
         registry = CommandRegistry(plugins_configs, command_packages)
 
