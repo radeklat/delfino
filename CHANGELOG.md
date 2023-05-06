@@ -12,6 +12,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [1.2.0] - 2023-05-06
+
+### Features
+
+- Added support for config file named `.delfinorc`.
+
 ## [1.1.1] - 2023-05-06
 
 ### Fixes
@@ -444,7 +450,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/1.1.1...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/radeklat/delfino/compare/1.1.1...1.2.0
 [1.1.1]: https://github.com/radeklat/delfino/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/radeklat/delfino/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/radeklat/delfino/compare/0.30.0...1.0.0

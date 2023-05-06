@@ -5,10 +5,9 @@ from pathlib import Path
 from typing import Any, List, Optional
 
 import click
-import toml
-from pydantic import ValidationError
 
 from delfino.click_utils.command import CommandRegistry
+from delfino.config import ConfigValidationError, load_config
 from delfino.constants import ENTRY_POINT, PYPROJECT_TOML_FILENAME
 from delfino.internal_parameters.completion import install_completion_option, show_completion_option
 from delfino.internal_parameters.help import extended_help_option
@@ -25,19 +24,16 @@ class Commands(click.MultiCommand):
         sys.path.append(os.getcwd())
 
         self._project_root = Path(os.getcwd())
-        pyproject_toml_path = (self._project_root / PYPROJECT_TOML_FILENAME).relative_to(self._project_root)
 
         # When evaluating available commands, the program should not fail. We save the exception
         # to show it only when a command is executed.
-        self._pyproject_toml_validation_error: Optional[ValidationError] = None
+        self._pyproject_toml_validation_error: Optional[ConfigValidationError] = None
 
         try:
-            self._pyproject_toml = PyprojectToml(file_path=pyproject_toml_path, **toml.load(pyproject_toml_path))
-        except ValidationError as exc:
+            self._pyproject_toml = load_config(self._project_root)
+        except ConfigValidationError as exc:
             self._pyproject_toml = PyprojectToml()
             self._pyproject_toml_validation_error = exc
-        except FileNotFoundError:
-            self._pyproject_toml = PyprojectToml()
 
         self._command_registry = CommandRegistry(
             plugins_configs=self._pyproject_toml.tool.delfino.plugins,
@@ -59,9 +55,7 @@ class Commands(click.MultiCommand):
             return cmd.command
 
         if self._pyproject_toml_validation_error:
-            click.secho(
-                f"Delfino appears to be misconfigured: {self._pyproject_toml_validation_error}", fg="red", err=True
-            )
+            click.secho(str(self._pyproject_toml_validation_error), fg="red", err=True)
             raise click.Abort() from self._pyproject_toml_validation_error
 
         ctx.obj = AppContext(
