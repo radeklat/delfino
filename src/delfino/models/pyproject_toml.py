@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 
 from pydantic import BaseModel, Extra, Field
 
@@ -7,8 +7,9 @@ from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY
 
 
 class PluginConfig(BaseModel):
-    enable_commands: Set[str] = set()
-    disable_commands: Set[str] = set()
+    enable_commands: Set[str] = Field(default_factory=set)
+    disable_commands: Set[str] = Field(default_factory=set)
+    command_groups: Dict[str, List[str]] = Field(default_factory=dict)
 
     @classmethod
     def empty(cls):
@@ -21,6 +22,7 @@ class PluginConfig(BaseModel):
 class Delfino(BaseModel):
     local_commands_directory: Path = DEFAULT_LOCAL_COMMANDS_DIRECTORY
     plugins: Dict[str, PluginConfig] = Field(default_factory=dict)
+    command_groups: Dict[str, List[str]] = Field(default_factory=dict)
 
     class Config:
         extra = Extra.allow
