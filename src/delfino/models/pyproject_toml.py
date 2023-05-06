@@ -47,7 +47,6 @@ class Tool(BaseModel):
 
 
 class PyprojectToml(BaseModel):
-    file_path: Optional[Path] = None
     tool: Tool = Field(default_factory=Tool)
 
     class Config:
