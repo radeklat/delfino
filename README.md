@@ -87,12 +87,12 @@ to enable [auto-completion](#auto-completion).
 All configuration is expected to live in one of the following files:
 
 - `pyproject.toml` in the project root
-- `.pylintrc` in the project root - to allow dev specific config, not source controlled or for non-Python projects
-- `.pylintrc` in the user home directory - for user tools available in the system
+- `.delfinorc` in the project root - to allow dev specific config, not source controlled or for non-Python projects
+- `.delfinorc` in the user home directory - for user tools available in the system
 
 If multiple files are discovered, only the highest one in the list will be used.
 
-The format for `.pylintrc` is the same as for `pyproject.toml`.
+The format for `.delfinorc` is the same as for `pyproject.toml`.
 
 ## Enabling a plugin
 
