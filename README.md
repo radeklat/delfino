@@ -136,6 +136,7 @@ Delfino looks for any [`click.Command`](https://click.palletsprojects.com/en/8.0
   [tool.poetry.plugins."delfino.plugin"]
   "delfino-<PLUGIN_NAME>" = "<IMPORT_PATH>"
   ```
+- Folder specified in the [config file](#configuration) under `tool.delfino.local_commands_directory`.
 
 Any files starting with an underscore, except for `__init__.py`, will be ignored.
 
