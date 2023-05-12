@@ -1,5 +1,5 @@
 <h1 align="center" style="border-bottom: none;">🧰&nbsp;&nbsp;Delfino&nbsp;&nbsp;🧰</h1>
-<h3 align="center">Plugable Click command finder/loader/executor.</h3>
+<h3 align="center">The Ultimate Command Line Companion for Your Projects</h3>
 
 <p align="center">
     <a href="https://app.circleci.com/pipelines/github/radeklat/delfino?branch=main">
@@ -23,6 +23,18 @@
     </a>
 </p>
 
+Tired of managing scattered scripts? Say goodbye to complexity with Delfino!
+
+Delfino is a powerful wrapper around Click, the popular command line interface package. It automatically discovers and executes Click commands in your project. But Delfino doesn't stop there - it takes it a step further by allowing you to create plugins, making script distribution and installation a breeze.
+
+# Why choose Delfino?
+
+- **Streamline Scripts**: Consolidate all your helper scripts into a single, easy-to-use entry point. No more hunting for scripts or dealing with convoluted aliases. Simply use delfino followed by the script name and options.
+- **Reusable Plugins**: Package your helper scripts as plugins and install them with pip. Maintain consistency across projects and easily incorporate updates through a flexible configuration system.
+- **Simplify Tooling**: Delfino extends Click with advanced features like pass-through command-line options and seamless handling of file lists. Say goodbye to verbosity and hello to optimized workflows.
+
+Don't let scattered scripts and complex tooling slow you down. Embrace Delfino and revolutionize your command line experience. Try Delfino today and unlock simplicity in your projects!
+
 <!--
     How to generate TOC from PyCharm:
     https://github.com/vsch/idea-multimarkdown/wiki/Table-of-Contents-Extension
@@ -30,17 +42,16 @@
 [TOC levels=1,2 markdown formatted bullet hierarchy]: # "Table of content"
 
 # Table of content
-- [What is Delfino](#what-is-delfino)
-  - [Plugins](#plugins)
 - [Installation](#installation)
 - [Configuration](#configuration)
-  - [Enabling a plugin](#enabling-a-plugin)
-  - [Enabling/disabling commands](#enablingdisabling-commands)
 - [Usage](#usage)
 - [Development](#development)
   - [Commands discovery](#commands-discovery)
   - [Minimal command](#minimal-command)
   - [Minimal plugin](#minimal-plugin)
+- [Existing plugins](#existing-plugins)
+  - [Enabling a plugin](#enabling-a-plugin)
+  - [Enabling/disabling commands](#enablingdisabling-commands)
 - [Advanced usage](#advanced-usage)
   - [Auto-completion](#auto-completion)
   - [Running external programs](#running-external-programs)
@@ -49,24 +60,6 @@
   - [Plugin settings](#plugin-settings)
   - [Project specific overrides](#project-specific-overrides)
   - [Grouping commands](#grouping-commands)
-
-# What is Delfino
-
-Delfino is a wrapper around [Click](https://click.palletsprojects.com) command line scripts. It automatically discovers instances of [Click commands](https://click.palletsprojects.com/quickstart/#basic-concepts-creating-a-command) and offers them for execution. However, the biggest power comes from the possibility of creating [plugins](#plugins), which can be distributed as standard Python packages.
-
-## Plugins
-
-Plugins can greatly reduce code duplication and/or promote your own standards in multiple places. For example, you can create a plugin wrapping common linting tools that you use on your projects, including their default configuration. Keeping the rules and creating new projects with the same style suddenly becomes a matter of installing one Python library.
-
-Each plugin can contain one or more Click commands that are automatically discovered and exposed by Delfino. See [`delfino-demo`](https://github.com/radeklat/delfino-demo) for a minimal plugin, which provide a `demo` command printing out a message.
-
-Existing plugins:
-
-| Plugin name                                                  | Description                                                                                        |
-|:-------------------------------------------------------------|:---------------------------------------------------------------------------------------------------|
-| [delfino-demo](https://github.com/radeklat/delfino-demo)     | A minimal plugin example for Delfino. Contains one command printing a message.                     |
-| [delfino-core](https://github.com/radeklat/delfino-core)     | Commands wrapping tools used during every day development (linting, testing, dependencies update). |
-| [delfino-docker](https://github.com/radeklat/delfino-docker) | Docker build helper script.                                                                        |
 
 # Installation
 
@@ -93,28 +86,6 @@ All configuration is expected to live in one of the following files:
 If multiple files are discovered, only the highest one in the list will be used.
 
 The format for `.delfinorc` is the same as for `pyproject.toml`.
-
-## Enabling a plugin
-
-For security reasons, plugins are disabled by default. To enable a plugin, you have to include it in the `pyproject.toml` file:
-
-```toml
-[tool.delfino.plugins.<PLUGIN_NAME>]
-```
-
-## Enabling/disabling commands
-
-By default, all commands are enabled. Use `enable_commands` or `disable_commands`  to show only a subset of commands. If both used, disabled commands are subtracted from the set of enabled commands.
-
-```toml
-# [tool.delfino.plugins.<PLUGIN_NAME_A>]
-# enable_commands = [<COMMAND_NAME>]
-# disable_commands = [<COMMAND_NAME>]
-
-# [tool.delfino.plugins.<PLUGIN_NAME_B>]
-# enable_commands = [<COMMAND_NAME>]
-# disable_commands = [<COMMAND_NAME>]
-```
 
 # Usage
 
@@ -183,6 +154,42 @@ If you'd like to use one or more commands in multiple places, you can create a p
 The quickest way to create one is to use a [Delfino plugin cookiecutter template](https://github.com/radeklat/delfino-plugin-cookiecutter-template), which asks you several questions and sets up the whole project.
 
 Alternatively, you can get inspired by [the demo plugin](https://github.com/radeklat/delfino-demo) or any of the other [existing plugins](#plugins).
+
+# Existing plugins
+
+Plugins can greatly reduce code duplication and/or promote your own standards in multiple places. For example, you can create a plugin wrapping common linting tools that you use on your projects, including their default configuration. Keeping the rules and creating new projects with the same style suddenly becomes a matter of installing one Python library.
+
+Each plugin can contain one or more Click commands that are automatically discovered and exposed by Delfino. See [`delfino-demo`](https://github.com/radeklat/delfino-demo) for a minimal plugin, which provide a `demo` command printing out a message.
+
+Existing plugins:
+
+| Plugin name                                                  | Description                                                                                        |
+|:-------------------------------------------------------------|:---------------------------------------------------------------------------------------------------|
+| [delfino-demo](https://github.com/radeklat/delfino-demo)     | A minimal plugin example for Delfino. Contains one command printing a message.                     |
+| [delfino-core](https://github.com/radeklat/delfino-core)     | Commands wrapping tools used during every day development (linting, testing, dependencies update). |
+| [delfino-docker](https://github.com/radeklat/delfino-docker) | Docker build helper script.                                                                        |
+
+## Enabling a plugin
+
+For security reasons, plugins are disabled by default. To enable a plugin, you have to include it in the `pyproject.toml` file:
+
+```toml
+[tool.delfino.plugins.<PLUGIN_NAME>]
+```
+
+## Enabling/disabling commands
+
+By default, all commands are enabled. Use `enable_commands` or `disable_commands`  to show only a subset of commands. If both used, disabled commands are subtracted from the set of enabled commands.
+
+```toml
+# [tool.delfino.plugins.<PLUGIN_NAME_A>]
+# enable_commands = [<COMMAND_NAME>]
+# disable_commands = [<COMMAND_NAME>]
+
+# [tool.delfino.plugins.<PLUGIN_NAME_B>]
+# enable_commands = [<COMMAND_NAME>]
+# disable_commands = [<COMMAND_NAME>]
+```
 
 # Advanced usage
 
