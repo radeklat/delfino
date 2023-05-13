@@ -5,7 +5,7 @@ from typing import Dict, Set
 import pytest
 
 from delfino.click_utils.command import CommandRegistry
-from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY
+from delfino.constants import DEFAULT_LOCAL_COMMAND_FOLDERS
 from delfino.models.pyproject_toml import PluginConfig
 from tests.integration.fixtures import ALL_PLUGINS_ALL_COMMANDS, FakeCommandFile, demo_commands
 
@@ -115,7 +115,7 @@ class TestCommandRegistry:
     def should_ignore_files_starting_with_an_underscore():
         model_path = Path("underscore_only")
         with demo_commands(model_path, [FakeCommandFile(filename="_demo.py")]):
-            registry = CommandRegistry({}, local_commands_directory=model_path)
+            registry = CommandRegistry({}, local_command_folders=[model_path])
             assert not registry.visible_commands
             assert not registry.hidden_commands
 
@@ -131,7 +131,7 @@ class TestCommandRegistry:
             FakeCommandFile(filename="_not_inspected.py"),
         ]
         with demo_commands(model_path, fake_command_files):
-            registry = CommandRegistry({}, local_commands_directory=model_path)
+            registry = CommandRegistry({}, local_command_folders=[model_path])
             assert not registry.visible_commands
             assert not registry.hidden_commands
 
@@ -201,7 +201,7 @@ class TestCommandRegistryPluginAndCommandSelection:
     def should_load_from_init_file():
         model_path = Path("init_only")
         with demo_commands(model_path, [FakeCommandFile(filename="__init__.py")]) as command_names:
-            registry = CommandRegistry({}, local_commands_directory=model_path)
+            registry = CommandRegistry({}, local_command_folders=[model_path])
             assert {command.name for command in registry.visible_commands} == {command_names[0]}
             assert not registry.hidden_commands
 
@@ -211,8 +211,8 @@ class TestCommandRegistryLocalCommands:
     @pytest.mark.parametrize(
         "module_path, kwargs",
         [
-            pytest.param(DEFAULT_LOCAL_COMMANDS_DIRECTORY, {}, id="the default folder"),
-            pytest.param(Path("non_default"), {"local_commands_directory": Path("non_default")}, id="custom folder"),
+            pytest.param(DEFAULT_LOCAL_COMMAND_FOLDERS[0], {}, id="the default folders"),
+            pytest.param(Path("non_default"), {"local_command_folders": [Path("non_default")]}, id="custom folder"),
         ],
     )
     def should_be_discovered_from(module_path, kwargs):

@@ -6,7 +6,7 @@ from typing import Iterable, Iterator, List
 
 from pydantic import BaseModel
 
-from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY
+from delfino.constants import DEFAULT_LOCAL_COMMAND_FOLDERS
 from delfino.models.pyproject_toml import PluginConfig
 
 ALL_PLUGINS_ALL_COMMANDS = {
@@ -28,7 +28,7 @@ class FakeCommandFile(BaseModel):
 
 @contextmanager
 def demo_commands(
-    folder_name: Path = DEFAULT_LOCAL_COMMANDS_DIRECTORY,
+    folder_name: Path = DEFAULT_LOCAL_COMMAND_FOLDERS[0],
     fake_command_files: Iterable[FakeCommandFile] = (FakeCommandFile(),),
 ) -> Iterator[List[str]]:
     with tempfile.TemporaryDirectory() as tmpdir:
