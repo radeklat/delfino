@@ -12,6 +12,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [1.3.0] - 2023-05-13
+
+### Deprecated
+
+- Config option `tool.delfino.local_commands_directory` is now `tool.delfino.local_command_folders`. It is a list of folders to search for local commands (instead of a single folder). The default value is `["commands"]`. `delfino.models.pyproject_toml.Delfino.local_commands_directory` falls back to the first folder in `local_command_folder` and will be removed in the next major version.
+
 ## [1.2.0] - 2023-05-06
 
 ### Features
@@ -450,7 +456,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/radeklat/delfino/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/radeklat/delfino/compare/1.1.1...1.2.0
 [1.1.1]: https://github.com/radeklat/delfino/compare/1.1.0...1.1.1
 [1.1.0]: https://github.com/radeklat/delfino/compare/1.0.0...1.1.0

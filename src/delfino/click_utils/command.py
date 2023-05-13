@@ -5,12 +5,12 @@ from functools import partial
 from importlib import import_module, resources
 from importlib.resources import Package
 from pathlib import Path
-from typing import Dict, Iterator, List, Mapping, Optional, Set, cast
+from typing import Dict, Iterable, Iterator, List, Mapping, Optional, Set, cast
 
 import click
 from pydantic import BaseModel, Field, validator
 
-from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY, PYPROJECT_TOML_FILENAME
+from delfino.constants import DEFAULT_LOCAL_COMMAND_FOLDERS, PYPROJECT_TOML_FILENAME
 from delfino.models.pyproject_toml import PluginConfig
 
 if sys.version_info < (3, 10):
@@ -129,10 +129,10 @@ class CommandRegistry(Mapping):
         self,
         plugins_configs: Dict[str, PluginConfig],
         command_packages: Optional[List[_CommandPackage]] = None,
-        local_commands_directory: Path = DEFAULT_LOCAL_COMMANDS_DIRECTORY,
+        local_command_folders: Iterable[Path] = DEFAULT_LOCAL_COMMAND_FOLDERS,
     ):
         if command_packages is None:
-            self._command_packages = self._default_command_packages(plugins_configs, local_commands_directory)
+            self._command_packages = self._default_command_packages(plugins_configs, local_command_folders)
         else:
             self._command_packages = command_packages
         self._visible_commands: Dict[str, _Command] = {}
@@ -158,17 +158,20 @@ class CommandRegistry(Mapping):
 
     @classmethod
     def _default_command_packages(
-        cls, plugins_configs: Dict[str, PluginConfig], local_commands_directory: Path
+        cls, plugins_configs: Dict[str, PluginConfig], local_command_folders: Iterable[Path]
     ) -> List[_CommandPackage]:
         # This is a function to lazy load packages in tests. They may not exist on import of the code.
         return [
             # Lower priority - discovered installed packages
             *cls._discover_command_packages(plugins_configs),
             # Higher priority - locally available packages
-            _CommandPackage(
-                plugin_name=cls.LOCAL_PLUGIN_NAME,
-                package=str(local_commands_directory),
-                plugin_config=plugins_configs.get(cls.LOCAL_PLUGIN_NAME, PluginConfig.empty()),
+            *(
+                _CommandPackage(
+                    plugin_name=cls.LOCAL_PLUGIN_NAME,
+                    package=str(local_commands_folder),
+                    plugin_config=plugins_configs.get(cls.LOCAL_PLUGIN_NAME, PluginConfig.empty()),
+                )
+                for local_commands_folder in local_command_folders
             ),
         ]
 

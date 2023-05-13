@@ -1,9 +1,10 @@
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
+from warnings import warn
 
 from pydantic import BaseModel, Extra, Field
 
-from delfino.constants import DEFAULT_LOCAL_COMMANDS_DIRECTORY
+from delfino.constants import DEFAULT_LOCAL_COMMAND_FOLDERS
 
 
 class PluginConfig(BaseModel):
@@ -20,9 +21,17 @@ class PluginConfig(BaseModel):
 
 
 class Delfino(BaseModel):
-    local_commands_directory: Path = DEFAULT_LOCAL_COMMANDS_DIRECTORY
+    local_command_folders: Tuple[Path, ...] = DEFAULT_LOCAL_COMMAND_FOLDERS
     plugins: Dict[str, PluginConfig] = Field(default_factory=dict)
     command_groups: Dict[str, List[str]] = Field(default_factory=dict)
+
+    @property
+    def local_commands_directory(self) -> Path:
+        warn(
+            "tool.delfino.local_commands_directory is deprecated. Use tool.delfino.local_command_folders instead.",
+            DeprecationWarning,
+        )
+        return self.local_command_folders[0]
 
     class Config:
         extra = Extra.allow

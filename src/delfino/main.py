@@ -37,7 +37,7 @@ class Commands(click.MultiCommand):
 
         self._command_registry = CommandRegistry(
             plugins_configs=self._pyproject_toml.tool.delfino.plugins,
-            local_commands_directory=self._pyproject_toml.tool.delfino.local_commands_directory,
+            local_command_folders=self._pyproject_toml.tool.delfino.local_command_folders,
         )
 
     def list_commands(self, ctx: click.Context) -> List[str]:
