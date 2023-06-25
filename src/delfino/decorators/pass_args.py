@@ -1,5 +1,5 @@
 import shlex
-from typing import Any
+from typing import Any, Final
 
 import click
 
@@ -14,7 +14,7 @@ class _SetPassArgsFromConfigCallback(SetOptionFromConfigCallback):
         return super()._type_cast_value(ctx, param, value_from_config)
 
 
-_ARGUMENT_NAME = "passed_args"
+_ARGUMENT_NAME: Final[str] = "passed_args"
 PASS_ARGS_CALLBACK = _SetPassArgsFromConfigCallback(_ARGUMENT_NAME, "pass_args")
 
 

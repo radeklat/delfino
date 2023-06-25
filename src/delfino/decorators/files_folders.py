@@ -1,8 +1,10 @@
+from typing import Final
+
 import click
 
 from delfino.click_utils.set_from_config import SetOptionFromConfigCallback
 
-_ARGUMENT_NAME: str = "files_folders"
+_ARGUMENT_NAME: Final[str] = "files_folders"
 FILES_FOLDERS_OPTION_CALLBACK = SetOptionFromConfigCallback(_ARGUMENT_NAME)
 
 files_folders_option = click.option(

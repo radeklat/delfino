@@ -12,6 +12,17 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [2.0.0] - 2023-06-25
+
+### Breaking changes
+
+- Drops Python 3.7 support.
+- Removes deprecated config option `tool.delfino.local_commands_directory`. See [1.3.0](#130---2023-05-13) for more details.
+
+### Fixes
+
+- Adds `typing.Final` type annotation and use of assignment operator where possible.
+
 ## [1.3.0] - 2023-05-13
 
 ### Deprecated
@@ -456,7 +467,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/1.3.0...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/2.0.0...HEAD
+[2.0.0]: https://github.com/radeklat/delfino/compare/1.3.0...2.0.0
 [1.3.0]: https://github.com/radeklat/delfino/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/radeklat/delfino/compare/1.1.1...1.2.0
 [1.1.1]: https://github.com/radeklat/delfino/compare/1.1.0...1.1.1
