@@ -34,9 +34,7 @@ class SetOptionFromConfigCallback:
 
         This is useful for invoking commands indirectly, for example in a group command.
         """
-        app_context = ctx.find_object(AppContext)
-
-        if app_context is None:
+        if (app_context := ctx.find_object(AppContext)) is None:
             raise RuntimeError("AppContext was expected to be set but none found.")
 
         command_config = getattr(app_context.plugin_config, command.name or "", {})
@@ -63,9 +61,7 @@ class SetOptionFromConfigCallback:
             return value
 
         # No command line options provided, try to load them from config
-        app_context = ctx.find_object(AppContext)
-
-        if app_context is None:
+        if (app_context := ctx.find_object(AppContext)) is None:
             raise RuntimeError("AppContext was expected to be set but none found.")
 
         command_name: str = ctx.command.name or ""

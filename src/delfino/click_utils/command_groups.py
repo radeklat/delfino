@@ -17,9 +17,7 @@ def get_command_groups(app_context: AppContext) -> Dict[str, List[str]]:
 
 
 def _get_target_command_names(group_name: str, app_context: AppContext) -> List[str]:
-    target_command_names = get_command_groups(app_context).get(group_name, None)
-
-    if target_command_names is None:
+    if (target_command_names := get_command_groups(app_context).get(group_name, None)) is None:
         raise click.exceptions.Abort(f"Command group '{group_name}' does not exist.")
 
     if not target_command_names:

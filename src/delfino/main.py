@@ -47,8 +47,7 @@ class Commands(click.MultiCommand):
 
     def get_command(self, ctx: click.Context, cmd_name: str) -> Optional[click.Command]:
         """Override to give all commands a common ``AppContext`` or fail if ``pyproject.toml`` is broken/missing."""
-        cmd = self._command_registry.get(cmd_name, None)
-        if cmd is None:
+        if (cmd := self._command_registry.get(cmd_name, None)) is None:
             return None  # command doesn't exist
 
         if ctx.resilient_parsing:  # do not fail on auto-completion

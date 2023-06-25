@@ -1,7 +1,7 @@
 import functools
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, Final, List, Union
 
 import click
 
@@ -29,7 +29,9 @@ class Completion:
         return self.completion.format(entry_point=ENTRY_POINT, entry_point_upper=ENTRY_POINT.upper()).strip()
 
 
-_COMPLETION_BASH = """
+_COMPLETION_BASH: Final[
+    str
+] = """
 _complete_{entry_point}() {{
     [ -n "$(which {entry_point})" ] && \\
         eval "$(_{entry_point_upper}_COMPLETE=bash_source {entry_point})";
@@ -37,7 +39,9 @@ _complete_{entry_point}() {{
 complete -F _complete_{entry_point} -o default invoke {entry_point}
 """
 
-_COMPLETION_ZSH = """
+_COMPLETION_ZSH: Final[
+    str
+] = """
 _complete_{entry_point}() {{
     which {entry_point} >/dev/null && \\
         eval $(_{entry_point_upper}_COMPLETE=zsh_source {entry_point})

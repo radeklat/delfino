@@ -3,7 +3,7 @@ import shlex
 import subprocess
 from enum import Enum
 from logging import getLogger
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Final, Optional, Tuple
 
 import click
 
@@ -14,14 +14,14 @@ _LOG = getLogger(__name__)
 
 
 class OnError(Enum):
-    PASS = "pass"
+    PASS: Final[str] = "pass"
     """Same as ``check=False``. Use when you're handling the return code yourself."""
 
-    EXIT = "exit"
+    EXIT: Final[str] = "exit"
     """Same as ``check=True`` + red print of stdout/stderr + ``raise click.exception.Exit()``.
     Use when running commands where non-zero return code indicates an error, not a failed check."""
 
-    ABORT = "abort"
+    ABORT: Final[str] = "abort"
     """Same as ``check=True`` + print of stdout/stderr + ``raise click.Abort()``.
     Use when running commands where non-zero return code indicates a failed check, not an error."""
 
