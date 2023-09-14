@@ -17,7 +17,7 @@ from delfino.models.pyproject_toml import PyprojectToml
 from delfino.utils import get_package_manager
 
 
-class Commands(click.MultiCommand):
+class Commands(click.Group):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
