@@ -24,8 +24,15 @@ def _build_and_install_setuptools_plugin(tmpdir, plugin_name: str):
 def _build_and_install_poetry_plugin(tmpdir, plugin_name: str):
     plugin_dir = FAKE_PLUGINS_DIR / plugin_name
     wheel_path = plugin_dir / "dist" / f"{plugin_name}-0.0.1-py2.py3-none-any.whl"
-    subprocess.run(f"cd {plugin_dir} && poetry build -q", shell=True, check=True)
-    subprocess.run(f"pip install {wheel_path} -q --target {tmpdir}", shell=True, check=True)
+
+    action = "build"
+    try:
+        subprocess.run(f"cd {plugin_dir} && poetry build", shell=True, capture_output=True, check=True)
+        action = "install"
+        subprocess.run(f"pip install {wheel_path} -q --target {tmpdir}", shell=True, capture_output=True, check=True)
+    except subprocess.CalledProcessError as ex:
+        raise RuntimeError(f"Failed to {action} '{plugin_name}' plugin:\n{ex.stdout}\n{ex.stderr}") from ex
+
     shutil.rmtree(plugin_dir / "dist")
 
 

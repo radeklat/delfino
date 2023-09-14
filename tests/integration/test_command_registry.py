@@ -27,8 +27,8 @@ class TestCommandRegistry:
     @pytest.mark.parametrize(
         "first_plugin_name, second_plugin_name",
         [
-            pytest.param("fake-plugin-a", "fake-plugin-b", id="when A is first"),
-            pytest.param("fake-plugin-b", "fake-plugin-a", id="when B is first"),
+            pytest.param("fake-plugin-a", "fake_plugin_b", id="when A is first"),
+            pytest.param("fake_plugin_b", "fake-plugin-a", id="when B is first"),
         ],
     )
     def should_load_plugins_in_specified_order(first_plugin_name: str, second_plugin_name: str):
@@ -54,7 +54,7 @@ class TestCommandRegistry:
         caplog.set_level(logging.DEBUG)
         CommandRegistry(ALL_PLUGINS_ALL_COMMANDS, command_packages)
         log_msg = (
-            "Using command 'typecheck' from plugin 'fake-plugin-b'. Previously registered "
+            "Using command 'typecheck' from plugin 'fake_plugin_b'. Previously registered "
             "by 'fake-plugin-a' plugin, which has lower priority."
         )
         assert log_msg in caplog.text
@@ -151,10 +151,10 @@ class TestCommandRegistryPluginAndCommandSelection:
             pytest.param(
                 {
                     "fake-plugin-a": PluginConfig(enable_commands={"lint"}),
-                    "fake-plugin-b": PluginConfig(enable_commands={"typecheck"}),
+                    "fake_plugin_b": PluginConfig(enable_commands={"typecheck"}),
                 },
                 {"lint", "typecheck"},
-                {"format", "build"},  # typecheck from fake-plugin-b should not appear
+                {"format", "build"},  # typecheck from fake_plugin_b should not appear
                 id="only selected plugins and commands",
             ),
             pytest.param(

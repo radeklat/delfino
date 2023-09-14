@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Dict, Iterable, Iterator, List, Mapping, Optional, Set, cast
 
 import click
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from delfino.constants import DEFAULT_LOCAL_COMMAND_FOLDERS, PYPROJECT_TOML_FILENAME
 from delfino.models.pyproject_toml import PluginConfig
@@ -34,7 +34,8 @@ class _CommandPackage(BaseModel):
     package: Package = Field(..., description="A package that include commands.")
     plugin_config: PluginConfig
 
-    @validator("package")
+    @field_validator("package")
+    @classmethod
     def package_is_valid(cls, value: Package):  # pylint: disable=no-self-argument
         if isinstance(value, str):
             return value
@@ -60,8 +61,7 @@ class _CommandPackage(BaseModel):
         assert isinstance(self.package.__file__, str)
         return Path(self.package.__file__).parent
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 @dataclass(frozen=True)

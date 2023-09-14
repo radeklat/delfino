@@ -11,7 +11,7 @@ from delfino.models.pyproject_toml import PluginConfig
 
 ALL_PLUGINS_ALL_COMMANDS = {
     "fake-plugin-a": PluginConfig.empty(),
-    "fake-plugin-b": PluginConfig.empty(),
+    "fake_plugin_b": PluginConfig.empty(),
     "fake-plugin-init-only": PluginConfig.empty(),
 }
 
@@ -23,7 +23,7 @@ class FakeCommandFile(BaseModel):
 
     @property
     def content(self) -> str:
-        return self.content_template.format(**self.dict(exclude={"content_template"}))
+        return self.content_template.format(**self.model_dump(exclude={"content_template"}))
 
 
 @contextmanager
