@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from delfino.constants import DEFAULT_LOCAL_COMMAND_FOLDERS
 
@@ -15,17 +15,14 @@ class PluginConfig(BaseModel):
     def empty(cls):
         return cls()
 
-    class Config:
-        extra = Extra.allow  # Allows arbitrary plugin-specific keys
+    model_config = ConfigDict(extra="allow")
 
 
 class Delfino(BaseModel):
     local_command_folders: Tuple[Path, ...] = DEFAULT_LOCAL_COMMAND_FOLDERS
     plugins: Dict[str, PluginConfig] = Field(default_factory=dict)
     command_groups: Dict[str, List[str]] = Field(default_factory=dict)
-
-    class Config:
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")
 
 
 class Poetry(BaseModel):
@@ -33,21 +30,15 @@ class Poetry(BaseModel):
     version: str
     scripts: Dict[str, str] = Field(default_factory=dict)
     dependencies: Dict[str, Any] = Field(default_factory=dict)
-
-    class Config:
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")
 
 
 class Tool(BaseModel):
     poetry: Optional[Poetry] = None
     delfino: Delfino = Field(default_factory=Delfino)
-
-    class Config:
-        allow_population_by_field_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class PyprojectToml(BaseModel):
     tool: Tool = Field(default_factory=Tool)
-
-    class Config:
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")

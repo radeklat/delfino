@@ -25,7 +25,7 @@ persistent=yes
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-load-plugins=pylint.extensions.docparams,pylint.extensions.mccabe
+load-plugins=pylint.extensions.docparams,pylint.extensions.mccabe,pylint_pydantic
 
 # Use multiple processes to speed up Pylint.
 jobs=1

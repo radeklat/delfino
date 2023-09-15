@@ -19,7 +19,7 @@ def mock_rc_files(configs: List[Union[Delfino, Dict]]) -> Iterator[List[Path]]:
         for config in configs:
             file = Path(tempfile.NamedTemporaryFile().name)
             if isinstance(config, Delfino):
-                content = PyprojectToml(tool=Tool(delfino=config)).dict(exclude_defaults=True, exclude_unset=True)
+                content = PyprojectToml(tool=Tool(delfino=config)).model_dump(exclude_defaults=True, exclude_unset=True)
             else:
                 content = config
             file.write_text(toml.dumps(content), encoding="utf-8")
@@ -47,7 +47,7 @@ class TestLoadConfig:
             config = load_config(Path())
 
         assert isinstance(config, PyprojectToml)
-        assert config.dict(exclude_defaults=True, exclude_unset=True) == {}
+        assert config.model_dump(exclude_defaults=True, exclude_unset=True) == {}
 
     @staticmethod
     def should_choose_last_available_config():
@@ -60,7 +60,7 @@ class TestLoadConfig:
             config = load_config(Path())
 
         assert isinstance(config, PyprojectToml)
-        assert config.dict(exclude_defaults=True, exclude_unset=True) == {
+        assert config.model_dump(exclude_defaults=True, exclude_unset=True) == {
             "tool": {"delfino": {"command_groups": {"1": ["first"]}}}
         }
 

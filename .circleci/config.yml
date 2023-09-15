@@ -15,7 +15,7 @@ parameters:
     default: "3.8"
   cache_version:
     type: string
-    default: "6"
+    default: "7"
   git_trunk_branch:
     type: string
     default: "main"
