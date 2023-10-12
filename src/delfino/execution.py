@@ -7,7 +7,6 @@ from typing import Any, Dict, Final, Optional, Tuple
 
 import click
 
-from delfino.backports import shlex_join
 from delfino.utils import ArgsType
 
 _LOG = getLogger(__name__)
@@ -35,7 +34,7 @@ def _normalize_args(args: ArgsType, shell: bool) -> Tuple[ArgsType, str]:
             args_decoded = args.decode()
             return args_decoded, args_decoded
 
-        args_str = shlex_join(map(str, args))
+        args_str = shlex.join(map(str, args))
         return args_str, args_str
 
     # when not `shell`, `args` must be a `Sequence`
@@ -47,7 +46,7 @@ def _normalize_args(args: ArgsType, shell: bool) -> Tuple[ArgsType, str]:
         return shlex.split(args_decoded), args_decoded
 
     args_list = [str(arg) for arg in args]
-    return args_list, shlex_join(args_list)
+    return args_list, shlex.join(args_list)
 
 
 def _patch_env(

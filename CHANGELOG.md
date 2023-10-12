@@ -12,6 +12,13 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [3.0.1] - 2023-10-12
+
+### Fixes
+
+- Dependencies update
+- Removal of Python 3.7 compatibility code
+
 ## [3.0.0] - 2023-09-14
 
 ### Breaking changes
@@ -473,7 +480,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/3.0.0...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/3.0.1...HEAD
+[3.0.1]: https://github.com/radeklat/delfino/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/radeklat/delfino/compare/2.0.0...3.0.0
 [2.0.0]: https://github.com/radeklat/delfino/compare/1.3.0...2.0.0
 [1.3.0]: https://github.com/radeklat/delfino/compare/1.2.0...1.3.0
