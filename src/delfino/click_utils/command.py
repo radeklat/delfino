@@ -222,6 +222,7 @@ class CommandRegistry(Mapping):
         return group_command_names - missing_commands if missing_commands else group_command_names
 
     def _register_packages(self):
+        sub_commands: Set[str] = set()
         for command_package in self._command_packages:
             commands = {command.name: command for command in find_commands(command_package)}
             available_command_names = set(commands.keys())
@@ -241,7 +242,10 @@ class CommandRegistry(Mapping):
             enabled_commands.difference_update(disabled_commands)
 
             for command_name, command in commands.items():
-                self._register(command, command_name in enabled_commands)
+                if command_name not in sub_commands:  # hide sub-commands
+                    self._register(command, command_name in enabled_commands)
+                if hasattr(command.command, "commands"):
+                    sub_commands.update(command.command.commands.keys())
 
     def _register(self, command: _Command, enabled: bool):
         existing_command = self._visible_commands.pop(command.name, None) or self._hidden_commands.pop(
