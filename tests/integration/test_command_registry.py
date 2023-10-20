@@ -135,6 +135,22 @@ class TestCommandRegistry:
             assert not registry.visible_commands
             assert not registry.hidden_commands
 
+    @staticmethod
+    def should_not_load_sub_commands_of_a_group():
+        model_path = Path("group_command")
+        fake_command_files = [
+            FakeCommandFile(
+                content_template="import click\n"
+                "@click.group()\ndef visible_group():\n    pass\n"
+                "@visible_group.group()\ndef hidden_group():\n    pass\n"
+                "@hidden_group.command()\ndef hidden_sub_command():\n    pass\n",
+            ),
+        ]
+        with demo_commands(model_path, fake_command_files):
+            registry = CommandRegistry({}, local_command_folders=[model_path])
+            assert {command.name for command in registry.visible_commands} == {"visible-group"}
+            assert not registry.hidden_commands
+
 
 @pytest.mark.usefixtures("install_fake_plugins")
 class TestCommandRegistryPluginAndCommandSelection:

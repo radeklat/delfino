@@ -12,6 +12,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [3.0.2] - 2023-10-20
+
+### Fixes
+
+- Hide sub-commands from top level help.
+
 ## [3.0.1] - 2023-10-12
 
 ### Fixes
@@ -480,7 +486,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/3.0.1...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/3.0.2...HEAD
+[3.0.2]: https://github.com/radeklat/delfino/compare/3.0.1...3.0.2
 [3.0.1]: https://github.com/radeklat/delfino/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/radeklat/delfino/compare/2.0.0...3.0.0
 [2.0.0]: https://github.com/radeklat/delfino/compare/1.3.0...2.0.0
