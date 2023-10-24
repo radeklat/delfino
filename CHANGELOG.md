@@ -12,6 +12,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [3.1.0] - 2023-10-24
+
+### Features
+
+- Add `running_hook` to `execution.run` to allow showing progress of a slow running tool.
+
 ## [3.0.2] - 2023-10-20
 
 ### Fixes
@@ -486,7 +492,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/3.0.2...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/3.1.0...HEAD
+[3.1.0]: https://github.com/radeklat/delfino/compare/3.1.0...3.1.0
 [3.0.2]: https://github.com/radeklat/delfino/compare/3.0.1...3.0.2
 [3.0.1]: https://github.com/radeklat/delfino/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/radeklat/delfino/compare/2.0.0...3.0.0
