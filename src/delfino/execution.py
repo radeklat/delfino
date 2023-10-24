@@ -132,7 +132,7 @@ def run(
                 process.kill()
                 process.wait()
                 raise
-            except:  # Including KeyboardInterrupt, communicate handled that.
+            except Exception:  # Including KeyboardInterrupt, communicate handled that.
                 process.kill()
                 # We don't call process.wait() as .__exit__ does that for us.
                 raise
