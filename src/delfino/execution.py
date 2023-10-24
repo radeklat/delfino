@@ -3,7 +3,7 @@ import shlex
 import subprocess
 from enum import Enum
 from logging import getLogger
-from typing import Any, Dict, Final, Optional, Tuple
+from typing import Any, Callable, Dict, Final, Optional, Tuple
 
 import click
 
@@ -96,6 +96,7 @@ def run(
     on_error: OnError,
     env_update_path: Optional[Dict[str, Any]] = None,
     env_update: Optional[Dict[str, Any]] = None,
+    running_hook: Optional[Callable[[], None]] = None,
     **kwargs,
 ) -> subprocess.CompletedProcess:
     """Modified version of ``subprocess.run``.
@@ -110,6 +111,9 @@ def run(
         env_update_path: A dict of path-like environment variables to update. If this variable already
             exists, the value will be pre-pended with a ":".
         env_update: Similar to ``env_update_path`` but any existing variables are replaced.
+        running_hook: If provided, the process will be polled for return code and this function will
+            be called every time the process has not finished yet. The function should contain a
+            suitable wait interval to not check the result too frequently.
         **kwargs: Additional keyword arguments passed directly to ``subprocess.run``.
     """
     args, printable_args = _normalize_args(args, kwargs.get("shell", False))
@@ -118,6 +122,23 @@ def run(
     _LOG.debug(printable_args)
 
     try:
-        return subprocess.run(args, *popenargs, check=on_error != OnError.PASS, **kwargs)
+        with subprocess.Popen(args, *popenargs, **kwargs) as process:
+            if running_hook is not None:
+                while process.poll() is None:
+                    running_hook()
+            try:
+                stdout, stderr = process.communicate(timeout=kwargs.get("timeout", None))
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if on_error != OnError.PASS and retcode:
+                raise subprocess.CalledProcessError(retcode, process.args, output=stdout, stderr=stderr)
+        return subprocess.CompletedProcess(process.args, retcode or 0, stdout, stderr)
     except subprocess.CalledProcessError as exc:
         raise _called_process_error_to_click_exception(args, on_error, exc) from exc
