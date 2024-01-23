@@ -27,8 +27,8 @@ class TestCommandRegistry:
     @pytest.mark.parametrize(
         "first_plugin_name, second_plugin_name",
         [
-            pytest.param("fake-plugin-a", "fake_plugin_b", id="when A is first"),
-            pytest.param("fake_plugin_b", "fake-plugin-a", id="when B is first"),
+            pytest.param("fake_plugin_a", "fake_plugin_b", id="when A is first"),
+            pytest.param("fake_plugin_b", "fake_plugin_a", id="when B is first"),
         ],
     )
     def should_load_plugins_in_specified_order(first_plugin_name: str, second_plugin_name: str):
@@ -55,7 +55,7 @@ class TestCommandRegistry:
         CommandRegistry(ALL_PLUGINS_ALL_COMMANDS, command_packages)
         log_msg = (
             "Using command 'typecheck' from plugin 'fake_plugin_b'. Previously registered "
-            "by 'fake-plugin-a' plugin, which has lower priority."
+            "by 'fake_plugin_a' plugin, which has lower priority."
         )
         assert log_msg in caplog.text
 
@@ -86,7 +86,7 @@ class TestCommandRegistry:
     )
     def should_warn_about_missing_commands(caplog, group_name: str, registry_group_with_commands, empty_registry_group):
         # GIVEN
-        plugin_name = "fake-plugin-a"
+        plugin_name = "fake_plugin_a"
         command_name = "missing-command"
         caplog.set_level(logging.WARNING)
 
@@ -159,14 +159,14 @@ class TestCommandRegistryPluginAndCommandSelection:
         [
             pytest.param({}, set(), set(), id="no plugins when none selected"),
             pytest.param(
-                {"fake-plugin-a": PluginConfig(enable_commands={"lint"})},
+                {"fake_plugin_a": PluginConfig(enable_commands={"lint"})},
                 {"lint"},
                 {"typecheck", "build"},
                 id="only selected plugin and command",
             ),
             pytest.param(
                 {
-                    "fake-plugin-a": PluginConfig(enable_commands={"lint"}),
+                    "fake_plugin_a": PluginConfig(enable_commands={"lint"}),
                     "fake_plugin_b": PluginConfig(enable_commands={"typecheck"}),
                 },
                 {"lint", "typecheck"},
@@ -174,20 +174,20 @@ class TestCommandRegistryPluginAndCommandSelection:
                 id="only selected plugins and commands",
             ),
             pytest.param(
-                {"fake-plugin-a": PluginConfig.empty()},
+                {"fake_plugin_a": PluginConfig.empty()},
                 {"lint", "typecheck", "build"},
                 set(),
                 id="all plugin commands when no enable nor disable specified",
             ),
             pytest.param(
-                {"fake-plugin-a": PluginConfig(disable_commands={"lint"})},
+                {"fake_plugin_a": PluginConfig(disable_commands={"lint"})},
                 {"typecheck", "build"},
                 {"lint"},
                 id="all except disabled commands",
             ),
             pytest.param(
                 {
-                    "fake-plugin-a": PluginConfig(
+                    "fake_plugin_a": PluginConfig(
                         enable_commands={"typecheck", "build", "lint"}, disable_commands={"lint"}
                     )
                 },

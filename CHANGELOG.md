@@ -12,6 +12,12 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [3.1.1] - 2024-01-23
+
+### Fixes
+
+- Wrong order of inheritance for `pydantic.BaseModel` and `Generic`, generating a warning.
+
 ## [3.1.0] - 2023-10-24
 
 ### Features
@@ -492,8 +498,9 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/3.1.0...HEAD
-[3.1.0]: https://github.com/radeklat/delfino/compare/3.1.0...3.1.0
+[Unreleased]: https://github.com/radeklat/delfino/compare/3.1.1...HEAD
+[3.1.1]: https://github.com/radeklat/delfino/compare/3.1.0...3.1.1
+[3.1.0]: https://github.com/radeklat/delfino/compare/3.0.2...3.1.0
 [3.0.2]: https://github.com/radeklat/delfino/compare/3.0.1...3.0.2
 [3.0.1]: https://github.com/radeklat/delfino/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/radeklat/delfino/compare/2.0.0...3.0.0
