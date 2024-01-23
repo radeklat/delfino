@@ -10,7 +10,7 @@ from delfino.constants import DEFAULT_LOCAL_COMMAND_FOLDERS
 from delfino.models.pyproject_toml import PluginConfig
 
 ALL_PLUGINS_ALL_COMMANDS = {
-    "fake-plugin-a": PluginConfig.empty(),
+    "fake_plugin_a": PluginConfig.empty(),
     "fake_plugin_b": PluginConfig.empty(),
     "fake-plugin-init-only": PluginConfig.empty(),
 }

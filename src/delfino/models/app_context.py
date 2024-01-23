@@ -9,7 +9,7 @@ from delfino.models.pyproject_toml import PluginConfig, PyprojectToml
 PluginConfigType = TypeVar("PluginConfigType", bound=PluginConfig)
 
 
-class AppContext(Generic[PluginConfigType], BaseModel):
+class AppContext(BaseModel, Generic[PluginConfigType]):
     project_root: Path
     pyproject_toml: PyprojectToml
     package_manager: PackageManager
