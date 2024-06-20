@@ -67,6 +67,7 @@ class _CommandPackage(BaseModel):
 @dataclass(frozen=True)
 class _Command:
     name: str
+    func_name: str
     command: click.Command
     package: _CommandPackage
 
@@ -94,7 +95,7 @@ def find_commands(command_package: _CommandPackage) -> List[_Command]:
         module = import_module(f"{command_package.module_name}.{filename[:-3]}")
 
         commands.extend(
-            _Command(name=obj.name, command=obj, package=command_package)
+            _Command(name=obj.name, func_name=obj_name, command=obj, package=command_package)
             for obj_name, obj in vars(module).items()
             if not obj_name.startswith("_") and isinstance(obj, click.Command) and obj.name is not None
         )
@@ -224,8 +225,8 @@ class CommandRegistry(Mapping):
     def _register_packages(self):
         sub_commands: Set[str] = set()
         for command_package in self._command_packages:
-            commands = {command.name: command for command in find_commands(command_package)}
-            available_command_names = set(commands.keys())
+            commands = {command.func_name: command for command in find_commands(command_package)}
+            available_command_names = {command.name for command in commands.values()}
 
             filter_and_log_invalid_command_names = partial(
                 self._filter_and_log_invalid_command_names, command_package.plugin_name, available_command_names
@@ -241,11 +242,11 @@ class CommandRegistry(Mapping):
 
             enabled_commands.difference_update(disabled_commands)
 
-            for command_name, command in commands.items():
-                if command_name not in sub_commands:  # hide sub-commands
-                    self._register(command, command_name in enabled_commands)
+            for command_func_name, command in commands.items():
+                if command_func_name not in sub_commands:  # hide sub-commands
+                    self._register(command, command.name in enabled_commands)
                 if hasattr(command.command, "commands"):
-                    sub_commands.update(command.command.commands.keys())
+                    sub_commands.update(command.callback.__name__ for command in command.command.commands.values())
 
     def _register(self, command: _Command, enabled: bool):
         existing_command = self._visible_commands.pop(command.name, None) or self._hidden_commands.pop(

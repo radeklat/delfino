@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="verify-all" type="PythonConfigurationType" factoryName="Python">
     <module name="delfino" />
+    <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>
@@ -8,7 +9,7 @@
       <env name="PYTHONPATH" value="$PROJECT_DIR$/../delfino-core/src" />
     </envs>
     <option name="SDK_HOME" value="$PROJECT_DIR$/.venv/bin/python" />
-    <option name="SDK_NAME" value="Python 3.7 (delfino)" />
+    <option name="SDK_NAME" value="Python 3.12 (delfino)" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../delfino-core" />
     <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
