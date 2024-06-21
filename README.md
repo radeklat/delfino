@@ -308,9 +308,23 @@ def print_app_version(obj: AppContext):
     print(obj.pyproject_toml.tool.poetry.version)
 ```
 
+## Delfino settings
+
+On top of the project settings, Delfino itself has a few configuration options that can be set in the [config file](#configuration) as well:
+
+```toml
+[tool.delfino]
+# Folders where to look for local commands. Defaults to `commands`.
+local_command_folders = ["commands"]
+
+# Overrides for command groups (see https://github.com/radeklat/delfino/blob/main/README.md#grouping-commands).
+[tool.delfino.plugins.local.command_groups]
+group_name = ["command_name"]
+```
+
 ## Plugin settings
 
-Plugin settings are expected to live in the `pyproject.toml` file. To prevent naming conflicts, each plugin must put its settings under `tool.delfino.plugins.<PLUGIN_NAME>`. It also allows Delfino to pass these settings directly to commands from these plugins.
+Plugin settings are expected to live in the `pyproject.toml` file. To prevent naming conflicts, each plugin must put its settings under `tool.delfino.plugins.<PLUGIN_NAME>` (with `local` as the plugin name for the local `commands` folder). It also allows Delfino to pass these settings directly to commands from these plugins.
 
 Delfino loads, parses, validates and stores plugin settings in [`AppContext.plugin_config`](https://github.com/radeklat/delfino/blob/main/src/delfino/models/app_context.py). If not specified otherwise (see below), it will be an instance of [`PluginConfig`](https://github.com/radeklat/delfino/blob/main/src/delfino/models/pyproject_toml.py), with any extra keys unvalidated and in JSON-like Python objects.
 
@@ -321,7 +335,7 @@ Delfino also needs to know, which class to use for the validation. To do that, s
 ```toml
 # pyproject.toml
 
-[tool.delfino.plugins.delfino_login_plugin]
+[tool.delfino.plugins.local]
 username = "user"
 ```
 
