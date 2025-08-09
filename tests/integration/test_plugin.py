@@ -15,7 +15,11 @@ class TestPlugin:
         assert plugin_names == {"fake_plugin_a", "fake_plugin_b"}
 
         fake_plugin_a_package = next(
-            filter(lambda command_package: command_package.plugin_name == "fake_plugin_a", command_packages), None
+            filter(
+                lambda command_package: command_package.plugin_name == "fake_plugin_a",
+                command_packages,
+            ),
+            None,
         )
         assert fake_plugin_a_package
         assert isinstance(fake_plugin_a_package.package, ModuleType)

@@ -1,11 +1,12 @@
 import logging
 import sys
+from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass
 from functools import partial
 from importlib import import_module, resources
 from importlib.resources import Package
 from pathlib import Path
-from typing import Dict, Iterable, Iterator, List, Mapping, Optional, Set, cast
+from typing import Optional, cast
 
 import click
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -23,7 +24,7 @@ else:
 _LOG = logging.getLogger(__name__)
 
 
-def command_names(commands: List[click.Command]) -> str:
+def command_names(commands: list[click.Command]) -> str:
     return ", ".join(command.name for command in commands if command.name)
 
 
@@ -72,22 +73,20 @@ class _Command:
     package: _CommandPackage
 
 
-def find_commands(command_package: _CommandPackage) -> List[_Command]:
+def find_commands(command_package: _CommandPackage) -> list[_Command]:
     """Finds all instances of ``click.Command`` in given module.
 
     Does not traverse modules recursively. Plugins must point to the correct module via the entry point.
     """
     try:
-        if sys.version_info >= (3, 9):
-            files = [
-                path.name for path in resources.files(command_package.package).iterdir()  # pylint: disable=no-member
-            ]
-        else:
-            files = resources.contents(command_package.package)
+        files = [
+            path.name
+            for path in resources.files(command_package.package).iterdir()  # pylint: disable=no-member
+        ]
     except ModuleNotFoundError:
         return []
 
-    commands: List[_Command] = []
+    commands: list[_Command] = []
 
     for filename in files:
         if not filename.endswith(".py") or (filename.startswith("_") and filename != "__init__.py"):
@@ -128,16 +127,16 @@ class CommandRegistry(Mapping):
 
     def __init__(
         self,
-        plugins_configs: Dict[str, PluginConfig],
-        command_packages: Optional[List[_CommandPackage]] = None,
+        plugins_configs: dict[str, PluginConfig],
+        command_packages: Optional[list[_CommandPackage]] = None,
         local_command_folders: Iterable[Path] = DEFAULT_LOCAL_COMMAND_FOLDERS,
     ):
         if command_packages is None:
             self._command_packages = self._default_command_packages(plugins_configs, local_command_folders)
         else:
             self._command_packages = command_packages
-        self._visible_commands: Dict[str, _Command] = {}
-        self._hidden_commands: Dict[str, _Command] = {}
+        self._visible_commands: dict[str, _Command] = {}
+        self._hidden_commands: dict[str, _Command] = {}
         self._register_packages()
 
     def __len__(self) -> int:
@@ -150,17 +149,19 @@ class CommandRegistry(Mapping):
         return iter(self._visible_commands)
 
     @property
-    def visible_commands(self) -> List[_Command]:
+    def visible_commands(self) -> list[_Command]:
         return list(self._visible_commands.values())
 
     @property
-    def hidden_commands(self) -> List[_Command]:
+    def hidden_commands(self) -> list[_Command]:
         return list(self._hidden_commands.values())
 
     @classmethod
     def _default_command_packages(
-        cls, plugins_configs: Dict[str, PluginConfig], local_command_folders: Iterable[Path]
-    ) -> List[_CommandPackage]:
+        cls,
+        plugins_configs: dict[str, PluginConfig],
+        local_command_folders: Iterable[Path],
+    ) -> list[_CommandPackage]:
         # This is a function to lazy load packages in tests. They may not exist on import of the code.
         return [
             # Lower priority - discovered installed packages
@@ -177,21 +178,22 @@ class CommandRegistry(Mapping):
         ]
 
     @classmethod
-    def _discover_command_packages(cls, plugins_configs: Dict[str, PluginConfig]) -> List[_CommandPackage]:
+    def _discover_command_packages(cls, plugins_configs: dict[str, PluginConfig]) -> list[_CommandPackage]:
         """Discover packages from plugin. It is using package metadata as plugin discovering solution.
 
         Check the following URL about the plugin discovering solutions including the one uses package metadata.
         https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/
         """
         # We want to keep loaded _CommandPackage instance in the same order as defined in the config
-        command_packages: Dict[str, Optional[_CommandPackage]] = {plugin_name: None for plugin_name in plugins_configs}
+        command_packages: dict[str, Optional[_CommandPackage]] = {plugin_name: None for plugin_name in plugins_configs}
         for distribution in distributions():
             for entry_point in distribution.entry_points.select(group=cls.TYPE_OF_PLUGIN):
-                if not entry_point:
+                if not entry_point or distribution.metadata is None:
                     continue
-                plugin_name = distribution.metadata["Name"]
-                if plugin_name not in command_packages:
+
+                if (plugin_name := distribution.metadata["Name"]) not in command_packages:
                     continue
+
                 command_packages[plugin_name] = _CommandPackage(
                     plugin_name=plugin_name,
                     package=entry_point.load(),
@@ -211,8 +213,11 @@ class CommandRegistry(Mapping):
 
     @staticmethod
     def _filter_and_log_invalid_command_names(
-        plugin_name: str, available_command_names: Set[str], group_name: str, group_command_names: Set[str]
-    ) -> Set[str]:
+        plugin_name: str,
+        available_command_names: set[str],
+        group_name: str,
+        group_command_names: set[str],
+    ) -> set[str]:
         missing_commands = group_command_names - available_command_names
         for command_name in missing_commands:
             _LOG.warning(
@@ -223,13 +228,15 @@ class CommandRegistry(Mapping):
         return group_command_names - missing_commands if missing_commands else group_command_names
 
     def _register_packages(self):
-        sub_commands: Set[str] = set()
+        sub_commands: set[str] = set()
         for command_package in self._command_packages:
             commands = {command.func_name: command for command in find_commands(command_package)}
             available_command_names = {command.name for command in commands.values()}
 
             filter_and_log_invalid_command_names = partial(
-                self._filter_and_log_invalid_command_names, command_package.plugin_name, available_command_names
+                self._filter_and_log_invalid_command_names,
+                command_package.plugin_name,
+                available_command_names,
             )
 
             disabled_commands = filter_and_log_invalid_command_names(
@@ -237,7 +244,8 @@ class CommandRegistry(Mapping):
             )
 
             enabled_commands = filter_and_log_invalid_command_names(
-                "Enabled", command_package.plugin_config.enable_commands or available_command_names
+                "Enabled",
+                command_package.plugin_config.enable_commands or available_command_names,
             )
 
             enabled_commands.difference_update(disabled_commands)

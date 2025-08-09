@@ -1,13 +1,16 @@
 import logging
 from pathlib import Path
-from typing import Dict, Set
 
 import pytest
 
 from delfino.click_utils.command import CommandRegistry
 from delfino.constants import DEFAULT_LOCAL_COMMAND_FOLDERS
 from delfino.models.pyproject_toml import PluginConfig
-from tests.integration.fixtures import ALL_PLUGINS_ALL_COMMANDS, FakeCommandFile, demo_commands
+from tests.integration.fixtures import (
+    ALL_PLUGINS_ALL_COMMANDS,
+    FakeCommandFile,
+    demo_commands,
+)
 
 
 @pytest.fixture(scope="module")
@@ -20,7 +23,12 @@ class TestCommandRegistry:
     @pytest.mark.usefixtures("install_fake_plugins")
     def should_deduplicate_plugin_commands(command_packages):
         registry = CommandRegistry(ALL_PLUGINS_ALL_COMMANDS, command_packages)
-        assert {command.name for command in registry.visible_commands} == {"build", "format", "lint", "typecheck"}
+        assert {command.name for command in registry.visible_commands} == {
+            "build",
+            "format",
+            "lint",
+            "typecheck",
+        }
 
     @staticmethod
     @pytest.mark.usefixtures("install_fake_plugins")
@@ -165,7 +173,10 @@ class TestCommandRegistry:
         ]
         with demo_commands(model_path, fake_command_files):
             registry = CommandRegistry({}, local_command_folders=[model_path])
-            assert {command.name for command in registry.visible_commands} == {"visible", "command"}
+            assert {command.name for command in registry.visible_commands} == {
+                "visible",
+                "command",
+            }
             assert not registry.hidden_commands
 
 
@@ -205,7 +216,8 @@ class TestCommandRegistryPluginAndCommandSelection:
             pytest.param(
                 {
                     "fake_plugin_a": PluginConfig(
-                        enable_commands={"typecheck", "build", "lint"}, disable_commands={"lint"}
+                        enable_commands={"typecheck", "build", "lint"},
+                        disable_commands={"lint"},
                     )
                 },
                 {"typecheck", "build"},
@@ -216,9 +228,9 @@ class TestCommandRegistryPluginAndCommandSelection:
     )
     def should_load(
         self,
-        plugins_configs: Dict[str, PluginConfig],
-        expected_visible_commands: Set[str],
-        expected_hidden_commands: Set[str],
+        plugins_configs: dict[str, PluginConfig],
+        expected_visible_commands: set[str],
+        expected_hidden_commands: set[str],
     ):
         # GIVEN
         command_packages = CommandRegistry._discover_command_packages(plugins_configs)
@@ -245,7 +257,11 @@ class TestCommandRegistryLocalCommands:
         "module_path, kwargs",
         [
             pytest.param(DEFAULT_LOCAL_COMMAND_FOLDERS[0], {}, id="the default folders"),
-            pytest.param(Path("non_default"), {"local_command_folders": [Path("non_default")]}, id="custom folder"),
+            pytest.param(
+                Path("non_default"),
+                {"local_command_folders": [Path("non_default")]},
+                id="custom folder",
+            ),
         ],
     )
     def should_be_discovered_from(module_path, kwargs):

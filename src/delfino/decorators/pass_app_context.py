@@ -1,5 +1,5 @@
 import functools
-from typing import Any, Callable, Type, TypeVar, cast
+from typing import Any, Callable, TypeVar, cast
 
 from click import get_current_context
 
@@ -10,7 +10,8 @@ _Func = TypeVar("_Func", bound=Callable[..., Any])
 
 
 def pass_app_context(
-    plugin_config_type: Type[PluginConfig] = PluginConfig, kwargs_name: str = "app_context"
+    plugin_config_type: type[PluginConfig] = PluginConfig,
+    kwargs_name: str = "app_context",
 ) -> Callable[[_Func], _Func]:
     """Similar to ``click.make_pass_decorator``, with optional parsing of plugin specific config.
 
@@ -37,6 +38,6 @@ def pass_app_context(
             obj.plugin_config = plugin_config_type(**obj.plugin_config.model_dump())
             return ctx.invoke(func, *args, **kwargs, **{kwargs_name: obj})
 
-        return functools.update_wrapper(cast(_Func, new_func), func)
+        return cast(_Func, functools.update_wrapper(new_func, func))
 
     return decorator

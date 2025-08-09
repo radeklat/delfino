@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List
 
 import toml
 from pydantic import ValidationError
@@ -14,7 +13,7 @@ class ConfigValidationError(ValueError):
     pass
 
 
-def _rc_locations(project_root: Path) -> List[Path]:  # pragma: no cover
+def _rc_locations(project_root: Path) -> list[Path]:  # pragma: no cover
     return [
         Path.home() / _RC_FILE_NAME,
         project_root / PYPROJECT_TOML_FILENAME,

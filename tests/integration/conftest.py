@@ -27,9 +27,19 @@ def _build_and_install_poetry_plugin(tmpdir, plugin_name: str):
 
     action = "build"
     try:
-        subprocess.run(f"cd {plugin_dir} && poetry build", shell=True, capture_output=True, check=True)
+        subprocess.run(
+            f"cd {plugin_dir} && poetry build",
+            shell=True,
+            capture_output=True,
+            check=True,
+        )
         action = "install"
-        subprocess.run(f"pip install {wheel_path} -q --target {tmpdir}", shell=True, capture_output=True, check=True)
+        subprocess.run(
+            f"pip install {wheel_path} -q --target {tmpdir}",
+            shell=True,
+            capture_output=True,
+            check=True,
+        )
     except subprocess.CalledProcessError as ex:
         raise RuntimeError(f"Failed to {action} '{plugin_name}' plugin:\n{ex.stdout}\n{ex.stderr}") from ex
 

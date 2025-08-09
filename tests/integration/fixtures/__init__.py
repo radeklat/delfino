@@ -1,8 +1,8 @@
 import sys
 import tempfile
+from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterable, Iterator, List
 
 from pydantic import BaseModel
 
@@ -30,7 +30,7 @@ class FakeCommandFile(BaseModel):
 def demo_commands(
     folder_name: Path = DEFAULT_LOCAL_COMMAND_FOLDERS[0],
     fake_command_files: Iterable[FakeCommandFile] = (FakeCommandFile(),),
-) -> Iterator[List[str]]:
+) -> Iterator[list[str]]:
     with tempfile.TemporaryDirectory() as tmpdir:
         root_dir = tmpdir / folder_name
         root_dir.mkdir(exist_ok=True)

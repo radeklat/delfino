@@ -12,6 +12,22 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [4.0.0] - 2025-08-09
+
+### Breaking changes
+
+- Drop support for Python 3.8. Type annotations now use Python 3.9+ style generics (list, dict, tuple) and PEP 604 unions.
+
+### Features
+
+- Detect `uv` as a package manager when `tool.uv` is present in `pyproject.toml`, when `uv.lock` exists, or via `build-system.requires`.
+- Upgrade `delfino-core` from 7.x to 9.x. Most linting and formatting are now handled by `ruff` instead of previously used tools like `black` and `isort`.
+
+### Fixes
+
+- Fixed several typing errors previously undetected by the tooling.
+- Upgrade of all dependencies.
+
 ## [3.1.2] - 2024-06-20
 
 ### Fixes
@@ -504,7 +520,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/3.1.2...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/4.0.0...HEAD
+[4.0.0]: https://github.com/radeklat/delfino/compare/3.1.2...4.0.0
 [3.1.2]: https://github.com/radeklat/delfino/compare/3.1.1...3.1.2
 [3.1.1]: https://github.com/radeklat/delfino/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/radeklat/delfino/compare/3.0.2...3.1.0

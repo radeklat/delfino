@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Making a release
+1. Update the "Unreleased" section in CHANGELOG.md
+2. Based on the changes, run `poetry version major/minor/patch` to update the version in pyproject.toml based on the changes (breaking changes = major, features = minor, fixes = patch).
+3. Update the "Unreleased" section in CHANGELOG.md to the new version with today's date.
+4. Commit the changes in a new branch called "release/$(potery version -s)" with a message "Release vX.Y.Z".
+5. Push the branch to the remote repository.

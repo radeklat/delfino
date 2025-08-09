@@ -3,7 +3,7 @@ import shlex
 import subprocess
 from enum import Enum
 from logging import getLogger
-from typing import Any, Callable, Dict, Final, Optional, Tuple
+from typing import Any, Callable, Optional
 
 import click
 
@@ -13,19 +13,19 @@ _LOG = getLogger(__name__)
 
 
 class OnError(Enum):
-    PASS: Final[str] = "pass"
+    PASS = "pass"
     """Same as ``check=False``. Use when you're handling the return code yourself."""
 
-    EXIT: Final[str] = "exit"
+    EXIT = "exit"
     """Same as ``check=True`` + red print of stdout/stderr + ``raise click.exception.Exit()``.
     Use when running commands where non-zero return code indicates an error, not a failed check."""
 
-    ABORT: Final[str] = "abort"
+    ABORT = "abort"
     """Same as ``check=True`` + print of stdout/stderr + ``raise click.Abort()``.
     Use when running commands where non-zero return code indicates a failed check, not an error."""
 
 
-def _normalize_args(args: ArgsType, shell: bool) -> Tuple[ArgsType, str]:
+def _normalize_args(args: ArgsType, shell: bool) -> tuple[ArgsType, str]:
     if shell:  # when `shell`, `args` must be a string
         if isinstance(args, str):
             return args, args
@@ -50,8 +50,9 @@ def _normalize_args(args: ArgsType, shell: bool) -> Tuple[ArgsType, str]:
 
 
 def _patch_env(
-    env_update_path: Optional[Dict[str, Any]] = None, env_update: Optional[Dict[str, Any]] = None
-) -> Dict[str, str]:
+    env_update_path: Optional[dict[str, Any]] = None,
+    env_update: Optional[dict[str, Any]] = None,
+) -> dict[str, str]:
     modified_env = os.environ.copy()
 
     if env_update_path or env_update:
@@ -94,8 +95,8 @@ def run(
     args: ArgsType,
     *popenargs,
     on_error: OnError,
-    env_update_path: Optional[Dict[str, Any]] = None,
-    env_update: Optional[Dict[str, Any]] = None,
+    env_update_path: Optional[dict[str, Any]] = None,
+    env_update: Optional[dict[str, Any]] = None,
     running_hook: Optional[Callable[[], None]] = None,
     **kwargs,
 ) -> subprocess.CompletedProcess:

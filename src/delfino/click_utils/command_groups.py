@@ -1,6 +1,6 @@
 from collections import ChainMap
 from logging import getLogger
-from typing import Dict, List, cast
+from typing import cast
 
 import click
 
@@ -12,11 +12,14 @@ from delfino.models.app_context import AppContext
 _LOG = getLogger(__name__)
 
 
-def get_command_groups(app_context: AppContext) -> Dict[str, List[str]]:
-    return {**app_context.plugin_config.command_groups, **app_context.pyproject_toml.tool.delfino.command_groups}
+def get_command_groups(app_context: AppContext) -> dict[str, list[str]]:
+    return {
+        **app_context.plugin_config.command_groups,
+        **app_context.pyproject_toml.tool.delfino.command_groups,
+    }
 
 
-def _get_target_command_names(group_name: str, app_context: AppContext) -> List[str]:
+def _get_target_command_names(group_name: str, app_context: AppContext) -> list[str]:
     if (target_command_names := get_command_groups(app_context).get(group_name, None)) is None:
         raise click.exceptions.Abort(f"Command group '{group_name}' does not exist.")
 
@@ -31,7 +34,7 @@ def execute_commands_group(group_name: str, click_context: click.Context, app_co
     target_command_names = _get_target_command_names(group_name, app_context)
     root_command = get_root_command(click_context)
 
-    commands: Dict[str, click.Command] = {
+    commands: dict[str, click.Command] = {
         command: cast(click.Command, root_command.get_command(click_context, command))
         for command in root_command.list_commands(click_context)
     }

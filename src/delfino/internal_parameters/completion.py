@@ -1,7 +1,7 @@
 import functools
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Dict, Final, List, Union
+from typing import Callable, Final, Union
 
 import click
 
@@ -14,7 +14,7 @@ except ImportError:
     pass
 
 
-class CompletionAlreadyInstalled(Exception):
+class CompletionAlreadyInstalledError(Exception):
     pass
 
 
@@ -29,9 +29,7 @@ class Completion:
         return self.completion.format(entry_point=ENTRY_POINT, entry_point_upper=ENTRY_POINT.upper()).strip()
 
 
-_COMPLETION_BASH: Final[
-    str
-] = """
+_COMPLETION_BASH: Final[str] = """
 _complete_{entry_point}() {{
     [ -n "$(which {entry_point})" ] && \\
         eval "$(_{entry_point_upper}_COMPLETE=bash_source {entry_point})";
@@ -39,9 +37,7 @@ _complete_{entry_point}() {{
 complete -F _complete_{entry_point} -o default invoke {entry_point}
 """
 
-_COMPLETION_ZSH: Final[
-    str
-] = """
+_COMPLETION_ZSH: Final[str] = """
 _complete_{entry_point}() {{
     which {entry_point} >/dev/null && \\
         eval $(_{entry_point_upper}_COMPLETE=zsh_source {entry_point})
@@ -63,7 +59,11 @@ def handle_assertion_error(func):
 
 
 def _install_completion(
-    formatted_completion: str, *, completion_path: Path, completion_init_lines: List[str], rc_path: Path
+    formatted_completion: str,
+    *,
+    completion_path: Path,
+    completion_init_lines: list[str],
+    rc_path: Path,
 ) -> Path:
     rc_path.parent.mkdir(parents=True, exist_ok=True)
     rc_content = rc_path.read_text(encoding="utf-8") if rc_path.is_file() else ""
@@ -75,7 +75,7 @@ def _install_completion(
             content_added = True
 
     if not content_added:
-        raise CompletionAlreadyInstalled()
+        raise CompletionAlreadyInstalledError()
 
     rc_content += "\n"
     rc_path.write_text(rc_content)
@@ -110,13 +110,15 @@ def _install_completion_zsh(formatted_completion: str) -> Path:
     )
 
 
-_COMPLETIONS: Dict[str, Completion] = {
+_COMPLETIONS: dict[str, Completion] = {
     "bash": Completion(shell="bash", completion=_COMPLETION_BASH, install=_install_completion_bash),
     "zsh": Completion(shell="zsh", completion=_COMPLETION_ZSH, install=_install_completion_zsh),
 }
 
 
-def _get_completion_for_current_shell(param: Union[click.Option, click.Parameter]) -> Completion:
+def _get_completion_for_current_shell(
+    param: Union[click.Option, click.Parameter],
+) -> Completion:
     assert_pip_package_installed("shellingham", required_by=f"{param.param_type_name} --{param.name}")
 
     shell: str = shellingham.detect_shell()[0]
@@ -124,7 +126,10 @@ def _get_completion_for_current_shell(param: Union[click.Option, click.Parameter
         return _COMPLETIONS[shell]
     except KeyError as exc:
         supported_shells = ", ".join(_.capitalize() for _ in _COMPLETIONS)
-        click.secho(f"{shell.capitalize()} is not supported. Supported shells are: {supported_shells}", fg="red")
+        click.secho(
+            f"{shell.capitalize()} is not supported. Supported shells are: {supported_shells}",
+            fg="red",
+        )
         raise click.Abort() from exc
 
 
@@ -152,9 +157,12 @@ def _install_completion_for_current_shell(ctx: click.Context, param: Union[click
     completion = _get_completion_for_current_shell(param)
     try:
         path = completion.install(completion.formatted_completion)
-        click.secho(f"✔ {completion.shell.capitalize()} completion installed in '{path}'.", fg="green")
+        click.secho(
+            f"✔ {completion.shell.capitalize()} completion installed in '{path}'.",
+            fg="green",
+        )
         click.secho("⚠ Completion will take effect once you restart the terminal.", fg="yellow")
-    except CompletionAlreadyInstalled:
+    except CompletionAlreadyInstalledError:
         click.secho(
             f"✔ {completion.shell.capitalize()} completion has been previously installed. Not installing again.",
             fg="green",
