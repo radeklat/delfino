@@ -1,0 +1,31 @@
+---
+description: 
+globs: tests/**/*.py
+alwaysApply: false
+---
+# Testing Guidelines
+1. Write unit tests for functions and classes
+2. Write integration tests for commands
+3. Use pytest fixtures for test setup
+4. Use parameterized tests with `pytest.mark.parametrize` for testing multiple scenarios
+5. Use `pytest.param(.., id="test name")` to label parameterized tests with custom names
+5. Mock external dependencies in unit tests
+
+# Technologies
+- Testing: pytest, pytest.mark.parametrize, pytest-mock, pytest fixtures, pytest-httpx (https://colin-b.github.io/pytest_httpx/)
+
+# Type annotations
+- `httpx_mock: HTTPXMock` (`from pytest_httpx import HTTPXMock`)
+
+# Tests signposting
+Use "GIVEN/WHEN/THEN/AND <DESCRIPTION>" comments to annotate setup, test and checks. For example:
+
+```python
+# GIVEN event happens
+
+# WHEN it is processed by the endpoint
+
+# THEN a Slack message is sent
+
+# AND success response is sent back
+```

@@ -1,7 +1,8 @@
 import tempfile
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Dict, Iterator, List, Union
+from typing import Union
 from unittest.mock import patch
 
 import pytest
@@ -12,7 +13,7 @@ from delfino.models import Delfino, PyprojectToml, Tool
 
 
 @contextmanager
-def mock_rc_files(configs: List[Union[Delfino, Dict]]) -> Iterator[List[Path]]:
+def mock_rc_files(configs: list[Union[Delfino, dict]]) -> Iterator[list[Path]]:
     rc_files = []
 
     try:
@@ -51,7 +52,7 @@ class TestLoadConfig:
 
     @staticmethod
     def should_choose_last_available_config():
-        configs: List[Union[Delfino, Dict]] = [
+        configs: list[Union[Delfino, dict]] = [
             Delfino(command_groups={"1": ["last"]}),
             Delfino(command_groups={"1": ["middle"]}),
             Delfino(command_groups={"1": ["first"]}),
@@ -66,7 +67,7 @@ class TestLoadConfig:
 
     @staticmethod
     def should_raise_validation_error_from_the_first_invalid_config():
-        configs: List[Union[Delfino, Dict]] = [
+        configs: list[Union[Delfino, dict]] = [
             Delfino(command_groups={"1": ["valid"]}),
             {"tool": {"delfino": {"command_groups": {"2": "invalid"}}}},
             Delfino(command_groups={"3": ["also_valid"]}),

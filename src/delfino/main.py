@@ -2,14 +2,17 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 import click
 
 from delfino.click_utils.command import CommandRegistry
 from delfino.config import ConfigValidationError, load_config
 from delfino.constants import ENTRY_POINT, PYPROJECT_TOML_FILENAME
-from delfino.internal_parameters.completion import install_completion_option, show_completion_option
+from delfino.internal_parameters.completion import (
+    install_completion_option,
+    show_completion_option,
+)
 from delfino.internal_parameters.help import extended_help_option
 from delfino.internal_parameters.verbosity import log_level_option
 from delfino.models.app_context import AppContext
@@ -40,7 +43,7 @@ class Commands(click.Group):
             local_command_folders=self._pyproject_toml.tool.delfino.local_command_folders,
         )
 
-    def list_commands(self, ctx: click.Context) -> List[str]:
+    def list_commands(self, ctx: click.Context) -> list[str]:
         """Override as MultiCommand always returns []."""
         del ctx
         return sorted(command.name for command in self._command_registry.visible_commands)
@@ -71,7 +74,11 @@ class Commands(click.Group):
         try:
             return super().invoke(ctx)
         except AssertionError as exc:
-            click.secho(f"Command '{ctx.invoked_subcommand}' is misconfigured. {exc}", fg="red", err=True)
+            click.secho(
+                f"Command '{ctx.invoked_subcommand}' is misconfigured. {exc}",
+                fg="red",
+                err=True,
+            )
             raise click.exceptions.Exit(1)
 
     def get_help(self, *args, **kwargs) -> str:

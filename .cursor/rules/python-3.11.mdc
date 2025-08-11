@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Technologies
+- Language: Python 3.9
+
+# Type annotations
+Use python 3.9 type annotations:
+- Dict -> dict
+- List -> list
+- Generator[None, None, None] -> Iterator[None]
+- Final[...] for constants

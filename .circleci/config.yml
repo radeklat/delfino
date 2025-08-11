@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  gh: circleci/github-cli@1.0.4
+  gh: circleci/github-cli@2.7.0
 
 parameters:
   project_name:
@@ -12,7 +12,7 @@ parameters:
     default: ~/delfino
   python_version:
     type: string
-    default: "3.8"
+    default: "3.9"
   cache_version:
     type: string
     default: "7"
@@ -23,7 +23,7 @@ parameters:
     type: string
     default: "poetry run python src/delfino/main.py"
 
-jobs: # A basic unit of work in a run
+jobs:
   test:
     environment:
       PYTHONPATH: src
@@ -47,20 +47,8 @@ jobs: # A basic unit of work in a run
           paths:
             - ".venv"
       - run:
-          name: Format check
-          command: << pipeline.parameters.command_prefix >> format --check
-      - run:
-          name: Type check
-          command: << pipeline.parameters.command_prefix >> mypy
-      - run:
-          name: Linters
-          command: << pipeline.parameters.command_prefix >> lint
-      - run:
-          name: Unit tests
-          command: << pipeline.parameters.command_prefix >> pytest-unit
-      - run:
-          name: Integration tests
-          command: << pipeline.parameters.command_prefix >> pytest-integration
+          name: Verify
+          command: << pipeline.parameters.command_prefix >> verify
       - run:
           name: Build coverage report
           command: << pipeline.parameters.command_prefix >> coverage-report
@@ -146,7 +134,7 @@ workflows:
           context: << pipeline.parameters.project_name >>
           matrix:
             parameters:
-              python_version: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
+              python_version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
       - build:
           name: Build
           requires:

@@ -1,7 +1,7 @@
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import click
 import pytest
@@ -12,7 +12,7 @@ from tests.integration.assertions import assert_output_matches
 
 
 class CustomPluginConfig(PluginConfig):
-    cmd: Dict[str, Any]
+    cmd: dict[str, Any]
 
 
 @click.command("cmd")
@@ -94,7 +94,11 @@ class TestPassArgsDecorator:
 
             try:
                 sys.path.append(tmpdir)
-                result = runner.invoke(command, f"--file {file1} --folder {folder} -- --option 1 arg", obj=context_obj)
+                result = runner.invoke(
+                    command,
+                    f"--file {file1} --folder {folder} -- --option 1 arg",
+                    obj=context_obj,
+                )
             finally:
                 sys.path.pop()
 

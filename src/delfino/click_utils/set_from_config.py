@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import click
 from click import BadParameter
@@ -26,7 +26,7 @@ class SetOptionFromConfigCallback:
             exc.param_hint = f"the '{ctx.info_name}.{self.config_option_name}' config option in pyproject.toml file"
             raise
 
-    def parameter_from_config_in_group(self, ctx: click.Context, command: click.Command) -> Dict[str, Any]:
+    def parameter_from_config_in_group(self, ctx: click.Context, command: click.Command) -> dict[str, Any]:
         """Returns key-value pair to set in invoking another command.
 
         Similarly to ``__call__``, it takes the value from config if it exists. It also checks
@@ -65,7 +65,7 @@ class SetOptionFromConfigCallback:
             raise RuntimeError("AppContext was expected to be set but none found.")
 
         command_name: str = ctx.command.name or ""
-        value_from_config: str = getattr(app_context.plugin_config, command_name, {}).get(self.config_option_name, None)
+        value_from_config: str = getattr(app_context.plugin_config, command_name, {}).get(self.config_option_name, "")
         if value_from_config:
             return self._type_cast_value(ctx, param, value_from_config)
 

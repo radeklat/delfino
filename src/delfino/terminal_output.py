@@ -26,7 +26,7 @@ def print_header(text: str, level: int = 1, icon: str = ""):
     padding = f"\n{{:{padding_character}^{padding_length}}}\n"
     if level == 1:
         text = text.upper()
-    print(padding.format(f" {icon}{icon_pad}{text} {icon[::-1 if len(icon) > 1 else 1]}{icon_pad}"))
+    print(padding.format(f" {icon}{icon_pad}{text} {icon[:: -1 if len(icon) > 1 else 1]}{icon_pad}"))
 
 
 def run_command_example(command: click.Command, app_context: AppContext) -> str:
