@@ -12,6 +12,16 @@ Types of changes are:
 
 ## [Unreleased]
 
+## [5.1.0] - 2025-09-13
+
+### Features
+
+- Detect `uv_build` as UV package manager.
+
+### Fixes
+
+- Change the build backend from `hatchling` to `uv_build`.
+
 ## [5.0.0] - 2025-09-13
 
 ### Breaking changes
@@ -531,7 +541,8 @@ Commands can raise `AssertionError` exceptions to tell `delfino` some pre-condit
 
 - Initial copy of source codes.
 
-[Unreleased]: https://github.com/radeklat/delfino/compare/5.0.0...HEAD
+[Unreleased]: https://github.com/radeklat/delfino/compare/5.1.0...HEAD
+[5.1.0]: https://github.com/radeklat/delfino/compare/5.0.0...5.1.0
 [5.0.0]: https://github.com/radeklat/delfino/compare/4.0.0...5.0.0
 [4.0.0]: https://github.com/radeklat/delfino/compare/3.1.2...4.0.0
 [3.1.2]: https://github.com/radeklat/delfino/compare/3.1.1...3.1.2

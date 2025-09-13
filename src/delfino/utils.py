@@ -19,7 +19,7 @@ def get_package_manager(project_root: Path, pyproject_toml: PyprojectToml) -> Pa
         requires = pyproject_toml.build_system.requires
         if any("poetry" in req for req in requires):
             return PackageManager.POETRY
-        if any("hatchling" in req for req in requires):
+        if any("hatchling" in req for req in requires) or any("uv_build" in req for req in requires):
             return PackageManager.UV
 
     if (project_root / "Pipfile").exists() or (project_root / "Pipfile.lock").exists():

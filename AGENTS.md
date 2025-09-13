@@ -86,8 +86,7 @@ Use "GIVEN/WHEN/THEN/AND <DESCRIPTION>" comments to annotate setup, test and che
 ```
 
 # Making a release
-1. Update the "Unreleased" section in CHANGELOG.md
-2. Based on the changes, run `poetry version major/minor/patch` to update the version in pyproject.toml based on the changes (breaking changes = major, features = minor, fixes = patch).
-3. Update the "Unreleased" section in CHANGELOG.md to the new version with today's date.
-4. Commit the changes in a new branch called "release/$(uv version --short)" with a message "Release X.Y.Z".
-5. Push the branch to the remote repository.
+1. Based on the changes in the "Unreleased" section of CHANGELOG.md, run `uv version --bump major/minor/patch` to update the version in pyproject.toml (breaking changes = major, features = minor, fixes = patch).
+2. Update the "Unreleased" section in CHANGELOG.md to the new version with today's date.
+3. Commit the changes in a new branch called "release/$(uv version --short)" with a message "Release X.Y.Z".
+4. Push the branch to the remote repository.
