@@ -13,9 +13,8 @@ This project is a CLI application that discovers and exposes Click commands from
 ├── dist - distribution files for the package.
 ├── documentation - documentation files for thing that do not fit into the top level README.md.
 ├── LICENSE - license file for the project.
-├── poetry.lock - Poetry lock file for dependency management.
-├── poetry.toml - Poetry configuration file.
-├── pyproject.toml - Poetry project configuration file.
+├── uv.lock - UV lock file for dependency management.
+├── pyproject.toml - Project configuration file.
 ├── README.md - main README file for the project.
 ├── reports - generated reports and documentation.
 ├── src - source code of the project.
@@ -48,8 +47,13 @@ This project is a CLI application that discovers and exposes Click commands from
 2. Use `delfino verify` for linting and formatting
 3. Write comprehensive tests for new features
 
-# Type annotations
-Use Python 3.9 type annotations:
+# Python 3.10+ syntax
+- `match` statements instead of long `if/elif/else` chains where appropriate
+- `:=` assignment operator for inline assignments in expressions
+
+## Type annotations
+Use Python 3.10 type annotations:
+- Optional -> | None
 - Dict -> dict
 - List -> list
 - Generator[None, None, None] -> Iterator[None]
