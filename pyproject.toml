@@ -42,8 +42,8 @@ mike = "delfino.main:main"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "shellingham>=1.4",
     "types-toml",
     "delfino-core[verify,dependencies-update]>=9.0",
