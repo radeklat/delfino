@@ -12,7 +12,8 @@ class TestGetPackageManager:
             pytest.param(["poetry-core>=1.0.0"], PackageManager.POETRY, id="Poetry with version constraint"),
             pytest.param(["poetry-core>=1.0.0,<2.0"], PackageManager.POETRY, id="Poetry with version range"),
             pytest.param(["poetry-core"], PackageManager.POETRY, id="Poetry without version"),
-            pytest.param(["hatchling"], PackageManager.UV, id="UV"),
+            pytest.param(["hatchling"], PackageManager.UV, id="UV, hatchling"),
+            pytest.param(["uv_build"], PackageManager.UV, id="UV, uv_build"),
         ],
     )
     def test_should_identify_package_manager_from_build_system(self, tmp_path, build_system_requires, expected_manager):
@@ -22,7 +23,8 @@ class TestGetPackageManager:
     @pytest.mark.parametrize(
         "file_name,expected_manager",
         [
-            pytest.param("poetry.lock", PackageManager.POETRY, id="poetry_lock_file"),
+            pytest.param("poetry.lock", PackageManager.POETRY, id="poetry lock file"),
+            pytest.param("uv.lock", PackageManager.UV, id="uv lock file"),
             pytest.param("Pipfile", PackageManager.PIPENV, id="pipfile"),
         ],
     )
