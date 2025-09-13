@@ -15,13 +15,13 @@ parameters:
     default: "3.9"
   cache_version:
     type: string
-    default: "7"
+    default: "8"
   git_trunk_branch:
     type: string
     default: "main"
   command_prefix:
     type: string
-    default: "poetry run python src/delfino/main.py"
+    default: "uv run python src/delfino/main.py"
 
 jobs:
   test:
@@ -38,12 +38,17 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< parameters.python_version >>-{{ checksum "poetry.lock" }}
+          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< parameters.python_version >>-{{ checksum "uv.lock" }}
+      - run:
+          name: Install uv
+          command: pip install uv
       - run:
           name: Install dev libraries
-          command: pip install --upgrade pip poetry && poetry install --no-ansi --no-root
+          command: |
+            uv venv --allow-existing
+            uv sync --dev
       - save_cache:
-          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< parameters.python_version >>-{{ checksum "poetry.lock" }}
+          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< parameters.python_version >>-{{ checksum "uv.lock" }}
           paths:
             - ".venv"
       - run:
@@ -72,11 +77,14 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< pipeline.parameters.python_version >>-{{ checksum "poetry.lock" }}
+          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< pipeline.parameters.python_version >>-{{ checksum "uv.lock" }}
+      - run:
+          name: Install uv
+          command: pip install uv
       - run:
           name: Build library
           command: |
-            poetry build
+            uv build
       - persist_to_workspace:
           root: << pipeline.parameters.working_directory >>
           paths:
@@ -90,16 +98,19 @@ jobs:
       - attach_workspace:
           at: << pipeline.parameters.working_directory >>
       - run:
+          name: Install uv
+          command: pip install uv
+      - run:
           name: Upload to pypi
           command: |
-            VERSION=$(poetry version -s)
+            VERSION=$(uv version --short)
             VERSION_EXISTS=$( \
               curl -Ls https://pypi.org/pypi/<< pipeline.parameters.project_name >>/json | \
                 jq -r '.releases | keys_unsorted' | \
                 grep -q "\"$VERSION\"" ; echo $? \
             )
             if [[ $VERSION_EXISTS -ne 0 ]]; then
-              poetry publish --username "__token__" --password $PYPI_API_TOKEN
+              uv publish
             else
               echo "Package with this version has been already release. Skipping."
             fi
@@ -111,19 +122,22 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< pipeline.parameters.python_version >>-{{ checksum "poetry.lock" }}
+          key: << pipeline.parameters.cache_version >>-<< pipeline.parameters.project_name >>-<< pipeline.parameters.python_version >>-{{ checksum "uv.lock" }}
       - gh/setup
+      - run:
+          name: Install uv
+          command: pip install uv
       - run:
           name: Check if current version has been released
           command: |
-            VERSION=$(poetry version -s)
+            VERSION=$(uv version --short)
             if [[ $(gh release view $VERSION >/dev/null 2>&1; echo $?) -eq 0 ]]; then
               echo "Tag '$VERSION' already exists. Skipping."
               circleci-agent step halt
             fi
       - run:
           name: Create a release
-          command: gh release create $(poetry version -s) -F CHANGELOG.md
+          command: gh release create $(uv version --short) -F CHANGELOG.md
 
 workflows:
   version: 2
@@ -134,7 +148,7 @@ workflows:
           context: << pipeline.parameters.project_name >>
           matrix:
             parameters:
-              python_version: [ "3.9", "3.10", "3.11", "3.12", "3.13" ]
+              python_version: [ "3.10", "3.11", "3.12", "3.13" ]
       - build:
           name: Build
           requires:

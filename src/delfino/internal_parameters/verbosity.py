@@ -1,5 +1,4 @@
 import logging
-from typing import Union
 
 import click
 
@@ -12,7 +11,7 @@ _NAME_TO_LEVEL = {
 }
 
 
-def _set_log_level(ctx: click.Context, param: Union[click.Option, click.Parameter], value: str):
+def _set_log_level(ctx: click.Context, param: click.Option | click.Parameter, value: str):
     del param
 
     if ctx.resilient_parsing:

@@ -2,7 +2,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import click
 
@@ -30,7 +30,7 @@ class Commands(click.Group):
 
         # When evaluating available commands, the program should not fail. We save the exception
         # to show it only when a command is executed.
-        self._pyproject_toml_validation_error: Optional[ConfigValidationError] = None
+        self._pyproject_toml_validation_error: ConfigValidationError | None = None
 
         try:
             self._pyproject_toml = load_config(self._project_root)
@@ -48,7 +48,7 @@ class Commands(click.Group):
         del ctx
         return sorted(command.name for command in self._command_registry.visible_commands)
 
-    def get_command(self, ctx: click.Context, cmd_name: str) -> Optional[click.Command]:
+    def get_command(self, ctx: click.Context, cmd_name: str) -> click.Command | None:
         """Override to give all commands a common ``AppContext`` or fail if ``pyproject.toml`` is broken/missing."""
         if (cmd := self._command_registry.get(cmd_name, None)) is None:
             return None  # command doesn't exist

@@ -1,25 +1,18 @@
 import logging
-import sys
 from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass
 from functools import partial
 from importlib import import_module, resources
+from importlib.metadata import distributions
 from importlib.resources import Package
 from pathlib import Path
-from typing import Optional, cast
+from typing import cast
 
 import click
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from delfino.constants import DEFAULT_LOCAL_COMMAND_FOLDERS, PYPROJECT_TOML_FILENAME
 from delfino.models.pyproject_toml import PluginConfig
-
-if sys.version_info < (3, 10):
-    # `importlib.metadata` available since 3.8 but `distribution.entry_points.select` only since 3.10
-    from importlib_metadata import distributions
-else:
-    from importlib.metadata import distributions
-
 
 _LOG = logging.getLogger(__name__)
 
@@ -102,14 +95,14 @@ def find_commands(command_package: _CommandPackage) -> list[_Command]:
     return commands
 
 
-def get_root_command(click_context: click.Context) -> click.MultiCommand:
+def get_root_command(click_context: click.Context) -> click.Group:
     """Find the root command.
 
     In the context of `delfino`, this is generally the ``main.Commands`` instance.
     """
     while click_context.parent:
         click_context = click_context.parent
-    return cast(click.MultiCommand, click_context.command)
+    return cast(click.Group, click_context.command)
 
 
 class CommandRegistry(Mapping):
@@ -128,7 +121,7 @@ class CommandRegistry(Mapping):
     def __init__(
         self,
         plugins_configs: dict[str, PluginConfig],
-        command_packages: Optional[list[_CommandPackage]] = None,
+        command_packages: list[_CommandPackage] | None = None,
         local_command_folders: Iterable[Path] = DEFAULT_LOCAL_COMMAND_FOLDERS,
     ):
         if command_packages is None:
@@ -185,7 +178,7 @@ class CommandRegistry(Mapping):
         https://packaging.python.org/en/latest/guides/creating-and-discovering-plugins/
         """
         # We want to keep loaded _CommandPackage instance in the same order as defined in the config
-        command_packages: dict[str, Optional[_CommandPackage]] = {plugin_name: None for plugin_name in plugins_configs}
+        command_packages: dict[str, _CommandPackage | None] = {plugin_name: None for plugin_name in plugins_configs}
         for distribution in distributions():
             for entry_point in distribution.entry_points.select(group=cls.TYPE_OF_PLUGIN):
                 if not entry_point or distribution.metadata is None:

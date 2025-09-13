@@ -2,7 +2,6 @@ import tempfile
 from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Union
 from unittest.mock import patch
 
 import pytest
@@ -13,7 +12,7 @@ from delfino.models import Delfino, PyprojectToml, Tool
 
 
 @contextmanager
-def mock_rc_files(configs: list[Union[Delfino, dict]]) -> Iterator[list[Path]]:
+def mock_rc_files(configs: list[Delfino | dict]) -> Iterator[list[Path]]:
     rc_files = []
 
     try:
@@ -38,7 +37,7 @@ def mock_rc_files(configs: list[Union[Delfino, dict]]) -> Iterator[list[Path]]:
 
 class TestLoadConfig:
     @staticmethod
-    def should_return_empty_config_when_no_files_are_found():
+    def test_should_return_empty_config_when_no_files_are_found():
         rc_files = []
         for _ in range(3):
             with tempfile.NamedTemporaryFile(delete=True) as file:
@@ -51,8 +50,8 @@ class TestLoadConfig:
         assert config.model_dump(exclude_defaults=True, exclude_unset=True) == {}
 
     @staticmethod
-    def should_choose_last_available_config():
-        configs: list[Union[Delfino, dict]] = [
+    def test_should_choose_last_available_config():
+        configs: list[Delfino | dict] = [
             Delfino(command_groups={"1": ["last"]}),
             Delfino(command_groups={"1": ["middle"]}),
             Delfino(command_groups={"1": ["first"]}),
@@ -66,8 +65,8 @@ class TestLoadConfig:
         }
 
     @staticmethod
-    def should_raise_validation_error_from_the_first_invalid_config():
-        configs: list[Union[Delfino, dict]] = [
+    def test_should_raise_validation_error_from_the_first_invalid_config():
+        configs: list[Delfino | dict] = [
             Delfino(command_groups={"1": ["valid"]}),
             {"tool": {"delfino": {"command_groups": {"2": "invalid"}}}},
             Delfino(command_groups={"3": ["also_valid"]}),

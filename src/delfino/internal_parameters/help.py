@@ -1,9 +1,7 @@
-from typing import Union
-
 import click
 
 
-def _print_help(ctx: click.Context, param: Union[click.Option, click.Parameter], value: bool):
+def _print_help(ctx: click.Context, param: click.Option | click.Parameter, value: bool):
     del param
     if not value or ctx.resilient_parsing:
         return

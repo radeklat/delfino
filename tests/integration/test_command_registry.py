@@ -21,7 +21,7 @@ def command_packages():
 class TestCommandRegistry:
     @staticmethod
     @pytest.mark.usefixtures("install_fake_plugins")
-    def should_deduplicate_plugin_commands(command_packages):
+    def test_should_deduplicate_plugin_commands(command_packages):
         registry = CommandRegistry(ALL_PLUGINS_ALL_COMMANDS, command_packages)
         assert {command.name for command in registry.visible_commands} == {
             "build",
@@ -39,7 +39,7 @@ class TestCommandRegistry:
             pytest.param("fake_plugin_b", "fake_plugin_a", id="when B is first"),
         ],
     )
-    def should_load_plugins_in_specified_order(first_plugin_name: str, second_plugin_name: str):
+    def test_should_load_plugins_in_specified_order(first_plugin_name: str, second_plugin_name: str):
         # GIVEN
         plugins_configs = {
             first_plugin_name: PluginConfig(enable_commands={"typecheck"}),
@@ -58,7 +58,7 @@ class TestCommandRegistry:
 
     @staticmethod
     @pytest.mark.usefixtures("install_fake_plugins")
-    def should_log_when_duplicated_plugin_commands_are_ignored(caplog, command_packages):
+    def test_should_log_when_duplicated_plugin_commands_are_ignored(caplog, command_packages):
         caplog.set_level(logging.DEBUG)
         CommandRegistry(ALL_PLUGINS_ALL_COMMANDS, command_packages)
         log_msg = (
@@ -69,7 +69,7 @@ class TestCommandRegistry:
 
     @staticmethod
     @pytest.mark.usefixtures("install_fake_plugins")
-    def should_warn_about_config_for_missing_plugin(caplog):
+    def test_should_warn_about_config_for_missing_plugin(caplog):
         # GIVEN
         caplog.set_level(logging.WARNING)
 
@@ -92,7 +92,9 @@ class TestCommandRegistry:
             pytest.param("enable", "hidden_commands", "visible_commands", id="that are enabled"),
         ],
     )
-    def should_warn_about_missing_commands(caplog, group_name: str, registry_group_with_commands, empty_registry_group):
+    def test_should_warn_about_missing_commands(
+        caplog, group_name: str, registry_group_with_commands, empty_registry_group
+    ):
         # GIVEN
         plugin_name = "fake_plugin_a"
         command_name = "missing-command"
@@ -120,7 +122,7 @@ class TestCommandRegistry:
         }
 
     @staticmethod
-    def should_ignore_files_starting_with_an_underscore():
+    def test_should_ignore_files_starting_with_an_underscore():
         model_path = Path("underscore_only")
         with demo_commands(model_path, [FakeCommandFile(filename="_demo.py")]):
             registry = CommandRegistry({}, local_command_folders=[model_path])
@@ -128,7 +130,7 @@ class TestCommandRegistry:
             assert not registry.hidden_commands
 
     @staticmethod
-    def should_not_load_commands_that_come_from_import_statements_and_start_with_an_underscore():
+    def test_should_not_load_commands_that_come_from_import_statements_and_start_with_an_underscore():
         model_path = Path("imported_command")
         fake_command_files = [
             FakeCommandFile(
@@ -144,23 +146,23 @@ class TestCommandRegistry:
             assert not registry.hidden_commands
 
     @staticmethod
-    def should_not_load_sub_commands_of_a_group():
+    def test_should_not_load_sub_commands_of_a_group():
         model_path = Path("group_command")
         fake_command_files = [
             FakeCommandFile(
                 content_template="import click\n"
-                "@click.group()\ndef visible_group():\n    pass\n"
-                "@visible_group.group()\ndef hidden_group():\n    pass\n"
-                "@hidden_group.command()\ndef hidden_sub_command():\n    pass\n",
+                "@click.group()\ndef visible():\n    pass\n"
+                "@visible.group()\ndef hidden():\n    pass\n"
+                "@hidden.command()\ndef hidden_sub_command():\n    pass\n",
             ),
         ]
         with demo_commands(model_path, fake_command_files):
             registry = CommandRegistry({}, local_command_folders=[model_path])
-            assert {command.name for command in registry.visible_commands} == {"visible-group"}
+            assert {command.name for command in registry.visible_commands} == {"visible"}
             assert not registry.hidden_commands
 
     @staticmethod
-    def should_ignore_sub_commands_by_function_name():
+    def test_should_ignore_sub_commands_by_function_name():
         model_path = Path("same_name_different_function")
         fake_command_files = [
             FakeCommandFile(
@@ -226,7 +228,7 @@ class TestCommandRegistryPluginAndCommandSelection:
             ),
         ],
     )
-    def should_load(
+    def test_should_load(
         self,
         plugins_configs: dict[str, PluginConfig],
         expected_visible_commands: set[str],
@@ -243,7 +245,7 @@ class TestCommandRegistryPluginAndCommandSelection:
         assert {command.name for command in registry.hidden_commands} == expected_hidden_commands
 
     @staticmethod
-    def should_load_from_init_file():
+    def test_should_load_from_init_file():
         model_path = Path("init_only")
         with demo_commands(model_path, [FakeCommandFile(filename="__init__.py")]) as command_names:
             registry = CommandRegistry({}, local_command_folders=[model_path])
@@ -264,7 +266,7 @@ class TestCommandRegistryLocalCommands:
             ),
         ],
     )
-    def should_be_discovered_from(module_path, kwargs):
+    def test_should_be_discovered_from(module_path, kwargs):
         with demo_commands(module_path) as command_names:
             registry = CommandRegistry({}, **kwargs)
             assert set(command_names) <= {command.name for command in registry.visible_commands}

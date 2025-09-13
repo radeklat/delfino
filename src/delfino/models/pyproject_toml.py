@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -26,35 +26,74 @@ class Delfino(BaseModel):
 
 
 class Poetry(BaseModel):
-    name: str
-    version: str
-    scripts: dict[str, str] = Field(default_factory=dict)
-    dependencies: dict[str, Any] = Field(default_factory=dict)
+    name: str  # legacy Poetry 1.x field
+    version: str  # legacy Poetry 1.x field
+    homepage: str | None = None  # legacy Poetry 1.x field
+    dependencies: dict[str, Any] = Field(default_factory=dict)  # legacy Poetry 1.x field
+    scripts: dict[str, str] = Field(default_factory=dict)  # legacy Poetry 1.x field
+    model_config = ConfigDict(extra="allow")
+
+
+class Uv(BaseModel):
+    dev_dependencies: list[str] = Field(default_factory=list)
     model_config = ConfigDict(extra="allow")
 
 
 class BuildSystem(BaseModel):
     requires: list[str] = Field(default_factory=list)
-    build_backend: Optional[str] = None
+    build_backend: str | None = None
     model_config = ConfigDict(extra="allow")
 
 
 class Tool(BaseModel):
-    poetry: Optional[Poetry] = None
-    uv: Optional[dict[str, Any]] = None
+    poetry: Poetry | None = None
+    uv: Uv | None = None
     delfino: Delfino = Field(default_factory=Delfino)
     model_config = ConfigDict(populate_by_name=True)
 
 
 class Project(BaseModel):
-    name: Optional[str] = None
-    version: Optional[str] = None
-    dependencies: dict[str, Any] = Field(default_factory=dict)
+    name: str | None = None
+    version: str | None = None
+    homepage: str | None = None
+    dependencies: dict[str, Any] | list[str] = Field(default_factory=dict)
+    scripts: dict[str, str] = Field(default_factory=dict)
     model_config = ConfigDict(extra="allow")
+
+
+_Default = TypeVar("_Default")
 
 
 class PyprojectToml(BaseModel):
     tool: Tool = Field(default_factory=Tool)
-    project: Optional[Project] = None
-    build_system: Optional[BuildSystem] = None
+    project: Project | None = None
+    build_system: BuildSystem | None = None
     model_config = ConfigDict(extra="allow")
+
+    # Convenience properties for accessing common fields with fallbacks to legacy Poetry fields
+    def _get_project_attr_with_fallback_to_tool_poetry(self, attr: str, default: _Default) -> Any | _Default:
+        if self.project and hasattr(self.project, attr):
+            return getattr(self.project, attr)
+        if self.tool.poetry and hasattr(self.tool.poetry, attr):
+            return getattr(self.tool.poetry, attr)
+        return default
+
+    @property
+    def project_name(self) -> str | None:
+        return self._get_project_attr_with_fallback_to_tool_poetry("name", None)
+
+    @property
+    def project_version(self) -> str | None:
+        return self._get_project_attr_with_fallback_to_tool_poetry("version", None)
+
+    @property
+    def project_homepage(self) -> str | None:
+        return self._get_project_attr_with_fallback_to_tool_poetry("homepage", None)
+
+    @property
+    def project_scripts(self) -> dict[str, str]:
+        return self._get_project_attr_with_fallback_to_tool_poetry("scripts", {})
+
+    @property
+    def project_dependencies(self) -> dict[str, Any] | list[str]:
+        return self._get_project_attr_with_fallback_to_tool_poetry("dependencies", {})
