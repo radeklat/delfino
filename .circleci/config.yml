@@ -110,7 +110,7 @@ jobs:
                 grep -q "\"$VERSION\"" ; echo $? \
             )
             if [[ $VERSION_EXISTS -ne 0 ]]; then
-              UV_PUBLISH_USERNAME="__token__" uv publish
+              uv publish
             else
               echo "Package with this version has been already release. Skipping."
             fi
