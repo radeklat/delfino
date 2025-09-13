@@ -3,7 +3,7 @@
 This project is a CLI application that discovers and exposes Click commands from pre-defined locations and other delfino plugins. It provides a unified interface for managing and executing commands.
 
 # Technologies
-- Languages: Python 3.9-3.13
+- Languages: Python 3.10-3.13
 - Testing: pytest, pytest.mark.parametrize, pytest-mock, pytest fixtures, pytest-httpx (https://colin-b.github.io/pytest_httpx/)
 - Dependency management: uv
 - CI/CD: CircleCI
