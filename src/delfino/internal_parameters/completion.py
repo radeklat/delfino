@@ -1,7 +1,8 @@
 import functools
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Final, Union
+from typing import Final
 
 import click
 
@@ -48,7 +49,7 @@ compctl -K _complete_{entry_point} + -f invoke {entry_point}
 
 def handle_assertion_error(func):
     @functools.wraps(func)
-    def inner(ctx: click.Context, param: Union[click.Option, click.Parameter], value: bool):
+    def inner(ctx: click.Context, param: click.Option | click.Parameter, value: bool):
         try:
             return func(ctx, param, value)
         except AssertionError as exc:
@@ -117,7 +118,7 @@ _COMPLETIONS: dict[str, Completion] = {
 
 
 def _get_completion_for_current_shell(
-    param: Union[click.Option, click.Parameter],
+    param: click.Option | click.Parameter,
 ) -> Completion:
     assert_pip_package_installed("shellingham", required_by=f"{param.param_type_name} --{param.name}")
 
@@ -134,7 +135,7 @@ def _get_completion_for_current_shell(
 
 
 @handle_assertion_error
-def _show_completion_for_current_shell(ctx: click.Context, param: Union[click.Option, click.Parameter], value: bool):
+def _show_completion_for_current_shell(ctx: click.Context, param: click.Option | click.Parameter, value: bool):
     if not value or ctx.resilient_parsing:
         return
     click.secho(_get_completion_for_current_shell(param).formatted_completion)
@@ -151,7 +152,7 @@ show_completion_option = click.option(
 )
 
 
-def _install_completion_for_current_shell(ctx: click.Context, param: Union[click.Option, click.Parameter], value: bool):
+def _install_completion_for_current_shell(ctx: click.Context, param: click.Option | click.Parameter, value: bool):
     if not value or ctx.resilient_parsing:
         return
     completion = _get_completion_for_current_shell(param)

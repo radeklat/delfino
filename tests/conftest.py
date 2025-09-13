@@ -25,12 +25,6 @@ def pyproject_toml(project_root):
     return PyprojectToml(**toml.load(project_root / PYPROJECT_TOML_FILENAME))
 
 
-@pytest.fixture(scope="session")
-def poetry(pyproject_toml):
-    assert pyproject_toml.tool.poetry
-    return pyproject_toml.tool.poetry
-
-
 @pytest.fixture()
 def context_obj(project_root, pyproject_toml):
     return AppContext(

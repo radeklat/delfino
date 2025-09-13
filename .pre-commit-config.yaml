@@ -8,5 +8,5 @@ repos:
     name: formatting
     stages: [pre-commit]
     language: system
-    entry: bash -c "export PYTHONPATH=src; poetry run python src/delfino/main.py ruff"
+    entry: bash -c "export PYTHONPATH=src; uv run python src/delfino/main.py ruff"
     pass_filenames: false

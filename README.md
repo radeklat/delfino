@@ -64,13 +64,13 @@ Don't let scattered scripts and complex tooling slow you down. Embrace Delfino a
 # Installation
 
 - pip: `pip install delfino`
-- Poetry: `poetry add --group=dev delfino`
+- uv: `uv add --dev delfino`
 - Pipenv: `pipenv install -d delfino`
 
 or 
 
 - pip: `pip install delfino[completion]`
-- Poetry: `poetry add --group=dev delfino[completion]`
+- uv: `uv add --dev delfino[completion]`
 - Pipenv: `pipenv install -d delfino[completion]`
 
 to enable [auto-completion](#auto-completion).
@@ -102,11 +102,10 @@ Delfino looks for any [`click.Command`](https://click.palletsprojects.com/en/8.0
 - `commands` folder in the root of the project (next to the `pyproject.toml` file) OR folders specified in the [config file](#configuration) under `tool.delfino.local_command_folders`. This location is useful for commands that don't need to be replicated in multiple locations/projects.
 - python module import path (`<IMPORT_PATH>`) specified by `entry_point` of [a plugin](#minimal-plugin):
   ```toml
-  [tool.poetry.plugins] # Optional super table
+  [project.entry-points."delfino.plugin"] # Optional super table
 
-  [tool.poetry.plugins."delfino.plugin"]
   "delfino-<PLUGIN_NAME>" = "<IMPORT_PATH>"
-  ```
+```
 
 Any files starting with an underscore, except for `__init__.py`, will be ignored.
 
@@ -117,7 +116,7 @@ Any files starting with an underscore, except for `__init__.py`, will be ignored
 ## Minimal command
 
 <!-- TODO(Radek): Delfino expects `pyproject.toml` configured. -->
-<!-- TODO(Radek): Delfino expects Poetry or Pipenv to be available. -->
+<!-- TODO(Radek): Delfino expects uv or Pipenv to be available. -->
 
 1. Create a `commands` folder:
    ```shell script
@@ -305,7 +304,7 @@ from delfino.models.app_context import AppContext
 @click.command()
 @click.pass_obj
 def print_app_version(obj: AppContext):
-    print(obj.pyproject_toml.tool.poetry.version)
+    print(obj.pyproject_toml.project.version)
 ```
 
 ## Delfino settings

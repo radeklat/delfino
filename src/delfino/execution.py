@@ -1,9 +1,10 @@
 import os
 import shlex
 import subprocess
+from collections.abc import Callable
 from enum import Enum
 from logging import getLogger
-from typing import Any, Callable, Optional
+from typing import Any
 
 import click
 
@@ -50,8 +51,8 @@ def _normalize_args(args: ArgsType, shell: bool) -> tuple[ArgsType, str]:
 
 
 def _patch_env(
-    env_update_path: Optional[dict[str, Any]] = None,
-    env_update: Optional[dict[str, Any]] = None,
+    env_update_path: dict[str, Any] | None = None,
+    env_update: dict[str, Any] | None = None,
 ) -> dict[str, str]:
     modified_env = os.environ.copy()
 
@@ -95,9 +96,9 @@ def run(
     args: ArgsType,
     *popenargs,
     on_error: OnError,
-    env_update_path: Optional[dict[str, Any]] = None,
-    env_update: Optional[dict[str, Any]] = None,
-    running_hook: Optional[Callable[[], None]] = None,
+    env_update_path: dict[str, Any] | None = None,
+    env_update: dict[str, Any] | None = None,
+    running_hook: Callable[[], None] | None = None,
     **kwargs,
 ) -> subprocess.CompletedProcess:
     """Modified version of ``subprocess.run``.

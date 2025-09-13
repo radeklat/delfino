@@ -15,7 +15,7 @@ class TestGetPackageManager:
             pytest.param(["hatchling"], PackageManager.UV, id="UV"),
         ],
     )
-    def should_identify_package_manager_from_build_system(self, tmp_path, build_system_requires, expected_manager):
+    def test_should_identify_package_manager_from_build_system(self, tmp_path, build_system_requires, expected_manager):
         result = get_package_manager(tmp_path, PyprojectToml(build_system=BuildSystem(requires=build_system_requires)))
         assert result == expected_manager
 
@@ -26,7 +26,7 @@ class TestGetPackageManager:
             pytest.param("Pipfile", PackageManager.PIPENV, id="pipfile"),
         ],
     )
-    def should_fallback_to_file_indicators(self, tmp_path, file_name, expected_manager):
+    def test_should_fallback_to_file_indicators(self, tmp_path, file_name, expected_manager):
         # GIVEN there is the indicator file
         (tmp_path / file_name).write_text("")
 
@@ -40,7 +40,7 @@ class TestGetPackageManager:
         assert result == expected_manager
 
     @staticmethod
-    def should_return_unknown_when_no_indicators(tmp_path):
+    def test_should_return_unknown_when_no_indicators(tmp_path):
         # Create pyproject.toml without build-system
         pyproject_toml = PyprojectToml()
 
@@ -49,7 +49,7 @@ class TestGetPackageManager:
         assert result == PackageManager.UNKNOWN
 
     @staticmethod
-    def should_prioritize_file_indicators_over_build_system(tmp_path):
+    def test_should_prioritize_file_indicators_over_build_system(tmp_path):
         # GIVEN there is a poetry.lock file (indicates poetry)
         (tmp_path / "poetry.lock").write_text("")
 

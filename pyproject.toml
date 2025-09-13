@@ -1,9 +1,11 @@
-[tool.poetry]
+[project]
 name = "delfino"
-version = "4.0.0"
+version = "5.0.0"
 description = "A collection of command line helper scripts wrapping tools used during Python development."
-authors = ["Radek Lát <radek.lat@gmail.com>"]
-license = "MIT License"
+authors = [
+    {name = "Radek Lát", email = "radek.lat@gmail.com"}
+]
+license = {text = "MIT License"}
 readme = "README.md"
 homepage = "https://github.com/radeklat/delfino"
 classifiers = [
@@ -14,7 +16,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -22,34 +23,34 @@ classifiers = [
     "Topic :: Software Development",
     "Topic :: Utilities",
 ]
+requires-python = ">=3.10.0"
+dependencies = [
+    "toml>=0.10",
+    "click>=8.2.0",
+    "pydantic>=2.0",
+    "deprecation>=2.1",
+]
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[project.optional-dependencies]
+completion = ["shellingham>=1.4"]
 
-[tool.poetry.dependencies]
-python = "^3.9.1"
-toml = "^0.10"
-click = "^8.0"
-pydantic = "^2.0"
-deprecation ="^2.1"
-importlib-metadata = {version = "*", python = "<3.10"}
-
-[tool.poetry.group.dev.dependencies]
-shellingham = "^1.4"
-types-toml = "*"
-delfino-core = {extras = ["verify", "dependencies-update"], version = "^9.0"}
-
-[tool.poetry.extras]
-completion = ["shellingham"]
-
-[tool.poetry.scripts]
+[project.scripts]
 delfino = "delfino.main:main"
 mike = "delfino.main:main"
 
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "shellingham>=1.4",
+    "types-toml",
+    "delfino-core[verify,dependencies-update]>=9.0",
+]
+
 [tool.pytest.ini_options]
 testpaths = "tests/unit tests/integration"
-python_functions = "should_*"
 junit_family = "xunit2"
 
 # Structure: https://docs.pytest.org/en/stable/warnings.html

@@ -9,7 +9,7 @@ from tests.integration.fixtures import ALL_PLUGINS_ALL_COMMANDS
 @pytest.mark.usefixtures("install_fake_plugins")
 class TestPlugin:
     @staticmethod
-    def should_discover_packages():
+    def test_should_discover_packages():
         command_packages = CommandRegistry._discover_command_packages(ALL_PLUGINS_ALL_COMMANDS)
         plugin_names = {command_package.plugin_name for command_package in command_packages}
         assert plugin_names == {"fake_plugin_a", "fake_plugin_b"}

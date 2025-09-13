@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import Any, Optional
+from typing import Any
 
 import click
 from click import BadParameter
@@ -15,7 +15,7 @@ class SetOptionFromConfigCallback:
     Config option is looked up at ``tool.delfino.plugins.<PLUGIN>.<COMMAND NAME>.<COMMAND_ARGUMENT_NAME>``.
     """
 
-    def __init__(self, command_argument_name: str, config_option_name: Optional[str] = None):
+    def __init__(self, command_argument_name: str, config_option_name: str | None = None):
         self.config_option_name = config_option_name or command_argument_name
         self.command_argument_name = command_argument_name
 

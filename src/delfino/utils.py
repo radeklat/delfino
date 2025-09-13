@@ -1,11 +1,10 @@
 from pathlib import Path
-from typing import Union
 
 from delfino.constants import PackageManager
 from delfino.models.pyproject_toml import PyprojectToml
 
-ArgsList = list[Union[str, bytes, Path]]
-ArgsType = Union[str, bytes, list]
+ArgsList = list[str | bytes | Path]
+ArgsType = str | bytes | list
 
 
 def get_package_manager(project_root: Path, pyproject_toml: PyprojectToml) -> PackageManager:

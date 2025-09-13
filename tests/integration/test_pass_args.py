@@ -38,41 +38,41 @@ def _command_with_filepaths_argument_second(files_folders, passed_args):
 
 class TestPassArgsDecorator:
     @staticmethod
-    def should_pass_arguments_from_command_line(runner, context_obj):
+    def test_should_pass_arguments_from_command_line(runner, context_obj):
         result = runner.invoke(_command, "-- --option 1 argument", obj=context_obj)
         assert_output_matches(result, None, "--option", "1", "argument")
 
     @staticmethod
-    def should_pass_arguments_from_config(runner, context_obj):
+    def test_should_pass_arguments_from_config(runner, context_obj):
         context_obj.plugin_config = CustomPluginConfig(cmd={"pass_args": "--option 1 argument"})
         result = runner.invoke(_command, obj=context_obj)
         assert_output_matches(result, None, "--option", "1", "argument")
 
     @staticmethod
-    def should_prefer_command_line_arguments_over_config(runner, context_obj):
+    def test_should_prefer_command_line_arguments_over_config(runner, context_obj):
         context_obj.plugin_config = CustomPluginConfig(cmd={"pass_args": "config"})
         result = runner.invoke(_command, "-- commandline", obj=context_obj)
         assert_output_matches(result, None, "commandline")
 
     @staticmethod
-    def should_not_override_command_options_of_the_same_name_from_config(runner, context_obj):
+    def test_should_not_override_command_options_of_the_same_name_from_config(runner, context_obj):
         context_obj.plugin_config = CustomPluginConfig(cmd={"pass_args": "--option passed"})
         result = runner.invoke(_command, "--option option", obj=context_obj)
         assert_output_matches(result, "option", "--option", "passed")
 
     @staticmethod
-    def should_not_override_command_options_of_the_same_name_from_command_line(runner, context_obj):
+    def test_should_not_override_command_options_of_the_same_name_from_command_line(runner, context_obj):
         result = runner.invoke(_command, "--option option -- --option passed", obj=context_obj)
         assert_output_matches(result, "option", "--option", "passed")
 
     @staticmethod
-    def should_allow_empty_config(runner, context_obj):
+    def test_should_allow_empty_config(runner, context_obj):
         context_obj.plugin_config = CustomPluginConfig(cmd={"pass_args": ""})
         result = runner.invoke(_command, obj=context_obj)
         assert_output_matches(result, None)
 
     @staticmethod
-    def should_allow_empty_command_line_pass_args(runner, context_obj):
+    def test_should_allow_empty_command_line_pass_args(runner, context_obj):
         result = runner.invoke(_command, "--", obj=context_obj)
         assert_output_matches(result, None)
 
@@ -84,7 +84,7 @@ class TestPassArgsDecorator:
             pytest.param(_command_with_filepaths_argument_first, id="before this decorator"),
         ],
     )
-    def should_not_conflict_with_filepaths_argument(runner, context_obj, command):
+    def test_should_not_conflict_with_filepaths_argument(runner, context_obj, command):
         with tempfile.TemporaryDirectory() as tmpdir:
             tmpdir_path = Path(tmpdir)
             file1 = tmpdir_path / "file1.py"
