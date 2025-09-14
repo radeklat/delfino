@@ -32,8 +32,6 @@ jobs:
         type: string
     docker:
       - image: cimg/python:<< parameters.python_version >>
-        environment:
-          PIPENV_VENV_IN_PROJECT: "true"
     working_directory: << pipeline.parameters.working_directory >>
     steps:
       - checkout
@@ -84,7 +82,7 @@ jobs:
       - run:
           name: Build library
           command: |
-            uv build
+            uv build --wheel
       - persist_to_workspace:
           root: << pipeline.parameters.working_directory >>
           paths:
