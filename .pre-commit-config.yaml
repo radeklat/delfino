@@ -4,9 +4,9 @@ default_language_version:
 repos:
 - repo: local
   hooks:
-  - id: formatting
-    name: formatting
+  - id: Ruff
+    name: Ruff
     stages: [pre-commit]
     language: system
-    entry: bash -c "export PYTHONPATH=src; uv run python src/delfino/main.py ruff"
+    entry: bash -c "uv run python src/delfino/main.py ruff"
     pass_filenames: false

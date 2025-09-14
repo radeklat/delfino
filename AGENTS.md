@@ -27,6 +27,7 @@ This project is a CLI application that discovers and exposes Click commands from
 2. Follow type hints throughout the codebase
 3. Use async/await for asynchronous operations
 4. Use dependency injection where appropriate
+5. All imports must be absolute imports and on top of the file
 
 # Logging
 1. Use Python's built-in logging module for structured logging. Create a logger in each module as `logger = logging.getLogger(__name__)`.
@@ -65,7 +66,7 @@ Use library-specific types where applicable, e.g.:
 - `caplog: LogCaptureFixture` (`from pytest import LogCaptureFixture`)
 
 # Testing Guidelines
-1. Write unit tests for functions and classes
+1. Write unit tests for functions and classes. The folder structure should mirror the `src` folder. If a file with tests is over 500 lines long, consider splitting it into multiple files, with package name same as the file being tested.
 2. Write integration tests for commands
 3. Use pytest fixtures for test setup
 4. Use parameterized tests with `pytest.mark.parametrize` for testing multiple scenarios
