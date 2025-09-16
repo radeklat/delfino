@@ -29,15 +29,18 @@ This project is a CLI application that discovers and exposes Click commands from
 4. Use dependency injection where appropriate
 5. All imports must be absolute imports and on top of the file
 
-# Logging
+## Logging
 1. Use Python's built-in logging module for structured logging. Create a logger in each module as `logger = logging.getLogger(__name__)`.
-2. Use the following logging levels:
-   - `DEBUG` for detailed debugging information, not to be used in production.
-   - `INFO` for general operational messages. Should not be logged more than once per second.
-   - `WARNING` for fixable issues and possible data inconsistencies that do not stop the application.
-   - `ERROR` for errors and clear data inconsistencies that require attention, but do not stop the application.
-   - `CRITICAL` for critical errors that stop the application. Must be logged into Sentry as well.
-3. Log messages with appropriate context information, such as request IDs, and operation details.
+2. Compose log messages with f-strings but put variable context information, such as request IDs, into `extra` dict.
+3. Never log secrets/PII.
+4. See also: logging.json
+
+### Logging Levels
+- `DEBUG` for detailed debugging information, not to be used in production.
+- `INFO` for general operational messages. Should not be logged more than once per second.
+- `WARNING` for fixable issues and possible data inconsistencies that do not stop the application.
+- `ERROR` for errors and clear data inconsistencies that require attention, but do not stop the application.
+- `CRITICAL` for critical errors that stop the application. Must be logged into Sentry as well.
 
 # Documentation
 1. Keep README.md up to date
