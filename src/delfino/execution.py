@@ -121,15 +121,23 @@ def run(
     args, printable_args = _normalize_args(args, kwargs.get("shell", False))
     kwargs["env"] = _patch_env(env_update_path, env_update)
 
+    timeout = kwargs.pop("timeout", None)
+
     _LOG.debug(printable_args)
 
     try:
         with subprocess.Popen(args, *popenargs, **kwargs) as process:
-            if running_hook is not None:
-                while process.poll() is None:
-                    running_hook()
             try:
-                stdout, stderr = process.communicate(timeout=kwargs.get("timeout", None))
+                if running_hook is None:
+                    stdout, stderr = process.communicate(timeout=timeout)
+                else:
+                    while True:
+                        try:
+                            stdout, stderr = process.communicate(timeout=min(timeout or 0.1, 0.1))
+                            break
+                        except subprocess.TimeoutExpired:
+                            running_hook()
+                            continue
             except subprocess.TimeoutExpired:
                 process.kill()
                 process.wait()
