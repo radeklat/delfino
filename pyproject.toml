@@ -47,6 +47,7 @@ dev = [
     "shellingham>=1.4",
     "types-toml",
     "delfino-core[verify,dependencies-update]>=9.0",
+    "pytest-timeout>=2.4.0",
 ]
 
 [tool.pytest.ini_options]
