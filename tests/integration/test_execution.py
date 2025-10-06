@@ -57,7 +57,6 @@ class TestExecution:
             text=False,
         )
 
-        # 正常終了し、双方の出力が十分にあることを確認
         assert cp.returncode == 0
         assert isinstance(cp.stdout, (bytes, bytearray)) and len(cp.stdout) > 0
         assert isinstance(cp.stderr, (bytes, bytearray)) and len(cp.stderr) > 0
